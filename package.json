@@ -8,6 +8,10 @@
     "install-all": "npm run install-backend && npm run install-frontend",
     "build-frontend": "npm run build --prefix frontend",
     "start": "node backend/server.js",
-    "build-and-start": "npm run build-frontend && npm run start"
+    "build-and-start": "npm run build-frontend && npm run start",
+    "test": "node run_selenium_tests.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.46.0"
   }
 }
