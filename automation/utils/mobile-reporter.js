@@ -7,7 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const XLSX = require('xlsx');
 
-const reportsDir = path.join(__dirname, '../reports');
+const reportsDir = path.join(__dirname, '../../Test Results');
 const excelDir = path.join(reportsDir, 'Excel');
 const htmlDir = path.join(reportsDir, 'HTML');
 const jsonDir = path.join(reportsDir, 'JSON');

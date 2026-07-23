@@ -53,8 +53,8 @@ jobs:
         npm install
         npm run install-all
 
-    # Stage 6 & 7: Start Android Emulator & Verify Readiness
-    - name: Launch Android Emulator and Verify Readiness
+    # Stage 6, 7, 8, 9, 10, 11: Launch Emulator & Execute Appium Test Suite inside the Runner script
+    - name: Launch Emulator and Run Appium Suite
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 29
@@ -62,19 +62,12 @@ jobs:
         arch: x86_64
         script: |
           adb devices
-          echo "Android Emulator is ready!"
-
-    # Stage 8: Install APK
-    - name: Install APK on Emulator
-      run: |
-        echo "Installing App APK on emulator..."
-        # adb install android/app/build/outputs/apk/debug/app-debug.apk || true
-
-    # Stage 9, 10, 11: Appium Server & Test Execution
-    # Stage 12, 13, 14, 15, 16, 17: Generate Reports
-    - name: Run Appium E2E Tests
-      run: |
-        node automation/tests/mobile-e2e.test.js
+          echo "Android Emulator is initialized!"
+          # Start Appium Server in the background
+          npx appium --port 4723 &
+          sleep 10
+          # Run tests
+          node automation/tests/mobile-e2e.test.js
 
     # Stage 18: Upload Artifacts
     - name: Upload Test Artifacts
@@ -82,7 +75,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Android-Appium-Reports
-        path: automation/reports/
+        path: Test Results/
         retention-days: 30
 
     # Stage 19 & 20: Publish Reports to GitHub Pages & Update History
@@ -91,10 +84,10 @@ jobs:
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./automation/reports
+        publish_dir: ./Test Results
 
     # Stage 21: Publish GitHub Action Summary
     - name: Publish Action Execution Summary
       if: always()
       run: |
-        cat automation/reports/Summary/summary.md >> $GITHUB_STEP_SUMMARY
+        cat "Test Results/Summary/summary.md" >> $GITHUB_STEP_SUMMARY
