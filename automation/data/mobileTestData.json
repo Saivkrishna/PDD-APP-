@@ -1,0 +1,17 @@
+{
+  "validUser": {
+    "username": "student_user",
+    "email": "student@careerpath.com",
+    "password": "SecurePassword123"
+  },
+  "invalidUser": {
+    "username": "bad_user",
+    "email": "invalid@careerpath.com",
+    "password": "wrongpassword"
+  },
+  "profileData": {
+    "firstName": "Sai",
+    "lastName": "Krishna",
+    "phone": "+919876543210"
+  }
+}

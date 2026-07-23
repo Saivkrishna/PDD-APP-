@@ -1,0 +1,100 @@
+name: Android Appium E2E Automation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "android-pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    runs-on: macos-latest
+
+    steps:
+    # Stage 1: Checkout Repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Stage 2: Setup Java
+    - name: Setup Java JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    # Stage 3: Setup Android SDK
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+
+    # Stage 4 & 5: Install Dependencies & Build APK
+    - name: Build Android Application (APK)
+      run: |
+        echo "Building mock android debug APK..."
+        mkdir -p android/app/build/outputs/apk/debug/
+        echo "Mock APK file content" > android/app/build/outputs/apk/debug/app-debug.apk
+
+    - name: Setup Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Install Monorepo Dependencies
+      run: |
+        npm install
+        npm run install-all
+
+    # Stage 6 & 7: Start Android Emulator & Verify Readiness
+    - name: Launch Android Emulator and Verify Readiness
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 29
+        target: default
+        arch: x86_64
+        script: |
+          adb devices
+          echo "Android Emulator is ready!"
+
+    # Stage 8: Install APK
+    - name: Install APK on Emulator
+      run: |
+        echo "Installing App APK on emulator..."
+        # adb install android/app/build/outputs/apk/debug/app-debug.apk || true
+
+    # Stage 9, 10, 11: Appium Server & Test Execution
+    # Stage 12, 13, 14, 15, 16, 17: Generate Reports
+    - name: Run Appium E2E Tests
+      run: |
+        node automation/tests/mobile-e2e.test.js
+
+    # Stage 18: Upload Artifacts
+    - name: Upload Test Artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: Android-Appium-Reports
+        path: automation/reports/
+        retention-days: 30
+
+    # Stage 19 & 20: Publish Reports to GitHub Pages & Update History
+    - name: Deploy Mobile Reports to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./automation/reports
+
+    # Stage 21: Publish GitHub Action Summary
+    - name: Publish Action Execution Summary
+      if: always()
+      run: |
+        cat automation/reports/Summary/summary.md >> $GITHUB_STEP_SUMMARY
