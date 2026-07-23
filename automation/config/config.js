@@ -10,8 +10,8 @@ module.exports = {
   timeout: parseInt(process.env.TEST_TIMEOUT || '10000', 10),
   headless: process.env.HEADLESS !== 'false',
   paths: {
-    screenshots: path.join(__dirname, '../screenshots'),
-    logs: path.join(__dirname, '../logs'),
-    reports: path.join(__dirname, '../reports')
+    screenshots: path.join(__dirname, '../../Test Results/Screenshots'),
+    logs: path.join(__dirname, '../../Test Results/Logs'),
+    reports: path.join(__dirname, '../../Test Results')
   }
 };

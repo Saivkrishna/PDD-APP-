@@ -13,8 +13,10 @@ const htmlDir = path.join(config.paths.reports, 'HTML');
 const excelDir = path.join(config.paths.reports, 'Excel');
 const jsonDir = path.join(config.paths.reports, 'JSON');
 const summaryDir = path.join(config.paths.reports, 'Summary');
+const screenshotsDir = config.paths.screenshots;
+const logsDir = config.paths.logs;
 
-[htmlDir, excelDir, jsonDir, summaryDir].forEach(dir => {
+[htmlDir, excelDir, jsonDir, summaryDir, screenshotsDir, logsDir].forEach(dir => {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
