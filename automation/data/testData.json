@@ -1,0 +1,21 @@
+{
+  "users": {
+    "valid": {
+      "email": "user@careerpath.com",
+      "password": "Password123"
+    },
+    "invalid": {
+      "email": "baduser@invalid.com",
+      "password": "wrongpassword"
+    }
+  },
+  "searchQueries": [
+    "Software Developer",
+    "Data Scientist",
+    "Chartered Accountant",
+    "Teacher",
+    "Civil Engineer",
+    "UI/UX Designer",
+    "Database Administrator"
+  ]
+}

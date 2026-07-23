@@ -2,6 +2,7 @@
   "name": "careerpath-ai-frontend",
   "version": "1.0.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "firebase": "^12.15.0",
