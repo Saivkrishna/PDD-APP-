@@ -1,0 +1,447 @@
+/**
+ * ArithmeticRainGame.css
+ * Styling for the Arithmetic Rain Game, matching CareerPath AI's premium glassmorphic visual aesthetic.
+ */
+
+:root {
+  --rain-op-add: #22c55e;
+  --rain-op-sub: #f97316;
+  --rain-op-mul: #d946ef;
+  --rain-op-div: #38bdf8;
+}
+
+/* Base Wrapper */
+.rain-game-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+  animation: fadeIn 0.4s ease-out;
+  color: var(--text-main);
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shake screen on damage/wrong answer */
+.rain-shake {
+  animation: screenShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+}
+
+@keyframes screenShake {
+  10%, 90% { transform: translate3d(-2px, 0, 0); }
+  20%, 80% { transform: translate3d(4px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* Header back bar */
+.rain-back-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Menu Panel */
+.rain-menu-grid {
+  display: grid;
+  grid-template-columns: 8fr 4fr;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .rain-menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mode Cards */
+.rain-mode-card {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.4);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rain-mode-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: var(--primary);
+  background: rgba(139, 92, 246, 0.08);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.1);
+}
+
+.rain-mode-card.active {
+  border-color: var(--secondary);
+  background: rgba(217, 70, 239, 0.12);
+  box-shadow: 0 0 20px rgba(217, 70, 239, 0.15);
+}
+
+/* Settings, Achievements, and Stats tabs */
+.rain-tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.rain-tab {
+  background: none;
+  border: none;
+  color: var(--text-sub);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.rain-tab.active {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* Play Area */
+.rain-play-container {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(6, 2, 15, 0.7);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 10px 30px rgba(0,0,0,0.4), 0 0 30px rgba(139, 92, 246, 0.05);
+  margin-top: 10px;
+  transition: border-color 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* Glassmorphic console matrix backdrop lines */
+.rain-play-container::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 50px 50px,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px) 0 0 / 50px 50px;
+  pointer-events: none;
+  opacity: 0.8;
+  z-index: 1;
+}
+
+/* Red flashing border alert during container shake */
+.rain-play-container.shake-border {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.45), inset 0 0 40px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Falling Equations */
+.rain-bubble {
+  position: absolute;
+  padding: 12px 20px;
+  border-radius: 18px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 900;
+  font-size: 17px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+  user-select: none;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.05s linear;
+  animation: sway 2.5s ease-in-out infinite alternate;
+  z-index: 2;
+}
+
+@keyframes sway {
+  0% { margin-left: -8px; transform: rotate(-2deg); }
+  100% { margin-left: 8px; transform: rotate(2deg); }
+}
+
+.rain-bubble-add {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.5);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.rain-bubble-sub {
+  background: rgba(249, 115, 22, 0.15);
+  border: 1px solid rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.2);
+  color: #fb923c;
+}
+
+.rain-bubble-mul {
+  background: rgba(217, 70, 239, 0.15);
+  border: 1px solid rgba(217, 70, 239, 0.5);
+  box-shadow: 0 0 10px rgba(217, 70, 239, 0.2);
+  color: #f472b6;
+}
+
+.rain-bubble-div {
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.5);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  color: #38bdf8;
+}
+
+/* Pop effect on clearing */
+.rain-pop-effect {
+  animation: popOut 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes popOut {
+  0% { transform: scale(1); opacity: 1; filter: brightness(1); }
+  40% { transform: scale(1.4); opacity: 0.95; filter: brightness(2) drop-shadow(0 0 15px currentColor); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* Ground/Hazard bar */
+.rain-danger-zone {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0) 0%, rgba(239, 68, 68, 0.4) 100%);
+  border-top: 1px solid rgba(239, 68, 68, 0.5);
+  animation: pulseDanger 1.5s ease-in-out infinite;
+}
+
+@keyframes pulseDanger {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+/* User Input Panel */
+.rain-input-wrapper {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+.rain-input-field {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 12px 20px;
+  font-size: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  outline: none;
+  width: 160px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.25s;
+}
+
+.rain-input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Keypad Grid (Visible on mobile screens) */
+.rain-keypad {
+  display: none;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+  width: 100%;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rain-keypad-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.rain-keypad-btn:active {
+  background: var(--primary);
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .rain-keypad {
+    display: grid;
+  }
+}
+
+/* Achievements List Grid */
+.rain-achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.rain-achievement-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.rain-achievement-card.unlocked {
+  background: rgba(34, 197, 94, 0.05);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+/* History log */
+.rain-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.rain-history-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+/* Leaderboard entries */
+.rain-leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.rain-leaderboard-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  font-size: 13px;
+}
+
+.rain-leaderboard-card.highlight {
+  background: rgba(139, 92, 246, 0.08);
+  border-color: var(--primary);
+}
+
+.rain-leaderboard-rank {
+  width: 24px;
+  font-weight: 800;
+  color: var(--text-sub);
+}
+
+/* Settings item row */
+.rain-settings-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Result metrics grid */
+.rain-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.rain-metric-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 14px;
+  text-align: center;
+}
+
+.rain-metric-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  margin-top: 4px;
+}
+
+/* Switch Toggle Styling */
+.rain-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.rain-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.rain-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(255, 255, 255, 0.15);
+  transition: .3s;
+  border-radius: 34px;
+}
+
+.rain-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+
+input:checked + .rain-slider {
+  background-color: var(--primary);
+}
+
+input:checked + .rain-slider:before {
+  transform: translateX(20px);
+}

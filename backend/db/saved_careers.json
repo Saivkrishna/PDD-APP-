@@ -1,0 +1,30 @@
+[
+  {
+    "id": "7b49555a-3d31-4ffc-9242-699717aac0bf",
+    "userId": "c1bd1a24-8297-4d49-b7fb-e12027d39041",
+    "careerId": "usa",
+    "title": "USA 🇺🇸 Study Guide",
+    "icon": "✈️",
+    "type": "Study Abroad Program",
+    "payload": {
+      "type": "graduation",
+      "tab": "abroad",
+      "countryId": "usa"
+    },
+    "savedAt": "2026-06-20T06:05:54.468Z"
+  },
+  {
+    "id": "aeae9f13-927d-4f60-a1de-990e28804c4f",
+    "userId": "c1bd1a24-8297-4d49-b7fb-e12027d39041",
+    "careerId": "cse-software-developer",
+    "title": "Software Developer",
+    "icon": "👨‍💻",
+    "type": "Graduation Job",
+    "payload": {
+      "type": "graduation",
+      "tab": "jobs",
+      "jobId": "cse-software-developer"
+    },
+    "savedAt": "2026-06-20T06:09:44.527Z"
+  }
+]
