@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
+import { backHandlerStack } from './utils/backHandler';
 import aptitudeData from './aptitudeData';
 import { quizData } from './quizData';
 import { techLearningData, getYoutubeChannels } from './techLearningData';
@@ -21,33 +22,30 @@ import {
   updateProfile
 } from 'firebase/auth';
 
-const API = Capacitor.isNativePlatform() 
-  ? 'http://localhost:5000/api'
-  : (process.env.REACT_APP_API_URL || '/api');
+const API = process.env.REACT_APP_API_URL || '/api';
 
 // ─── COLORS & STYLES ─────────────
 const S = {
+
   page: {
     minHeight: '100vh',
     background: 'transparent',
-    padding: '0 0 120px 0',
+    padding: '0 0 calc(100px + env(safe-area-inset-bottom, 20px)) 0',
     color: 'var(--text-main)',
     fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
     transition: 'var(--transition-smooth)'
   },
   header: {
-    background: 'var(--bg-container)',
-    backdropFilter: 'blur(30px)',
-    WebkitBackdropFilter: 'blur(30px)',
+    background: 'var(--bg-start, #06020f)',
     padding: '12px 24px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
     position: 'sticky',
     top: 0,
-    zIndex: 100,
+    zIndex: 999,
     borderBottom: '1px solid var(--border-color)',
-    boxShadow: '0 8px 32px var(--glass-shadow)'
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
   },
   logo: {
     fontSize: 20,
@@ -300,7 +298,7 @@ const S = {
   splashTitle: { fontSize: 44, fontWeight: 900, fontFamily: 'Outfit, Nunito, sans-serif', background: 'linear-gradient(90deg, var(--primary), var(--secondary), #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.15, marginBottom: 12, letterSpacing: '-1px' },
   splashSub: { color: 'var(--text-sub)', fontSize: 18, fontWeight: 600, marginBottom: 44 },
   splashBtn: { background: 'linear-gradient(135deg, var(--primary), var(--secondary))', border: 'none', color: '#fff', padding: '16px 44px', borderRadius: 50, fontSize: 16, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 32px var(--accent-glow)', fontFamily: 'Outfit, Nunito, sans-serif', transition: 'var(--transition-smooth)' },
-  navBar: { position: 'fixed', bottom: '20px', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: '600px', background: 'var(--bg-container)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', display: 'flex', border: '1px solid var(--border-color)', borderRadius: '30px', zIndex: 200, boxShadow: '0 12px 40px var(--glass-shadow)', padding: '8px 12px', boxSizing: 'border-box' },
+  navBar: { position: 'fixed', bottom: 'calc(20px + env(safe-area-inset-bottom, 0px))', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: '600px', background: 'var(--bg-container)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', display: 'flex', border: '1px solid var(--border-color)', borderRadius: '30px', zIndex: 200, boxShadow: '0 12px 40px var(--glass-shadow)', padding: '8px 12px', boxSizing: 'border-box' },
   navItem: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px', cursor: 'pointer', transition: 'var(--transition-smooth)', borderRadius: '20px' },
   navIcon: { fontSize: 22 },
   navLabel: { fontSize: 10, fontWeight: 800, marginTop: 4, letterSpacing: '0.2px' },
@@ -552,37 +550,6 @@ function LoginPage({ onLogin, onForgot, onGoRegister }) {
     setLoading(false);
   };
 
-  const handleDevBypassLogin = async (selectedEmail) => {
-    setError('');
-    setLoading(true);
-    try {
-      const devUid = `dev-uid-${selectedEmail.replace(/[^a-zA-Z0-9]/g, '')}`;
-      const syncRes = await fetch(`${API}/auth/sync`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: devUid,
-          name: selectedEmail.split('@')[0],
-          email: selectedEmail
-        })
-      });
-      if (syncRes.ok) {
-        const syncData = await syncRes.json();
-        onLogin(syncData.user);
-      } else {
-        onLogin({
-          id: devUid,
-          name: selectedEmail.split('@')[0],
-          email: selectedEmail
-        });
-      }
-    } catch (e) {
-      console.error("Dev login bypass error:", e);
-      setError("Dev login bypass failed");
-    }
-    setLoading(false);
-  };
-
   const handleSendResetEmail = async () => {
     setForgotError('');
     const trimmedEmail = forgotEmail.trim();
@@ -679,34 +646,6 @@ function LoginPage({ onLogin, onForgot, onGoRegister }) {
           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style={{ width: 18, height: 18 }} />
           Continue with Google
         </button>
-
-        {isDevMode() && (
-          <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px dashed rgba(255,255,255,0.1)', textAlign: 'center' }}>
-            <div style={{ fontSize: 13, color: '#a89fff', marginBottom: 8, fontWeight: '500' }}>🛠️ Development Login Bypass</div>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, justifyContent: 'center' }}>
-              {['demo@careerpath.ai', 'saikrishna.vendi2259@gmail.com', 'test@test.com'].map(testEmail => (
-                <button
-                  key={testEmail}
-                  onClick={() => handleDevBypassLogin(testEmail)}
-                  style={{
-                    padding: '6px 12px',
-                    borderRadius: 6,
-                    border: '1px solid rgba(255,255,255,0.15)',
-                    background: 'rgba(255,255,255,0.04)',
-                    color: '#e2e0ff',
-                    fontSize: 11,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
-                  onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
-                >
-                  {testEmail.split('@')[0]}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         <div style={{ textAlign: 'center', marginTop: 18, color: '#a89fff', fontSize: 13 }}>
           Don't have an account?{' '}
@@ -1712,7 +1651,7 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
 
   const homeBgWrapperStyle = {
     minHeight: '100vh',
-    padding: '0 0 120px 0',
+    padding: '0 0 calc(100px + env(safe-area-inset-bottom, 20px)) 0',
     color: 'var(--text-main)',
     fontFamily: 'Inter, system-ui, -apple-system, sans-serif',
     transition: 'var(--transition-smooth)',
@@ -1727,9 +1666,7 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
         title={t('appName')}
         onOpenSettings={() => onNav('settings')}
         style={{
-          background: 'transparent',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
+          background: 'var(--bg-start, #06020f)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           boxShadow: 'none'
         }}
@@ -8106,15 +8043,6 @@ function ResumeBuilderPage({ onBack, t, user, soundEnabled }) {
   );
 }
 
-const isDevMode = () => {
-  return (
-    process.env.NODE_ENV === 'development' ||
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    Capacitor.isNativePlatform()
-  );
-};
-
 // ─── MAIN APP ────────────────────────────────────────────────────
 // ─── MAIN APP ────────────────────────────────────────────────────
 export default function App() {
@@ -8125,9 +8053,11 @@ export default function App() {
     return cached ? JSON.parse(cached) : null;
   });
   const [page, setPage] = useState('home');
+  const [navHistory, setNavHistory] = useState(['home']);
   const [selectedTrendingJob, setSelectedTrendingJob] = useState(null);
   const [navTarget, setNavTarget] = useState(null);
   const [showGeminiChat, setShowGeminiChat] = useState(false);
+
   const [initialChatPrompt, setInitialChatPrompt] = useState('');
 
   // Bookmarks state & trending cache
@@ -8145,8 +8075,56 @@ export default function App() {
 
   const [darkMode, setDarkMode] = useState(true);
 
+  // Sync state reference for native hardware back button handler
+  const backStateRef = useRef({ page, navHistory, selectedTrendingJob, showGeminiChat });
+  useEffect(() => {
+    backStateRef.current = { page, navHistory, selectedTrendingJob, showGeminiChat };
+  }, [page, navHistory, selectedTrendingJob, showGeminiChat]);
+
+  // Handle Capacitor Android hardware back button
+  useEffect(() => {
+    let listenerPromise;
+
+    if (Capacitor.isNativePlatform()) {
+      const initBackButton = async () => {
+        try {
+          const { App: CapApp } = await import('@capacitor/app');
+          const l = await CapApp.addListener('backButton', () => {
+            if (backHandlerStack.length > 0) {
+              backHandlerStack[backHandlerStack.length - 1]();
+            } else {
+              const { page: currPage, navHistory: currHistory, selectedTrendingJob: currJob, showGeminiChat: currChat } = backStateRef.current;
+              if (currChat) {
+                setShowGeminiChat(false);
+              } else if (currJob) {
+                setSelectedTrendingJob(null);
+              } else if (currPage === 'home' || currHistory.length <= 1) {
+                CapApp.exitApp();
+              } else {
+                handleBack();
+              }
+            }
+          });
+          return l;
+        } catch (e) {
+          console.error('Failed to initialize Capacitor App hardware back button listener:', e);
+        }
+      };
+      listenerPromise = initBackButton();
+    }
+
+    return () => {
+      if (listenerPromise) {
+        listenerPromise.then(l => {
+          if (l) l.remove();
+        });
+      }
+    };
+  }, []);
+
   // Monitor Firebase Auth State and synchronize with local/database state
   useEffect(() => {
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
@@ -8203,6 +8181,7 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+
   // Apply active theme dynamically to document root CSS variables
   useEffect(() => {
     const themePalettes = {
@@ -8236,6 +8215,15 @@ export default function App() {
       window.onGlobalThemeToggle = null;
     };
   }, []);
+
+  // Reset scroll position on page change
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+    const scrollableDivs = document.querySelectorAll('.app-scrollable-content, .bento-grid, body, html');
+    scrollableDivs.forEach(el => {
+      el.scrollTop = 0;
+    });
+  }, [page, selectedTrendingJob]);
 
   // Comparison State
   const [compareList, setCompareList] = useState([]);
@@ -8352,17 +8340,28 @@ export default function App() {
     playClickSound(soundEnabled);
     setPage(nextPage);
     setNavTarget(target);
+    setNavHistory(prev => {
+      // Prevent consecutive duplicate pages in history
+      if (prev[prev.length - 1] === nextPage) return prev;
+      return [...prev, nextPage];
+    });
   };
 
   const handleBack = () => {
     playClickSound(soundEnabled);
-    if (page === 'after10th' || page === 'after12th' || page === 'graduation') {
-      setPage('education');
+    if (navHistory.length > 1) {
+      const newHistory = [...navHistory];
+      newHistory.pop(); // Remove current page
+      const prevPage = newHistory[newHistory.length - 1];
+      setNavHistory(newHistory);
+      setPage(prevPage);
     } else {
       setPage('home');
+      setNavHistory(['home']);
     }
     setNavTarget(null);
   };
+
 
   const handleRemoveFromCompare = (jobId) => {
     playClickSound(soundEnabled);
@@ -8672,16 +8671,31 @@ export default function App() {
     return null;
   }
 
+  const isGameOrWorkspace = ['memory-matrix', 'arithmetic-rain', 'ai-workspace'].includes(page);
+
   return (
-    <div style={{ position: 'relative', minHeight: '100vh' }}>
-      {page !== 'memory-matrix' && page !== 'arithmetic-rain' && page !== 'ai-workspace' && (
-        <>
-          {/* Premium Animated Glowing Background */}
-          <div className="app-premium-bg" />
-        </>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', position: 'relative' }}>
+      {!isGameOrWorkspace && (
+        <div className="app-premium-bg" />
       )}
-      {renderPage()}
-      {page !== 'memory-matrix' && page !== 'arithmetic-rain' && page !== 'ai-workspace' && <BottomNav active={page} onNav={handleNavChange} t={t} />}
+      
+      {isGameOrWorkspace ? (
+        renderPage()
+      ) : (
+        <div 
+          className="app-scrollable-content" 
+          style={{ 
+            flex: 1, 
+            overflowY: 'auto', 
+            WebkitOverflowScrolling: 'touch',
+            position: 'relative'
+          }}
+        >
+          {renderPage()}
+        </div>
+      )}
+
+      {!isGameOrWorkspace && <BottomNav active={page} onNav={handleNavChange} t={t} />}
 
       {/* Floating Gemini FAB */}
       {user && page !== 'ai-workspace' && (

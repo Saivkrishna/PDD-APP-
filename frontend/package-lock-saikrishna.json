@@ -9,8 +9,8 @@
       "version": "1.0.0",
       "dependencies": {
         "@capacitor-firebase/authentication": "^8.3.0",
+        "@capacitor/app": "^8.1.1",
         "@capacitor/core": "^8.4.2",
-        "@google/generative-ai": "^0.24.1",
         "firebase": "^12.15.0",
         "html2canvas": "^1.4.1",
         "react": "^18.2.0",
@@ -2143,6 +2143,15 @@
         "@capacitor/core": "^8.4.0"
       }
     },
+    "node_modules/@capacitor/app": {
+      "version": "8.1.1",
+      "resolved": "https://registry.npmjs.org/@capacitor/app/-/app-8.1.1.tgz",
+      "integrity": "sha512-xM2ZTX5jK60tFtmjsmJv+Cdj1Qsb6NcavkqmdEnCPQBeya9oKhamZJxYOnQNj1ZvcJM7sWfG6BEtSLx42pisbA==",
+      "license": "MIT",
+      "peerDependencies": {
+        "@capacitor/core": ">=8.0.0"
+      }
+    },
     "node_modules/@capacitor/cli": {
       "version": "8.4.2",
       "resolved": "https://registry.npmjs.org/@capacitor/cli/-/cli-8.4.2.tgz",
@@ -3281,15 +3290,6 @@
       "resolved": "https://registry.npmjs.org/@firebase/webchannel-wrapper/-/webchannel-wrapper-1.0.6.tgz",
       "integrity": "sha512-Vr/Mqu79dMwGRAyGbJ4uN4+BtXB3/mRTdzetD1daWNeG8QaWuzhhbG77GltO5c0yYmYls8i250iX73624GJd7Q==",
       "license": "Apache-2.0"
-    },
-    "node_modules/@google/generative-ai": {
-      "version": "0.24.1",
-      "resolved": "https://registry.npmjs.org/@google/generative-ai/-/generative-ai-0.24.1.tgz",
-      "integrity": "sha512-MqO+MLfM6kjxcKoy0p1wRzG3b4ZZXtPI+z2IE26UogS2Cm/XHO+7gGRBh6gcJsOiIVoH93UwKvW4HdgiOZCy9Q==",
-      "license": "Apache-2.0",
-      "engines": {
-        "node": ">=18.0.0"
-      }
     },
     "node_modules/@grpc/grpc-js": {
       "version": "1.9.16",

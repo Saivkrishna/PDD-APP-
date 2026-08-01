@@ -24,6 +24,21 @@ async function initDemoUser() {
 // initDemoUser();
 
 const app = express();
+
+// Custom CORS middleware to allow cross-origin requests from the native app webview
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (origin && (origin.startsWith('http://localhost') || origin.startsWith('capacitor://') || origin.startsWith('http://10.'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');
@@ -1733,6 +1748,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 2259;
+app.listen(PORT, () => {
+  console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
+  
+  // Automatically open browser
+  const { exec } = require('child_process');
+  const url = `http://localhost:${PORT}`;
+  const startCommand = process.platform === 'win32' 
+    ? `start ${url}` 
+    : process.platform === 'darwin' 
+      ? `open ${url}` 
+      : `xdg-open ${url}`;
+  
+  exec(startCommand, (err) => {
+    if (err) {
+      console.log(`💡 To access the app, open: ${url}`);
+    }
+  });
+});
 

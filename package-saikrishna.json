@@ -1,0 +1,25 @@
+{
+  "name": "careerpath-ai-root",
+  "version": "1.0.0",
+  "description": "Orchestrates build and startup of CareerPath AI monolith",
+  "scripts": {
+    "install-backend": "npm install --prefix backend",
+    "install-frontend": "npm install --prefix frontend",
+    "install-all": "npm run install-backend && npm run install-frontend",
+    "frontend": "npm start --prefix frontend",
+    "backend": "node backend/server.js",
+    "dev": "concurrently \"npm run backend\" \"npm run frontend\"",
+    "build-frontend": "npm run build --prefix frontend",
+    "start": "npm run build-frontend && node backend/server.js",
+    "start-server": "node backend/server.js",
+    "build-and-start": "npm start",
+    "test": "node run_selenium_tests.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.46.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4"
+  }
+}

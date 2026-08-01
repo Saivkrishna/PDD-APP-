@@ -11,7 +11,7 @@ jobs:
   security-scan:
     runs-on: ubuntu-latest
     env:
-      FRAMEWORK: ''
+      FRAMEWORK: 'generic'
 
     steps:
     - name: Checkout Repository
