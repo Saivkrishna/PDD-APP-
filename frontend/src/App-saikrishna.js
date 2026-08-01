@@ -1917,16 +1917,6 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
             <p style={{ color: 'var(--text-sub)', fontSize: '12px', marginTop: '6px', lineHeight: 1.4 }}>
               Pick up where you left off. Access official documentation for Python, JavaScript, and 53+ languages.
             </p>
-
-            <div style={{ marginTop: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--text-sub)', marginBottom: '4px', fontWeight: 700 }}>
-                <span>🐍 Python documentation</span>
-                <span>65%</span>
-              </div>
-              <div style={{ background: 'rgba(255, 255, 255, 0.06)', height: '4px', borderRadius: '2px', overflow: 'hidden' }}>
-                <div style={{ background: 'linear-gradient(90deg, #8B5CF6, #D946EF)', width: '65%', height: '100%' }} />
-              </div>
-            </div>
           </div>
         </div>
 
