@@ -172,16 +172,59 @@ async function main() {
       });
     }
 
+    // ==========================================
+    // GROUP 8: JD PARSER UNIT TESTS (Tests 301-303)
+    // ==========================================
+    const { parseJd } = require('./backend/services/ats/jdParser');
+
+    runTest(301, 'JD Parser: Structured JD with required vs preferred sections', () => {
+      const jd = `
+        Job Title: Senior React Developer
+        Experience: 5+ years
+        Required Qualifications:
+        - React
+        - TypeScript
+        - SQL
+        Preferred Qualifications:
+        - Next.js is a plus
+        - AWS Certified
+      `;
+      const result = parseJd(jd);
+      if (result.jobTitle !== 'Senior React Developer') throw new Error(`Expected title Senior React Developer, got: ${result.jobTitle}`);
+      if (result.experienceYears !== 5) throw new Error(`Expected experience 5, got: ${result.experienceYears}`);
+      if (!result.requiredSkills.includes('react')) throw new Error('Missing react in required');
+      if (!result.requiredSkills.includes('typescript')) throw new Error('Missing typescript in required');
+      if (!result.requiredSkills.includes('sql')) throw new Error('Missing sql in required');
+      if (!result.preferredSkills.includes('next.js')) throw new Error('Missing next.js in preferred');
+      if (!result.preferredSkills.includes('aws')) throw new Error('Missing aws in preferred');
+    });
+
+    runTest(302, 'JD Parser: Unstructured JD with context-inferred requirements', () => {
+      const jd = 'We are looking for a backend engineer. You must have strong knowledge of Node.js and SQL. Experience with Docker and Redis is highly preferred. A degree in computer science is needed.';
+      const result = parseJd(jd);
+      if (result.jobTitle !== 'Backend Engineer') throw new Error(`Expected Backend Engineer, got: ${result.jobTitle}`);
+      if (!result.requiredSkills.includes('node.js') || !result.requiredSkills.includes('sql')) throw new Error('Missing node.js or sql in required');
+      if (!result.preferredSkills.includes('docker') || !result.preferredSkills.includes('redis')) throw new Error('Missing docker or redis in preferred');
+      if (!result.education.includes("Bachelor's Degree")) throw new Error('Missing education requirement inference');
+    });
+
+    runTest(303, 'JD Parser: Edge case JD with minimal structure', () => {
+      const jd = 'python developer python python';
+      const result = parseJd(jd);
+      if (result.jobTitle !== 'Python Developer') throw new Error(`Expected Python Developer, got: ${result.jobTitle}`);
+      if (!result.technicalSkills.includes('python')) throw new Error('Failed to find python in tech skills');
+    });
+
     console.log("\n====================================================");
     console.log("                TEST RUN SUMMARY                     ");
     console.log("====================================================");
-    console.log(`Total Tests Run: 300`);
+    console.log(`Total Tests Run: 303`);
     console.log(`Passed:         ${passedCount}`);
-    console.log(`Failed:         ${300 - passedCount}`);
+    console.log(`Failed:         ${303 - passedCount}`);
     console.log("====================================================\n");
 
-    if (passedCount === 300) {
-      console.log("[SUCCESS] ALL 300 SELENIUM TEST CASES PASSED SUCCESSFULLY!");
+    if (passedCount === 303) {
+      console.log("[SUCCESS] ALL 303 TEST CASES PASSED SUCCESSFULLY!");
       process.exit(0);
     } else {
       console.log("[FAILURE] Some test cases did not pass.");

@@ -6,6 +6,7 @@ const DB = require('./services/db');
 const { reasoningQuizQuestions } = require('./reasoningQuizQuestions');
 const { extractText } = require('./services/ats/extractor');
 const { detectSections } = require('./services/ats/detector');
+const { parseJd } = require('./services/ats/jdParser');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -2064,6 +2065,25 @@ app.post('/api/ats/extract', async (req, res) => {
     });
   } catch (err) {
     console.error('Error in /api/ats/extract:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ATS Job Description Parsing Route
+app.post('/api/ats/parse-jd', async (req, res) => {
+  try {
+    const { jdText } = req.body;
+    if (!jdText) {
+      return res.status(400).json({ error: 'jdText is required' });
+    }
+
+    const parsedJd = parseJd(jdText);
+    res.json({
+      success: true,
+      parsedJd
+    });
+  } catch (err) {
+    console.error('Error in /api/ats/parse-jd:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
