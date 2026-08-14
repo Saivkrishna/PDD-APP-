@@ -33,6 +33,26 @@ async function initDemoUser() {
 // initDemoUser();
 
 const app = express();
+
+// Enable CORS for Firebase Hosting domains
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    'https://career-guidance-app-9aba0.web.app',
+    'https://career-guidance-app-9aba0.firebaseapp.com'
+  ];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 app.use((req, res, next) => {
   res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.setHeader('Pragma', 'no-cache');
@@ -2174,23 +2194,30 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-const PORT = process.env.PORT || 2259;
-app.listen(PORT, () => {
-  console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
-  
-  // Automatically open browser
-  const { exec } = require('child_process');
-  const url = `http://localhost:${PORT}`;
-  const startCommand = process.platform === 'win32' 
-    ? `start ${url}` 
-    : process.platform === 'darwin' 
-      ? `open ${url}` 
-      : `xdg-open ${url}`;
-  
-  exec(startCommand, (err) => {
-    if (err) {
-      console.log(`💡 To access the app, open: ${url}`);
-    }
+// Only listen to port if run directly (development / local monolith mode)
+if (require.main === module || !process.env.FUNCTION_TARGET) {
+  const PORT = process.env.PORT || 2259;
+  app.listen(PORT, () => {
+    console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
+    
+    // Automatically open browser
+    const { exec } = require('child_process');
+    const url = `http://localhost:${PORT}`;
+    const startCommand = process.platform === 'win32' 
+      ? `start ${url}` 
+      : process.platform === 'darwin' 
+        ? `open ${url}` 
+        : `xdg-open ${url}`;
+    
+    exec(startCommand, (err) => {
+      if (err) {
+        console.log(`💡 To access the app, open: ${url}`);
+      }
+    });
   });
-});
+}
+
+// Export the Express app as a Firebase Cloud Function (v2 HTTPS trigger)
+const { onRequest } = require('firebase-functions/v2/https');
+exports.api = onRequest({ cors: true, memory: '1GiB', timeoutSeconds: 60 }, app);
 
