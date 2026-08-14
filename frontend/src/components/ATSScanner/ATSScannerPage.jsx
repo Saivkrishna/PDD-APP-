@@ -429,7 +429,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
       {/* STEP 1: UPLOAD RESUME */}
       {step === 1 && (
-        <div style={styles.grid}>
+        <div className="bento-grid">
           {/* Upload Card */}
           <div className="bento-card span-5 premium-glass-card" style={styles.card}>
             <div>
@@ -540,7 +540,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
       {/* STEP 2: PASTE JOB DESCRIPTION */}
       {step === 2 && (
-        <div style={styles.grid}>
+        <div className="bento-grid">
           {/* JD Pasting Panel */}
           <div className="bento-card span-7 premium-glass-card" style={styles.card}>
             <h3 style={styles.cardTitle}>Paste Job Description</h3>
@@ -608,7 +608,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
       {/* STEP 3: DASHBOARD RESULTS */}
       {step === 3 && parsedJd && subScores && (
-        <div style={styles.grid}>
+        <div className="bento-grid">
           {/* Left Side: Scoring Dashboard (Overall + Sub-scores) */}
           <div className="bento-card span-6 premium-glass-card" style={styles.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
@@ -949,13 +949,6 @@ const styles = {
     height: '2px',
     background: 'var(--border-color)',
     margin: '0 15px'
-  },
-  grid: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(12, 1fr)',
-    gap: '24px'
   },
   card: {
     padding: '24px',
