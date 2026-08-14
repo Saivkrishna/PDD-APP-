@@ -7,6 +7,7 @@ const { extractText } = require('./services/ats/extractor');
 const { detectSections } = require('./services/ats/detector');
 const { parseJd } = require('./services/ats/jdParser');
 const { matchSkills } = require('./services/ats/skillMatcher');
+const { calculateScore } = require('./services/ats/scoringEngine');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -1804,6 +1805,25 @@ app.post('/api/ats/match-skills', async (req, res) => {
     });
   } catch (err) {
     console.error('Error in /api/ats/match-skills:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ATS Scoring Engine Route
+app.post('/api/ats/score', async (req, res) => {
+  try {
+    const { resumeSections, parsedJd, matchedSkills, missingSkills } = req.body;
+    if (!resumeSections || !parsedJd) {
+      return res.status(400).json({ error: 'resumeSections and parsedJd are required' });
+    }
+
+    const scoreResults = calculateScore(resumeSections, parsedJd, matchedSkills, missingSkills);
+    res.json({
+      success: true,
+      ...scoreResults
+    });
+  } catch (err) {
+    console.error('Error in /api/ats/score:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

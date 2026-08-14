@@ -287,16 +287,96 @@ async function main() {
       if (djangoMatch.matchType !== 'related-not-matched') throw new Error('Django should be related');
     });
 
+    // ==========================================
+    // GROUP 10: SCORING ENGINE UNIT TESTS (Tests 307-309)
+    // ==========================================
+    const { calculateScore } = require('./backend/services/ats/scoringEngine');
+
+    runTest(307, 'Scoring Engine: Strong match score calculation', () => {
+      const resumeSections = {
+        SUMMARY: 'A passionate developer with years of experience.',
+        SKILLS: 'React, TypeScript, AWS, Docker',
+        EXPERIENCE: 'Worked 5+ years as a Senior React Developer. Increased speed by 40% and improved efficiency for 1000 users.',
+        PROJECTS: 'Built complex React dashboard for cloud deployments.',
+        EDUCATION: 'Bachelor\'s Degree in Computer Science.'
+      };
+      
+      const parsedJd = {
+        jobTitle: 'Senior React Developer',
+        experienceYears: 5,
+        education: ["Bachelor's Degree"],
+        certifications: [],
+        keywords: ['react', 'typescript', 'aws', 'docker'],
+        technicalSkills: ['react', 'typescript', 'aws', 'docker'],
+        requiredSkills: ['react', 'typescript'],
+        preferredSkills: ['aws', 'docker'],
+        optionalSkills: []
+      };
+
+      const matchedSkills = [
+        { skill: 'react', category: 'required', matchType: 'exact' },
+        { skill: 'typescript', category: 'required', matchType: 'exact' },
+        { skill: 'aws', category: 'preferred', matchType: 'synonym' },
+        { skill: 'docker', category: 'preferred', matchType: 'exact' }
+      ];
+
+      const result = calculateScore(resumeSections, parsedJd, matchedSkills, []);
+      if (result.overallScore < 80) throw new Error(`Expected strong match score (>=80), got: ${result.overallScore}`);
+      if (result.matchLabel !== 'Strong Match') throw new Error(`Expected Strong Match, got: ${result.matchLabel}`);
+    });
+
+    runTest(308, 'Scoring Engine: Weak match score calculation', () => {
+      const resumeSections = {
+        SKILLS: 'HTML, CSS'
+      };
+
+      const parsedJd = {
+        jobTitle: 'Senior Kubernetes Cloud Engineer',
+        experienceYears: 8,
+        education: ["Master's Degree"],
+        certifications: ['AWS Certified Solutions Architect'],
+        keywords: ['kubernetes', 'docker', 'terraform', 'aws'],
+        technicalSkills: ['kubernetes', 'docker', 'terraform', 'aws'],
+        requiredSkills: ['kubernetes'],
+        preferredSkills: ['aws'],
+        optionalSkills: []
+      };
+
+      const result = calculateScore(resumeSections, parsedJd, [], []);
+      if (result.overallScore > 40) throw new Error(`Expected weak match score (<=40), got: ${result.overallScore}`);
+      if (result.matchLabel !== 'Needs Improvement') throw new Error(`Expected Needs Improvement, got: ${result.matchLabel}`);
+    });
+
+    runTest(309, 'Scoring Engine: Checks weight boundaries and crash resilience', () => {
+      const resumeSections = {};
+      const parsedJd = {
+        jobTitle: '',
+        experienceYears: 0,
+        education: [],
+        certifications: [],
+        keywords: [],
+        technicalSkills: [],
+        requiredSkills: [],
+        preferredSkills: [],
+        optionalSkills: []
+      };
+
+      const result = calculateScore(resumeSections, parsedJd, [], []);
+      if (result.overallScore < 0 || result.overallScore > 100) {
+        throw new Error(`Score out of bounds: ${result.overallScore}`);
+      }
+    });
+
     console.log("\n====================================================");
     console.log("                TEST RUN SUMMARY                     ");
     console.log("====================================================");
-    console.log(`Total Tests Run: 306`);
+    console.log(`Total Tests Run: 309`);
     console.log(`Passed:         ${passedCount}`);
-    console.log(`Failed:         ${306 - passedCount}`);
+    console.log(`Failed:         ${309 - passedCount}`);
     console.log("====================================================\n");
 
-    if (passedCount === 306) {
-      console.log("[SUCCESS] ALL 306 TEST CASES PASSED SUCCESSFULLY!");
+    if (passedCount === 309) {
+      console.log("[SUCCESS] ALL 309 TEST CASES PASSED SUCCESSFULLY!");
       process.exit(0);
     } else {
       console.log("[FAILURE] Some test cases did not pass.");

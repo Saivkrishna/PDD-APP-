@@ -1,0 +1,18 @@
+{
+  "weights": {
+    "keywordMatch": 0.25,
+    "technicalSkills": 0.20,
+    "experienceRelevance": 0.15,
+    "projectRelevance": 0.10,
+    "resumeStructure": 0.10,
+    "education": 0.05,
+    "certifications": 0.05,
+    "achievements": 0.05,
+    "atsFormatting": 0.05
+  },
+  "thresholds": {
+    "strong": 80,
+    "good": 65,
+    "potential": 50
+  }
+}

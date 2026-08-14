@@ -10,8 +10,11 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
   const [parsedJd, setParsedJd] = useState(null);
   const [matchedSkills, setMatchedSkills] = useState([]);
   const [missingSkills, setMissingSkills] = useState([]);
+  const [overallScore, setOverallScore] = useState(0);
+  const [matchLabel, setMatchLabel] = useState('');
+  const [subScores, setSubScores] = useState(null);
 
-  // Tabs for the Resume/JD panels in step 3
+  // Tabs for the panels in step 3
   const [activeResumeTab, setActiveResumeTab] = useState('ALL');
   const [activeJdTab, setActiveJdTab] = useState('match-analysis');
 
@@ -162,9 +165,32 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
       setMatchedSkills(matchData.matchedSkills);
       setMissingSkills(matchData.missingSkills);
+
+      // 3. Compute Rule-Based ATS score
+      const scoreResponse = await fetch('/api/ats/score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          resumeSections: extractedResume.sections,
+          parsedJd: data.parsedJd,
+          matchedSkills: matchData.matchedSkills,
+          missingSkills: matchData.missingSkills
+        })
+      });
+
+      const scoreData = await scoreResponse.json();
+      if (!scoreResponse.ok) {
+        throw new Error(scoreData.error || 'Failed to compute scoring breakdown.');
+      }
+
+      setOverallScore(scoreData.overallScore);
+      setMatchLabel(scoreData.matchLabel);
+      setSubScores(scoreData.subScores);
       setStep(3); // Go to results dashboard
     } catch (err) {
-      setError(err.message || 'An error occurred during parsing or skill matching.');
+      setError(err.message || 'An error occurred during parsing or score calculation.');
     } finally {
       setLoading(false);
     }
@@ -177,6 +203,9 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     setParsedJd(null);
     setMatchedSkills([]);
     setMissingSkills([]);
+    setOverallScore(0);
+    setMatchLabel('');
+    setSubScores(null);
     setError('');
     setStep(1);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -188,8 +217,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     { id: 'SKILLS', label: 'Skills' },
     { id: 'EXPERIENCE', label: 'Experience' },
     { id: 'PROJECTS', label: 'Projects' },
-    { id: 'EDUCATION', label: 'Education' },
-    { id: 'CERTIFICATIONS', label: 'Certifications' }
+    { id: 'EDUCATION', label: 'Education' }
   ];
 
   const getResumeTabContent = () => {
@@ -208,6 +236,31 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       default: return 'Matched';
     }
   };
+
+  // Helper to get score color variables
+  const getScoreColor = (score) => {
+    if (score >= 80) return { text: 'var(--primary)', bg: 'rgba(4, 170, 109, 0.1)' };
+    if (score >= 65) return { text: '#38bdf8', bg: 'rgba(56, 189, 248, 0.1)' };
+    if (score >= 50) return { text: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' };
+    return { text: '#ff8b8b', bg: 'rgba(255, 139, 139, 0.1)' };
+  };
+
+  const renderProgressBar = (label, value) => {
+    const intVal = Math.round(value || 0);
+    return (
+      <div style={{ marginBottom: '14px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>
+          <span style={{ color: 'var(--text-sub)' }}>{label}</span>
+          <span style={{ color: 'var(--text-main)' }}>{intVal}%</span>
+        </div>
+        <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+          <div style={{ height: '100%', background: 'var(--primary)', width: `${intVal}%`, borderRadius: '4px', transition: 'width 0.4s ease' }} />
+        </div>
+      </div>
+    );
+  };
+
+  const scoreColors = getScoreColor(overallScore);
 
   return (
     <div style={styles.container}>
@@ -356,7 +409,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
         </div>
         <div style={styles.progressDivider} />
         <div style={{ ...styles.progressItem, color: step >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
-          3. Match Analysis
+          3. ATS Scoring Dashboard
         </div>
       </div>
 
@@ -503,7 +556,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 }}
                 onClick={handleParseJd}
               >
-                {loading ? 'Parsing & Matching Skills...' : 'Parse & Match Skills 🚀'}
+                {loading ? 'Analyzing & Scoring...' : 'Run Scoring & Match Analysis 🚀'}
               </button>
             </div>
           </div>
@@ -540,21 +593,50 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       )}
 
       {/* STEP 3: DASHBOARD RESULTS */}
-      {step === 3 && parsedJd && (
+      {step === 3 && parsedJd && subScores && (
         <div style={styles.grid}>
-          {/* Left Side: Parsed Job Description & Matching Results */}
+          {/* Left Side: Scoring Dashboard (Overall + Sub-scores) */}
           <div className="bento-card span-6 premium-glass-card" style={styles.card}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-              <h3 style={styles.cardTitle}>Skills Match Analysis</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h3 style={styles.cardTitle}>ATS Score Dashboard</h3>
               <button
                 className="section-tab-btn"
                 style={{ fontSize: '12px', padding: '6px 12px' }}
                 onClick={handleReset}
               >
-                Scan New Resume
+                Reset & Scan New
               </button>
             </div>
 
+            {/* Score Display Ring Block */}
+            <div style={styles.scoreContainer}>
+              <div style={{ ...styles.scoreCircle, borderColor: scoreColors.text, backgroundColor: scoreColors.bg }}>
+                <span style={styles.scoreNum}>{overallScore}</span>
+                <span style={styles.scoreMax}>/100</span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <div style={styles.scoreLabel}>CareerPath AI Compatibility Score</div>
+                <div style={{ ...styles.matchLabel, color: scoreColors.text }}>{matchLabel}</div>
+              </div>
+            </div>
+
+            {/* Progress Bars for Breakdown */}
+            <div style={styles.subScoresContainer}>
+              <h4 style={{ ...styles.subHeading, marginBottom: '14px' }}>Sub-Score Breakdown</h4>
+              {renderProgressBar('Keyword Match (25%)', subScores.keywordMatch)}
+              {renderProgressBar('Technical Skills (20%)', subScores.technicalSkills)}
+              {renderProgressBar('Experience Relevance (15%)', subScores.experienceRelevance)}
+              {renderProgressBar('Project Relevance (10%)', subScores.projectRelevance)}
+              {renderProgressBar('Resume Structure (10%)', subScores.resumeStructure)}
+              {renderProgressBar('Education Fit (5%)', subScores.education)}
+              {renderProgressBar('Certifications (5%)', subScores.certifications)}
+              {renderProgressBar('Achievements & Metrics (5%)', subScores.achievements)}
+              {renderProgressBar('ATS Layout Formatting (5%)', subScores.atsFormatting)}
+            </div>
+          </div>
+
+          {/* Right Side: Tabbed Skills Analysis & Details */}
+          <div className="bento-card span-6 premium-glass-card" style={styles.card}>
             {/* Quick Details Block */}
             <div style={styles.detailsBlock}>
               <div style={styles.detailItem}>
@@ -572,18 +654,18 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
             </div>
 
             {/* Result Tabs */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '15px', overflowX: 'auto' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '15px', overflowX: 'auto', paddingBottom: '4px' }}>
               <button
                 className={`section-tab-btn ${activeJdTab === 'match-analysis' ? 'active' : ''}`}
                 onClick={() => setActiveJdTab('match-analysis')}
               >
-                Matched vs Missing
+                Skills Match
               </button>
               <button
-                className={`section-tab-btn ${activeJdTab === 'jd-skills' ? 'active' : ''}`}
-                onClick={() => setActiveJdTab('jd-skills')}
+                className={`section-tab-btn ${activeJdTab === 'resume-ref' ? 'active' : ''}`}
+                onClick={() => setActiveJdTab('resume-ref')}
               >
-                JD Target Skills
+                Resume text
               </button>
               <button
                 className={`section-tab-btn ${activeJdTab === 'responsibilities' ? 'active' : ''}`}
@@ -595,11 +677,11 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 className={`section-tab-btn ${activeJdTab === 'keywords' ? 'active' : ''}`}
                 onClick={() => setActiveJdTab('keywords')}
               >
-                Main Keywords
+                Keywords
               </button>
             </div>
 
-            {/* JD Results Tab Contents */}
+            {/* Tab Contents */}
             <div style={styles.jdTabContainer}>
               {/* Matched vs Missing Skills Analysis */}
               {activeJdTab === 'match-analysis' && (
@@ -607,7 +689,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                   <div style={{ marginBottom: '20px' }}>
                     <div style={styles.subHeading}>Matched Skills ({matchedSkills.filter(s => s.matchType !== 'related-not-matched').length})</div>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
-                      Hover/tap a chip to inspect the local match criteria (exact, synonym, or fuzzy).
+                      Hover/tap a chip to inspect the local match criteria.
                     </p>
                     {matchedSkills.filter(s => s.matchType !== 'related-not-matched').length > 0 ? (
                       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
@@ -623,7 +705,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                         ))}
                       </div>
                     ) : (
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No matches found yet.</span>
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No matches found.</span>
                     )}
                   </div>
 
@@ -669,47 +751,25 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 </div>
               )}
 
-              {/* JD Target Skills */}
-              {activeJdTab === 'jd-skills' && (
+              {/* Resume text tab */}
+              {activeJdTab === 'resume-ref' && (
                 <div>
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={styles.subHeading}>Required Skills ({parsedJd.requiredSkills.length})</div>
-                    {parsedJd.requiredSkills.length > 0 ? (
-                      <div>
-                        {parsedJd.requiredSkills.map(skill => (
-                          <span key={skill} className="skill-badge matched-no">{skill}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>None explicitly detected.</span>
-                    )}
+                  <div style={{ display: 'flex', gap: '6px', marginBottom: '15px', overflowX: 'auto', paddingBottom: '4px' }}>
+                    {resumeTabs.map(tab => (
+                      <button
+                        key={tab.id}
+                        className={`section-tab-btn ${activeResumeTab === tab.id ? 'active' : ''}`}
+                        style={{ fontSize: '11px', padding: '6px 12px' }}
+                        onClick={() => setActiveResumeTab(tab.id)}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
                   </div>
 
-                  <div style={{ marginBottom: '16px' }}>
-                    <div style={styles.subHeading}>Preferred Skills ({parsedJd.preferredSkills.length})</div>
-                    {parsedJd.preferredSkills.length > 0 ? (
-                      <div>
-                        {parsedJd.preferredSkills.map(skill => (
-                          <span key={skill} className="skill-badge matched-no">{skill}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>None explicitly detected.</span>
-                    )}
-                  </div>
-
-                  <div>
-                    <div style={styles.subHeading}>Optional / Soft Skills ({parsedJd.optionalSkills.length})</div>
-                    {parsedJd.optionalSkills.length > 0 ? (
-                      <div>
-                        {parsedJd.optionalSkills.map(skill => (
-                          <span key={skill} className="skill-badge matched-no">{skill}</span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>None explicitly detected.</span>
-                    )}
-                  </div>
+                  <pre className="section-preview" style={{ maxHeight: '250px', minHeight: '200px' }}>
+                    {getResumeTabContent()}
+                  </pre>
                 </div>
               )}
 
@@ -746,30 +806,6 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Right Side: Parsed Resume Section Reference */}
-          <div className="bento-card span-6 premium-glass-card" style={styles.card}>
-            <h3 style={styles.cardTitle}>Extracted Resume Sections</h3>
-            <p style={styles.cardDesc}>
-              Refer back to your extracted resume details side-by-side.
-            </p>
-
-            <div style={{ display: 'flex', gap: '6px', marginBottom: '15px', overflowX: 'auto', paddingBottom: '4px' }}>
-              {resumeTabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`section-tab-btn ${activeResumeTab === tab.id ? 'active' : ''}`}
-                  onClick={() => setActiveResumeTab(tab.id)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-
-            <pre className="section-preview" style={{ maxHeight: '350px' }}>
-              {getResumeTabContent()}
-            </pre>
           </div>
         </div>
       )}
@@ -906,6 +942,56 @@ const styles = {
     borderBottom: '1px solid var(--border-color)',
     paddingBottom: '12px'
   },
+  scoreContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '24px',
+    background: 'var(--input-bg)',
+    border: '1px solid var(--border-color)',
+    borderRadius: '16px',
+    padding: '20px',
+    marginBottom: '24px'
+  },
+  scoreCircle: {
+    width: '90px',
+    height: '90px',
+    borderRadius: '50%',
+    border: '4px solid',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '1px'
+  },
+  scoreNum: {
+    fontSize: '32px',
+    fontWeight: '900',
+    fontFamily: 'Outfit, sans-serif'
+  },
+  scoreMax: {
+    fontSize: '12px',
+    fontWeight: 'bold',
+    opacity: 0.6,
+    alignSelf: 'flex-end',
+    marginBottom: '18px'
+  },
+  scoreLabel: {
+    fontSize: '12px',
+    color: 'var(--text-muted)',
+    fontWeight: 'bold',
+    textTransform: 'uppercase'
+  },
+  matchLabel: {
+    fontSize: '22px',
+    fontWeight: '900',
+    fontFamily: 'Outfit, sans-serif',
+    marginTop: '4px'
+  },
+  subScoresContainer: {
+    background: 'var(--input-bg)',
+    border: '1px solid var(--border-color)',
+    borderRadius: '16px',
+    padding: '20px'
+  },
   detailsBlock: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
@@ -944,7 +1030,8 @@ const styles = {
     border: '1px solid var(--border-color)',
     borderRadius: '12px',
     padding: '20px',
-    minHeight: '200px',
+    minHeight: '280px',
+    maxHeight: '400px',
     overflowY: 'auto'
   }
 };
