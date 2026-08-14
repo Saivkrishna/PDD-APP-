@@ -87,18 +87,7 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
         </TouchableOpacity>
       </View>
 
-      {/* Resume Builder Card */}
-      <TouchableOpacity
-        style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}
-        onPress={() => onNav('resume-builder')}
-      >
-        <Text style={styles.cardHeaderIcon}>📄</Text>
-        <Text style={[styles.cardTitle, { color: colors.textMain }]}>Resume Builder</Text>
-        <Text style={[styles.cardDesc, { color: colors.textSub }]}>
-          Design a professional CV using interactive fields, match it to Cosmic or Neon styles, and download clean, print-ready PDF configurations.
-        </Text>
-        <Text style={[styles.arrowLink, { color: colors.primary }]}>Create Resume →</Text>
-      </TouchableOpacity>
+
 
       {/* Education stages section title */}
       <Text style={[styles.sectionHeader, { color: colors.textMain }]}>Explore Education Stages</Text>
