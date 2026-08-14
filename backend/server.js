@@ -4,6 +4,8 @@ const express = require('express');
 const careerData = require('./data');
 const DB = require('./services/db');
 const { reasoningQuizQuestions } = require('./reasoningQuizQuestions');
+const { extractText } = require('./services/ats/extractor');
+const { detectSections } = require('./services/ats/detector');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -2040,6 +2042,29 @@ app.post('/api/arithmetic-rain/reset-stats', async (req, res) => {
   } catch (err) {
     console.error('Error resetting statistics:', err);
     res.status(500).json({ error: 'Internal Server Error: ' + err.message });
+  }
+});
+
+// ATS Resume Extraction & Section Detection Route
+app.post('/api/ats/extract', async (req, res) => {
+  try {
+    const { fileData, fileName, mimeType } = req.body;
+    if (!fileData || !fileName) {
+      return res.status(400).json({ error: 'fileData (base64 string) and fileName are required' });
+    }
+
+    const buffer = Buffer.from(fileData, 'base64');
+    const text = await extractText(buffer, mimeType, fileName);
+    const sections = detectSections(text);
+
+    res.json({
+      success: true,
+      text,
+      sections
+    });
+  } catch (err) {
+    console.error('Error in /api/ats/extract:', err.message);
+    res.status(500).json({ error: err.message });
   }
 });
 
