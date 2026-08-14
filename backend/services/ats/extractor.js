@@ -3,7 +3,7 @@
  * Extracts raw text from PDF, DOCX, and TXT file buffers using pdf-parse and mammoth.
  */
 
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 const mammoth = require('mammoth');
 
 /**
@@ -20,7 +20,8 @@ async function extractText(buffer, mimeType, fileName = '') {
   // 1. PDF Handler
   if (mimeLower === 'application/pdf' || nameLower.endsWith('.pdf')) {
     try {
-      const data = await pdfParse(buffer);
+      const parser = new PDFParse({ data: buffer });
+      const data = await parser.getText();
       return data.text || '';
     } catch (err) {
       throw new Error(`Failed to parse PDF file: ${err.message}`);
