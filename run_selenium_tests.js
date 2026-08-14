@@ -215,16 +215,88 @@ async function main() {
       if (!result.technicalSkills.includes('python')) throw new Error('Failed to find python in tech skills');
     });
 
+    // ==========================================
+    // GROUP 9: SKILL MATCHER UNIT TESTS (Tests 304-306)
+    // ==========================================
+    const { matchSkills } = require('./backend/services/ats/skillMatcher');
+
+    runTest(304, 'Skill Matcher: Exact and Synonym matching logic', () => {
+      const resumeSections = {
+        SKILLS: 'React, TypeScript, Amazon Web Services, SQL',
+        EXPERIENCE: 'Worked as a web developer.'
+      };
+      const parsedJd = {
+        requiredSkills: ['react', 'typescript', 'aws'],
+        preferredSkills: ['sql'],
+        optionalSkills: []
+      };
+
+      const result = matchSkills(resumeSections, parsedJd);
+      
+      const matchedNames = result.matchedSkills.map(m => m.skill);
+      if (!matchedNames.includes('react')) throw new Error('Missing react match');
+      if (!matchedNames.includes('typescript')) throw new Error('Missing typescript match');
+      if (!matchedNames.includes('aws')) throw new Error('Missing aws synonym match');
+      if (!matchedNames.includes('sql')) throw new Error('Missing sql match');
+
+      const awsMatch = result.matchedSkills.find(m => m.skill === 'aws');
+      if (awsMatch.matchType !== 'synonym') throw new Error('AWS should match as synonym');
+    });
+
+    runTest(305, 'Skill Matcher: Fuzzy matching and related correlation logic', () => {
+      const resumeSections = {
+        SKILLS: 'Javascriptt, Docker',
+        EXPERIENCE: 'Used Docker in deployment.'
+      };
+      const parsedJd = {
+        requiredSkills: ['javascript', 'kubernetes'],
+        preferredSkills: [],
+        optionalSkills: []
+      };
+
+      const result = matchSkills(resumeSections, parsedJd);
+
+      const matchedNames = result.matchedSkills.map(m => m.skill);
+      if (!matchedNames.includes('javascript')) throw new Error('Missing fuzzy javascript match');
+      if (!matchedNames.includes('kubernetes')) throw new Error('Missing related kubernetes check');
+
+      const jsMatch = result.matchedSkills.find(m => m.skill === 'javascript');
+      if (jsMatch.matchType !== 'fuzzy') throw new Error('Javascript should match as fuzzy');
+
+      const k8sMatch = result.matchedSkills.find(m => m.skill === 'kubernetes');
+      if (k8sMatch.matchType !== 'related-not-matched') throw new Error('Kubernetes should map to related-not-matched');
+      if (result.missingSkills.length > 0) throw new Error('Missing list should be empty since Kubernetes was flagged as related');
+    });
+
+    runTest(306, 'Skill Matcher: Correctly rejects near-miss non-equivalent terms', () => {
+      const resumeSections = {
+        SKILLS: 'Python',
+        EXPERIENCE: 'Coding in python.'
+      };
+      const parsedJd = {
+        requiredSkills: ['django'],
+        preferredSkills: [],
+        optionalSkills: []
+      };
+
+      const result = matchSkills(resumeSections, parsedJd);
+      
+      const matchedNames = result.matchedSkills.map(m => m.skill);
+      if (!matchedNames.includes('django')) throw new Error('Django should be flagged under related-not-matched');
+      const djangoMatch = result.matchedSkills.find(m => m.skill === 'django');
+      if (djangoMatch.matchType !== 'related-not-matched') throw new Error('Django should be related');
+    });
+
     console.log("\n====================================================");
     console.log("                TEST RUN SUMMARY                     ");
     console.log("====================================================");
-    console.log(`Total Tests Run: 303`);
+    console.log(`Total Tests Run: 306`);
     console.log(`Passed:         ${passedCount}`);
-    console.log(`Failed:         ${303 - passedCount}`);
+    console.log(`Failed:         ${306 - passedCount}`);
     console.log("====================================================\n");
 
-    if (passedCount === 303) {
-      console.log("[SUCCESS] ALL 303 TEST CASES PASSED SUCCESSFULLY!");
+    if (passedCount === 306) {
+      console.log("[SUCCESS] ALL 306 TEST CASES PASSED SUCCESSFULLY!");
       process.exit(0);
     } else {
       console.log("[FAILURE] Some test cases did not pass.");

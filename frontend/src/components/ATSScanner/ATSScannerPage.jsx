@@ -8,10 +8,12 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
   const [extractedResume, setExtractedResume] = useState(null);
   const [jdText, setJdText] = useState('');
   const [parsedJd, setParsedJd] = useState(null);
+  const [matchedSkills, setMatchedSkills] = useState([]);
+  const [missingSkills, setMissingSkills] = useState([]);
 
-  // Tabs for the Resume Sections view in step 3
+  // Tabs for the Resume/JD panels in step 3
   const [activeResumeTab, setActiveResumeTab] = useState('ALL');
-  const [activeJdTab, setActiveJdTab] = useState('skills');
+  const [activeJdTab, setActiveJdTab] = useState('match-analysis');
 
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
@@ -123,6 +125,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     setError('');
 
     try {
+      // 1. Parse Job Description requirements
       const response = await fetch('/api/ats/parse-jd', {
         method: 'POST',
         headers: {
@@ -139,9 +142,29 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       }
 
       setParsedJd(data.parsedJd);
-      setStep(3); // Go to results
+
+      // 2. Perform Skill & Keyword Matching
+      const matchResponse = await fetch('/api/ats/match-skills', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          resumeSections: extractedResume.sections,
+          parsedJd: data.parsedJd
+        })
+      });
+
+      const matchData = await matchResponse.json();
+      if (!matchResponse.ok) {
+        throw new Error(matchData.error || 'Failed to match resume skills.');
+      }
+
+      setMatchedSkills(matchData.matchedSkills);
+      setMissingSkills(matchData.missingSkills);
+      setStep(3); // Go to results dashboard
     } catch (err) {
-      setError(err.message || 'An error occurred during Job Description parsing.');
+      setError(err.message || 'An error occurred during parsing or skill matching.');
     } finally {
       setLoading(false);
     }
@@ -152,6 +175,8 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     setExtractedResume(null);
     setJdText('');
     setParsedJd(null);
+    setMatchedSkills([]);
+    setMissingSkills([]);
     setError('');
     setStep(1);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -173,9 +198,20 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     return extractedResume.sections[activeResumeTab] || `No content detected under ${activeResumeTab}.`;
   };
 
+  // Helper to format match type labels nicely
+  const getMatchTypeLabel = (type, details) => {
+    switch (type) {
+      case 'exact': return 'Exact Match';
+      case 'synonym': return `Synonym Match (Matched '${details}')`;
+      case 'fuzzy': return `Fuzzy Match (Matched '${details}')`;
+      case 'related-not-matched': return `${details}`;
+      default: return 'Matched';
+    }
+  };
+
   return (
     <div style={styles.container}>
-      {/* CSS overrides for styling */}
+      {/* Styles & Hover Tooltips */}
       <style>{`
         .ats-dropzone {
           border: 2px dashed var(--border-color);
@@ -220,6 +256,10 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
           max-height: 400px;
           min-height: 250px;
         }
+        .skill-badge-container {
+          position: relative;
+          display: inline-block;
+        }
         .skill-badge {
           display: inline-block;
           padding: 6px 12px;
@@ -229,21 +269,47 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
           margin-right: 8px;
           margin-bottom: 8px;
           text-transform: capitalize;
+          cursor: help;
         }
-        .skill-badge.required {
+        .skill-badge.matched-yes {
           background: rgba(4, 170, 109, 0.12);
           color: var(--primary);
           border: 1px solid var(--primary);
         }
-        .skill-badge.preferred {
-          background: rgba(56, 189, 248, 0.12);
-          color: #38bdf8;
-          border: 1px solid #38bdf8;
+        .skill-badge.matched-related {
+          background: rgba(245, 158, 11, 0.1);
+          color: #f59e0b;
+          border: 1px solid #f59e0b;
         }
-        .skill-badge.optional {
+        .skill-badge.matched-no {
           background: rgba(156, 163, 175, 0.12);
-          color: var(--text-muted);
+          color: var(--text-sub);
           border: 1px solid var(--border-color);
+        }
+        .skill-badge-tooltip {
+          visibility: hidden;
+          width: 180px;
+          background-color: #222;
+          border: 1px solid var(--border-color);
+          color: #fff;
+          text-align: center;
+          border-radius: 6px;
+          padding: 6px 8px;
+          position: absolute;
+          z-index: 10;
+          bottom: 125%;
+          left: 50%;
+          margin-left: -90px;
+          opacity: 0;
+          transition: opacity 0.2s;
+          font-size: 11px;
+          line-height: 1.3;
+          pointer-events: none;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .skill-badge-container:hover .skill-badge-tooltip {
+          visibility: visible;
+          opacity: 1;
         }
         .jd-textarea {
           width: 100%;
@@ -290,7 +356,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
         </div>
         <div style={styles.progressDivider} />
         <div style={{ ...styles.progressItem, color: step >= 3 ? 'var(--primary)' : 'var(--text-muted)' }}>
-          3. ATS Analysis Dashboard
+          3. Match Analysis
         </div>
       </div>
 
@@ -374,7 +440,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
           {/* Intro/Instructions Card */}
           <div className="bento-card span-7 premium-glass-card" style={styles.card}>
-            <h3 style={styles.cardTitle}>How Phase 1 Extraction Works</h3>
+            <h3 style={styles.cardTitle}>How Local Extraction Works</h3>
             <p style={styles.cardDesc}>
               Our local parser splits your file and extracts text using in-memory converters.
             </p>
@@ -437,7 +503,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 }}
                 onClick={handleParseJd}
               >
-                {loading ? 'Parsing Job Description...' : 'Parse Job Description 🚀'}
+                {loading ? 'Parsing & Matching Skills...' : 'Parse & Match Skills 🚀'}
               </button>
             </div>
           </div>
@@ -476,10 +542,10 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       {/* STEP 3: DASHBOARD RESULTS */}
       {step === 3 && parsedJd && (
         <div style={styles.grid}>
-          {/* Left Side: Parsed Job Description Results */}
+          {/* Left Side: Parsed Job Description & Matching Results */}
           <div className="bento-card span-6 premium-glass-card" style={styles.card}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-              <h3 style={styles.cardTitle}>Parsed Job Description</h3>
+              <h3 style={styles.cardTitle}>Skills Match Analysis</h3>
               <button
                 className="section-tab-btn"
                 style={{ fontSize: '12px', padding: '6px 12px' }}
@@ -508,10 +574,16 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
             {/* Result Tabs */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '15px', overflowX: 'auto' }}>
               <button
-                className={`section-tab-btn ${activeJdTab === 'skills' ? 'active' : ''}`}
-                onClick={() => setActiveJdTab('skills')}
+                className={`section-tab-btn ${activeJdTab === 'match-analysis' ? 'active' : ''}`}
+                onClick={() => setActiveJdTab('match-analysis')}
               >
-                Required/Preferred Skills
+                Matched vs Missing
+              </button>
+              <button
+                className={`section-tab-btn ${activeJdTab === 'jd-skills' ? 'active' : ''}`}
+                onClick={() => setActiveJdTab('jd-skills')}
+              >
+                JD Target Skills
               </button>
               <button
                 className={`section-tab-btn ${activeJdTab === 'responsibilities' ? 'active' : ''}`}
@@ -529,14 +601,83 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
             {/* JD Results Tab Contents */}
             <div style={styles.jdTabContainer}>
-              {activeJdTab === 'skills' && (
+              {/* Matched vs Missing Skills Analysis */}
+              {activeJdTab === 'match-analysis' && (
+                <div>
+                  <div style={{ marginBottom: '20px' }}>
+                    <div style={styles.subHeading}>Matched Skills ({matchedSkills.filter(s => s.matchType !== 'related-not-matched').length})</div>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                      Hover/tap a chip to inspect the local match criteria (exact, synonym, or fuzzy).
+                    </p>
+                    {matchedSkills.filter(s => s.matchType !== 'related-not-matched').length > 0 ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {matchedSkills.filter(s => s.matchType !== 'related-not-matched').map(item => (
+                          <div key={item.skill} className="skill-badge-container">
+                            <span className="skill-badge matched-yes">
+                              {item.skill}
+                            </span>
+                            <span className="skill-badge-tooltip">
+                              {getMatchTypeLabel(item.matchType, item.matchedText)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>No matches found yet.</span>
+                    )}
+                  </div>
+
+                  {/* Related/Partial Matches */}
+                  {matchedSkills.filter(s => s.matchType === 'related-not-matched').length > 0 && (
+                    <div style={{ marginBottom: '20px' }}>
+                      <div style={{ ...styles.subHeading, color: '#f59e0b' }}>Related Skills In Resume ({matchedSkills.filter(s => s.matchType === 'related-not-matched').length})</div>
+                      <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                        These related skills are present in your resume but do not count as direct matches.
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {matchedSkills.filter(s => s.matchType === 'related-not-matched').map(item => (
+                          <div key={item.skill} className="skill-badge-container">
+                            <span className="skill-badge matched-related">
+                              {item.skill}
+                            </span>
+                            <span className="skill-badge-tooltip">
+                              {item.matchedText}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <div style={styles.subHeading}>Missing Skills ({missingSkills.length})</div>
+                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '8px' }}>
+                      These required or preferred skills from the JD are missing in your resume.
+                    </p>
+                    {missingSkills.length > 0 ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                        {missingSkills.map(item => (
+                          <span key={item.skill} className="skill-badge matched-no">
+                            {item.skill}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 'bold' }}>🎉 Perfect Match! No missing skills.</span>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* JD Target Skills */}
+              {activeJdTab === 'jd-skills' && (
                 <div>
                   <div style={{ marginBottom: '16px' }}>
                     <div style={styles.subHeading}>Required Skills ({parsedJd.requiredSkills.length})</div>
                     {parsedJd.requiredSkills.length > 0 ? (
                       <div>
                         {parsedJd.requiredSkills.map(skill => (
-                          <span key={skill} className="skill-badge required">{skill}</span>
+                          <span key={skill} className="skill-badge matched-no">{skill}</span>
                         ))}
                       </div>
                     ) : (
@@ -549,7 +690,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                     {parsedJd.preferredSkills.length > 0 ? (
                       <div>
                         {parsedJd.preferredSkills.map(skill => (
-                          <span key={skill} className="skill-badge preferred">{skill}</span>
+                          <span key={skill} className="skill-badge matched-no">{skill}</span>
                         ))}
                       </div>
                     ) : (
@@ -562,7 +703,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                     {parsedJd.optionalSkills.length > 0 ? (
                       <div>
                         {parsedJd.optionalSkills.map(skill => (
-                          <span key={skill} className="skill-badge optional">{skill}</span>
+                          <span key={skill} className="skill-badge matched-no">{skill}</span>
                         ))}
                       </div>
                     ) : (
