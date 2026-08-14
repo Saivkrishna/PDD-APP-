@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Capacitor } from '@capacitor/core';
 import { backHandlerStack } from './utils/backHandler';
 import aptitudeData from './aptitudeData';
 import { quizData } from './quizData';
@@ -7,6 +6,7 @@ import { techLearningData, getYoutubeChannels } from './techLearningData';
 import html2canvas from 'html2canvas';
 import { allAptitudeQuestions } from './allQuizQuestions';
 import MemoryMatrixGame from './components/MemoryMatrix/MemoryMatrixGame-saikrishna';
+import ReasoningPracticePage from './components/ReasoningPracticePage';
 import ArithmeticRainGame from './components/ArithmeticRain/ArithmeticRainGame-saikrishna';
 import AIWorkspace from './components/AIWorkspace-saikrishna';
 import { auth, googleProvider } from './firebase';
@@ -51,9 +51,7 @@ const S = {
     fontSize: 20,
     fontWeight: 900,
     fontFamily: 'Outfit, Nunito, sans-serif',
-    background: 'linear-gradient(90deg, var(--primary), var(--secondary))',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    color: 'var(--text-main)',
     letterSpacing: '-0.5px'
   },
   backBtn: {
@@ -78,9 +76,7 @@ const S = {
     fontSize: 30,
     fontWeight: 900,
     fontFamily: 'Outfit, Nunito, sans-serif',
-    background: 'linear-gradient(135deg, var(--primary), var(--secondary), #c084fc)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
+    color: 'var(--text-main)',
     lineHeight: 1.15,
     letterSpacing: '-0.8px'
   },
@@ -232,10 +228,10 @@ const S = {
     transition: 'var(--transition-smooth)'
   },
   tabActive: {
-    background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-    border: 'none',
-    color: '#fff',
-    boxShadow: '0 6px 18px rgba(99, 102, 241, 0.3)'
+    background: 'var(--text-main)',
+    border: '1px solid var(--text-main)',
+    color: 'var(--bg-mid)',
+    boxShadow: 'none'
   },
   listRow: {
     display: 'flex',
@@ -269,7 +265,7 @@ const S = {
     fontSize: 18
   },
   badge: {
-    background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
+    background: 'var(--accent)',
     color: '#fff',
     borderRadius: 8,
     padding: '3px 10px',
@@ -293,23 +289,23 @@ const S = {
     color: 'var(--text-sub)',
     lineHeight: 1.5
   },
-  splashWrap: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end))', padding: 30, textAlign: 'center' },
+  splashWrap: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-mid)', padding: 30, textAlign: 'center' },
   splashIcon: { fontSize: 80, marginBottom: 24, animation: 'pulseGlow 2.5s infinite' },
-  splashTitle: { fontSize: 44, fontWeight: 900, fontFamily: 'Outfit, Nunito, sans-serif', background: 'linear-gradient(90deg, var(--primary), var(--secondary), #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.15, marginBottom: 12, letterSpacing: '-1px' },
+  splashTitle: { fontSize: 44, fontWeight: 900, fontFamily: 'Outfit, Nunito, sans-serif', color: 'var(--text-main)', lineHeight: 1.15, marginBottom: 12, letterSpacing: '-1px' },
   splashSub: { color: 'var(--text-sub)', fontSize: 18, fontWeight: 600, marginBottom: 44 },
-  splashBtn: { background: 'linear-gradient(135deg, var(--primary), var(--secondary))', border: 'none', color: '#fff', padding: '16px 44px', borderRadius: 50, fontSize: 16, fontWeight: 800, cursor: 'pointer', boxShadow: '0 8px 32px var(--accent-glow)', fontFamily: 'Outfit, Nunito, sans-serif', transition: 'var(--transition-smooth)' },
-  navBar: { position: 'fixed', bottom: 'calc(20px + env(safe-area-inset-bottom, 0px))', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: '600px', background: 'var(--bg-container)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', display: 'flex', border: '1px solid var(--border-color)', borderRadius: '30px', zIndex: 200, boxShadow: '0 12px 40px var(--glass-shadow)', padding: '8px 12px', boxSizing: 'border-box' },
+  splashBtn: { background: 'var(--btn-bg)', border: '1px solid var(--btn-border)', color: 'var(--btn-text)', padding: '16px 44px', borderRadius: 50, fontSize: 16, fontWeight: 800, cursor: 'pointer', fontFamily: 'Outfit, Nunito, sans-serif', transition: 'var(--transition-smooth)' },
+  navBar: { position: 'fixed', bottom: 'calc(20px + env(safe-area-inset-bottom, 0px))', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: '600px', background: 'var(--bg-container)', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', display: 'flex', border: '1px solid var(--border-color)', borderRadius: '30px', zIndex: 200, boxShadow: 'none', padding: '8px 12px', boxSizing: 'border-box' },
   navItem: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '10px 4px', cursor: 'pointer', transition: 'var(--transition-smooth)', borderRadius: '20px' },
   navIcon: { fontSize: 22 },
   navLabel: { fontSize: 10, fontWeight: 800, marginTop: 4, letterSpacing: '0.2px' },
 
   // ── AUTH STYLES ──────────────────────────────────────────────────
-  authWrap: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, var(--bg-start) 0%, var(--bg-mid) 50%, var(--bg-end) 100%)', padding: '30px 20px' },
-  authCard: { width: '100%', maxWidth: 400, background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-card)', padding: '40px 32px', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)', boxShadow: '0 16px 48px var(--glass-shadow)' },
-  authTitle: { fontSize: 26, fontWeight: 900, fontFamily: 'Outfit, Nunito, sans-serif', background: 'linear-gradient(90deg, var(--primary), var(--secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textAlign: 'center', marginBottom: 8, letterSpacing: '-0.5px' },
+  authWrap: { minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-mid)', padding: '30px 20px' },
+  authCard: { width: '100%', maxWidth: 400, background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-card)', padding: '40px 32px', backdropFilter: 'blur(25px)', WebkitBackdropFilter: 'blur(25px)', boxShadow: 'none' },
+  authTitle: { fontSize: 26, fontWeight: 900, fontFamily: 'Outfit, Nunito, sans-serif', color: 'var(--text-main)', textAlign: 'center', marginBottom: 8, letterSpacing: '-0.5px' },
   authSub: { color: 'var(--text-sub)', fontSize: 14, fontWeight: 600, textAlign: 'center', marginBottom: 32 },
-  authInput: { width: '100%', padding: '14px 18px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid var(--border-color)', borderRadius: 16, color: 'var(--text-main)', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif', marginBottom: 16, boxSizing: 'border-box', transition: 'var(--transition-smooth)' },
-  authBtn: { width: '100%', padding: '14px', background: 'linear-gradient(135deg, var(--primary), var(--secondary))', border: 'none', borderRadius: 16, color: '#fff', fontSize: 15, fontWeight: 800, cursor: 'pointer', fontFamily: 'Outfit, Nunito, sans-serif', marginTop: 4, transition: 'var(--transition-smooth)', boxShadow: '0 6px 20px var(--accent-glow)' },
+  authInput: { width: '100%', padding: '14px 18px', background: 'var(--input-bg)', border: '1px solid var(--border-color)', borderRadius: 16, color: 'var(--text-main)', fontSize: 14, outline: 'none', fontFamily: 'Inter, sans-serif', marginBottom: 16, boxSizing: 'border-box', transition: 'var(--transition-smooth)' },
+  authBtn: { width: '100%', padding: '14px', background: 'var(--btn-bg)', border: '1px solid var(--btn-border)', borderRadius: 16, color: 'var(--btn-text)', fontSize: 15, fontWeight: 800, cursor: 'pointer', fontFamily: 'Outfit, Nunito, sans-serif', marginTop: 4, transition: 'var(--transition-smooth)' },
   authLink: { color: 'var(--primary)', fontSize: 13, fontWeight: 700, cursor: 'pointer', textDecoration: 'underline', background: 'none', border: 'none', fontFamily: 'Inter, sans-serif' },
   authError: { background: 'rgba(239, 68, 68, 0.12)', border: '1px solid rgba(239, 68, 68, 0.3)', borderRadius: 12, padding: '12px 16px', color: '#ef4444', fontSize: 13, fontWeight: 700, marginBottom: 16, textAlign: 'center' },
   authSuccess: { background: 'rgba(16, 185, 129, 0.12)', border: '1px solid rgba(16, 185, 129, 0.3)', borderRadius: 12, padding: '12px 16px', color: '#10b981', fontSize: 13, fontWeight: 700, marginBottom: 16, textAlign: 'center' }
@@ -505,23 +501,8 @@ function LoginPage({ onLogin, onForgot, onGoRegister }) {
     setError('');
     setLoading(true);
     try {
-      let userCredential;
-      if (Capacitor.isNativePlatform()) {
-        // 1. Install/Import plugin dynamically
-        const { FirebaseAuthentication } = await import('@capacitor-firebase/authentication');
-        // 2. Sign in natively
-        const result = await FirebaseAuthentication.signInWithGoogle();
-        const idToken = result.credential?.idToken;
-        if (!idToken) {
-          throw new Error("No Google ID Token returned from native sign-in.");
-        }
-        // 3. Authenticate Firebase Web SDK with the native credential
-        const credential = GoogleAuthProvider.credential(idToken);
-        userCredential = await signInWithCredential(auth, credential);
-      } else {
-        // Sign in via Google Provider popup (Web/Development)
-        userCredential = await signInWithPopup(auth, googleProvider);
-      }
+      // Sign in via Google Provider popup (Web/Development)
+      const userCredential = await signInWithPopup(auth, googleProvider);
 
       // 2. Sync details to backend database
       const syncRes = await fetch(`${API}/auth/sync`, {
@@ -880,15 +861,27 @@ function Splash({ onEnter }) {
 
 // ─── HEADER ──────────────────────────────────────────────────────
 function Header({ title, onBack, showBack, isBookmarked, onToggleBookmarked, onOpenSettings, style }) {
-  const [dark, setDark] = useState(true);
+  const [dark, setDark] = useState(() => {
+    const saved = localStorage.getItem('cp_dark_mode');
+    if (saved !== null) {
+      return saved === 'true';
+    }
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    return mql.matches;
+  });
 
   const toggle = () => {
-    // Light mode removed - lock to dark mode
+    const nextDark = !dark;
+    setDark(nextDark);
+    window.dispatchEvent(new CustomEvent('cp-theme-sync', { detail: { darkMode: nextDark } }));
+    if (typeof window.onGlobalThemeToggle === 'function') {
+      window.onGlobalThemeToggle(nextDark);
+    }
   };
 
   useEffect(() => {
     const handleSync = (e) => {
-      setDark(true);
+      setDark(e.detail.darkMode);
     };
     window.addEventListener('cp-theme-sync', handleSync);
     return () => window.removeEventListener('cp-theme-sync', handleSync);
@@ -901,15 +894,39 @@ function Header({ title, onBack, showBack, isBookmarked, onToggleBookmarked, onO
         <div style={{ ...S.logo, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{title || 'CareerPath AI 🎓'}</div>
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button
+          onClick={toggle}
+          aria-label={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          title={dark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          style={{
+            background: 'var(--glass-bg, rgba(255, 255, 255, 0.05))',
+            border: '1px solid var(--border-color)',
+            borderRadius: '50%',
+            cursor: 'pointer',
+            fontSize: 16,
+            width: 34,
+            height: 34,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-main)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            padding: 0
+          }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}
+        >
+          {dark ? '🌙' : '☀️'}
+        </button>
         {onToggleBookmarked && (
-          <button onClick={onToggleBookmarked} style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isBookmarked ? '#f59e0b' : '#94a3b8', transition: 'all 0.2s', padding: 0 }}
+          <button onClick={onToggleBookmarked} style={{ background: 'var(--glass-bg, rgba(255, 255, 255, 0.05))', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isBookmarked ? '#f59e0b' : '#94a3b8', transition: 'all 0.2s', padding: 0 }}
             onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}>
             {isBookmarked ? '★' : '☆'}
           </button>
         )}
         {onOpenSettings && (
-          <button onClick={onOpenSettings} style={{ background: 'rgba(56, 189, 248, 0.1)', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-sub)', transition: 'all 0.2s', padding: 0 }}
+          <button onClick={onOpenSettings} style={{ background: 'var(--glass-bg, rgba(255, 255, 255, 0.05))', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-sub)', transition: 'all 0.2s', padding: 0 }}
             onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; }}
             onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}>
             ⚙️
@@ -926,17 +943,16 @@ function BottomNav({ active, onNav, t }) {
     { id: 'education', icon: '🎓', label: t('education') || 'Education' },
     { id: 'aptitude', icon: '📝', label: t('aptitude') },
     { id: 'tech-learning', icon: '📚', label: t('techLearning') || 'Hub' },
-    { id: 'ai-recommendation', icon: '🤖', label: t('ai') || 'AI' },
     { id: 'settings', icon: '👤', label: t('profileTab') || 'Profile' },
   ];
   return (
     <div style={{
       ...S.navBar,
-      background: 'rgba(15, 23, 42, 0.50)',
+      background: 'var(--bg-container)',
       backdropFilter: 'blur(16px)',
       WebkitBackdropFilter: 'blur(16px)',
-      border: '1px solid rgba(255, 255, 255, 0.08)',
-      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
+      border: '1px solid var(--border-color)',
+      boxShadow: '0 8px 32px 0 var(--glass-shadow)',
     }}>
       {items.map(item => {
         const isActive = active === item.id ||
@@ -1718,80 +1734,29 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
           </div>
         </div>
 
-        {/* AI CAREER MENTOR CARD (span-8) */}
-        <div className="bento-card span-8 premium-glass-card" style={{ minHeight: '250px' }}>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
-            <div style={{ flex: 1, minWidth: '240px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ background: 'rgba(139, 92, 246, 0.15)', border: '1px solid rgba(139, 92, 246, 0.2)', borderRadius: '12px', padding: '3px 8px', fontSize: '10px', fontWeight: 900, color: '#8B5CF6' }}>GEMINI POWERED</span>
-              </div>
-              <h3 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>AI Career Mentor</h3>
-              <p style={{ color: 'var(--text-sub)', fontSize: '13px', marginTop: '6px', lineHeight: 1.5 }}>
-                Chat with our AI mentor, ask questions about university requirements, prepare for exams, or execute quick roadmap lookups.
-              </p>
-
-              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {[
-                  { text: '🗺️ Draw software engineer roadmap', val: 'Draft a complete roadmap to become a Software Engineer.' },
-                  { text: '🤝 Give me mock coding interview questions', val: 'Give me 3 mock coding interview questions with model answers.' },
-                  { text: '📝 Explain how to structure a strong resume', val: 'Tell me the essential layout parts and strategies to structure a strong resume.' }
-                ].map((prompt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => onTriggerChatPrompt(prompt.val)}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.04)',
-                      border: '1px solid rgba(255, 255, 255, 0.1)',
-                      color: 'var(--text-main)',
-                      padding: '8px 14px',
-                      borderRadius: '14px',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.2s',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = '#8B5CF6'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.08)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'; e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)'; }}
-                  >
-                    <span>{prompt.text}</span>
-                    <span style={{ color: '#8B5CF6', fontWeight: 'bold', marginLeft: '6px' }}>→</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 'auto 0' }}>
-              <MentorIllustration />
-            </div>
-          </div>
-        </div>
-
-        {/* RESUME BUILDER CARD (span-4) */}
+        {/* RESUME BUILDER CARD (span-12) */}
         <div
-          className="bento-card span-4 premium-glass-card"
+          className="bento-card span-12 premium-glass-card"
           onClick={() => onNav('resume-builder')}
-          style={{ minHeight: '250px', cursor: 'pointer' }}
+          style={{ minHeight: '180px', cursor: 'pointer', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '20px', justifyContent: 'space-between' }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
-            <ResumeIllustration />
-            <span style={{ fontSize: '20px', color: '#D946EF' }}>↗</span>
-          </div>
-          <div style={{ marginTop: '16px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>Resume Builder</h3>
-            <p style={{ color: 'var(--text-sub)', fontSize: '12px', marginTop: '6px', lineHeight: 1.5 }}>
+          <div style={{ flex: '1 1 300px' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>Resume Builder</h3>
+            <p style={{ color: 'var(--text-sub)', fontSize: '13px', marginTop: '6px', lineHeight: 1.5 }}>
               Design a professional CV using interactive fields, match it to Cosmic or Neon styles, and download clean, print-ready PDF configurations.
             </p>
+            <button
+              className="premium-btn"
+              style={{ width: 'fit-content', padding: '10px 20px', fontSize: '12px', marginTop: '14px', background: 'linear-gradient(135deg, #8B5CF6, #D946EF)' }}
+              onClick={(e) => { e.stopPropagation(); onNav('resume-builder'); }}
+            >
+              Create Resume →
+            </button>
           </div>
-          <button
-            className="premium-btn"
-            style={{ width: '100%', padding: '10px', fontSize: '12px', marginTop: '14px', background: 'linear-gradient(135deg, #8B5CF6, #D946EF)' }}
-            onClick={(e) => { e.stopPropagation(); onNav('resume-builder'); }}
-          >
-            Create Resume →
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <ResumeIllustration />
+            <span style={{ fontSize: '24px', color: '#D946EF', marginRight: '10px' }}>↗</span>
+          </div>
         </div>
 
         {/* EDUCATION STAGE SELECTORS (After 10th, After 12th, Graduation) */}
@@ -1978,6 +1943,37 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
               textAlign: 'center'
             }}>
               🪙 Earn double Career Coins in Daily Challenge
+            </div>
+          </div>
+        </div>
+
+        {/* REASONING PRACTICE CARD (span-4) */}
+        <div
+          className="bento-card span-4 premium-glass-card"
+          onClick={() => onNav('reasoning')}
+          style={{ minHeight: '230px', cursor: 'pointer' }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ fontSize: '36px' }}>🧩</div>
+            <span style={{ fontSize: '20px', color: '#8B5CF6' }}>↗</span>
+          </div>
+          <div style={{ marginTop: '12px', flexGrow: 1 }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>Reasoning Practice</h3>
+            <p style={{ color: 'var(--text-sub)', fontSize: '12px', marginTop: '6px', lineHeight: 1.4 }}>
+              Series, blood relations, syllogisms, and spatial puzzles. Attempt tests, practice daily, and review solutions.
+            </p>
+            <div style={{
+              background: 'rgba(4, 170, 109, 0.06)',
+              border: '1px solid rgba(4, 170, 109, 0.15)',
+              borderRadius: '8px',
+              padding: '6px 10px',
+              fontSize: '10px',
+              color: 'var(--primary)',
+              fontFamily: 'monospace',
+              marginTop: '10px',
+              textAlign: 'center'
+            }}>
+              7 Core Topics • 100 MCQs
             </div>
           </div>
         </div>
@@ -3967,15 +3963,21 @@ function TechLearningHubPage({ onBack, t, onOpenSettings }) {
     fetch(`${API}/technologies`)
       .then(res => res.json())
       .then(data => {
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           // Sort alphabetically by name
           data.sort((a, b) => a.name.localeCompare(b.name));
           setTechs(data);
+        } else {
+          // Fallback to local data if database is empty
+          const localSorted = [...techLearningData].sort((a, b) => a.name.localeCompare(b.name));
+          setTechs(localSorted);
         }
         setLoading(false);
       })
       .catch(err => {
-        console.error("Error loading technologies from Firebase:", err);
+        console.error("Error loading technologies from Firebase, falling back to local data:", err);
+        const localSorted = [...techLearningData].sort((a, b) => a.name.localeCompare(b.name));
+        setTechs(localSorted);
         setLoading(false);
       });
   }, []);
@@ -4559,12 +4561,26 @@ function TechLearningHubPage({ onBack, t, onOpenSettings }) {
 
 // ─── APTITUDE CHEATSHEET PAGE ────────────────────────────────────
 function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
-  const [activeTab, setActiveTab] = useState('time-work');
+  const [activeTab, setActiveTab] = useState('lcm-hcf');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Interactive Practice Quiz States
   const [showQuiz, setShowQuiz] = useState(false);
-  const [quizTopic, setQuizTopic] = useState('time-work');
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeTab, showQuiz]);
+
+  const [dbCounts, setDbCounts] = useState({});
+
+  useEffect(() => {
+    fetch('/api/aptitude/counts')
+      .then(res => res.json())
+      .then(data => setDbCounts(data))
+      .catch(err => console.warn('⚠️ Failed to load database counts:', err.message));
+  }, []);
+
+  const [quizTopic, setQuizTopic] = useState('lcm-hcf');
   const [difficulty, setDifficulty] = useState(null); // 'easy' | 'medium' | 'hard'
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -4574,28 +4590,49 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
   const [quizFinished, setQuizFinished] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
 
-  const handleStartQuiz = (diff, topicId = quizTopic) => {
-    const filtered = allAptitudeQuestions.filter(q => q.topic === topicId && q.difficulty === diff);
-    let selected = [];
-    if (filtered.length === 0) {
-      const fallbackFiltered = allAptitudeQuestions.filter(q => q.topic === topicId);
-      if (fallbackFiltered.length > 0) {
-        selected = [...fallbackFiltered].sort(() => 0.5 - Math.random());
-      } else {
-        selected = [...allAptitudeQuestions].sort(() => 0.5 - Math.random());
+  const handleStartQuiz = async (diff, topicId = quizTopic) => {
+    try {
+      const normalizedTopic = topicId === 'percentage' ? 'percentages' : topicId;
+      const res = await fetch(`/api/aptitude/questions/${normalizedTopic}/${diff}`);
+      if (!res.ok) throw new Error('API response not ok');
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        setQuizQuestions([...data].sort(() => 0.5 - Math.random()));
+        setDifficulty(diff);
+        setQuizTopic(topicId);
+        setCurrentIdx(0);
+        setSelectedAns(null);
+        setIsAnswered(false);
+        setScore(0);
+        setUserAnswers([]);
+        setQuizFinished(false);
+        return;
       }
-    } else {
-      selected = [...filtered].sort(() => 0.5 - Math.random());
+      throw new Error('Empty questions data');
+    } catch (err) {
+      console.warn('⚠️ Fetching questions from backend failed. Falling back to offline bundle:', err.message);
+      const filtered = allAptitudeQuestions.filter(q => q.topic === topicId && q.difficulty === diff);
+      let selected = [];
+      if (filtered.length === 0) {
+        const fallbackFiltered = allAptitudeQuestions.filter(q => q.topic === topicId);
+        if (fallbackFiltered.length > 0) {
+          selected = [...fallbackFiltered].sort(() => 0.5 - Math.random());
+        } else {
+          selected = [...allAptitudeQuestions].sort(() => 0.5 - Math.random());
+        }
+      } else {
+        selected = [...filtered].sort(() => 0.5 - Math.random());
+      }
+      setQuizQuestions(selected);
+      setDifficulty(diff);
+      setQuizTopic(topicId);
+      setCurrentIdx(0);
+      setSelectedAns(null);
+      setIsAnswered(false);
+      setScore(0);
+      setUserAnswers([]);
+      setQuizFinished(false);
     }
-    setQuizQuestions(selected);
-    setDifficulty(diff);
-    setQuizTopic(topicId);
-    setCurrentIdx(0);
-    setSelectedAns(null);
-    setIsAnswered(false);
-    setScore(0);
-    setUserAnswers([]);
-    setQuizFinished(false);
   };
 
   const jumpToQuestion = (idx) => {
@@ -4650,16 +4687,28 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
   };
 
   const categories = [
-    { id: 'time-work', label: 'Time & Work', icon: '⏱️' },
-    { id: 'averages', label: 'Averages', icon: '📊' },
-    { id: 'profit-loss', label: 'Profit & Loss', icon: '💰' },
-    { id: 'percentages', label: 'Percentages', icon: '📈' },
-    { id: 'ratio-proportion', label: 'Ratio & Prop', icon: '⚖️' },
-    { id: 'squares', label: 'Square Numbers', icon: '🔢' },
+    { id: 'lcm-hcf', label: 'LCM & HCF', icon: '🔢' },
+    { id: 'divisibility-remainder', label: 'Divisibility & Remainder', icon: '➗' },
+    { id: 'problems-ages', label: 'Problems on Ages', icon: '👴' },
     { id: 'probability', label: 'Probability', icon: '🎲' },
-    { id: 'interest', label: 'Interest (SI/CI)', icon: '📈' },
-    { id: 'number-system', label: 'Number System', icon: '🔢' },
-    { id: 'pipes-cisterns', label: 'Pipes & Cisterns', icon: '🚰' },
+    { id: 'equation', label: 'Equation', icon: '🟰' },
+    { id: 'series-progression', label: 'Series & Progression', icon: '📈' },
+    { id: 'mensuration', label: 'Mensuration', icon: '📐' },
+    { id: 'geometry-perimeter', label: 'Geometry & Perimeter', icon: '🟦' },
+    { id: 'percentages', label: 'Percentage', icon: '📊' },
+    { id: 'profit-loss', label: 'Profit & Loss', icon: '💰' },
+    { id: 'time-work', label: 'Time & Work', icon: '⏱️' },
+    { id: 'clocks-calendar', label: 'Clocks & Calendar', icon: '📅' },
+    { id: 'ratio-proportion', label: 'Ratio & Proportion', icon: '⚖️' },
+    { id: 'mixture-alligation', label: 'Mixture & Alligation', icon: '🧪' },
+    { id: 'time-speed-distance', label: 'Time, Speed & Distance', icon: '🚗' },
+    { id: 'permutation-combination', label: 'Permutation & Combination', icon: '🔀' },
+    { id: 'mean-median-mode', label: 'Mean, Median & Mode', icon: '📊' },
+    { id: 'data-interpretation', label: 'Data Interpretation', icon: '📉' },
+    { id: 'pie-chart', label: 'Pie Chart', icon: '⚪' },
+    { id: 'graphical-chart', label: 'Graphical Chart', icon: '📊' },
+    { id: 'simple-arithmetic', label: 'Simple Arithmetic', icon: '➕' },
+    { id: 'averages', label: 'Average', icon: '📊' },
   ];
 
   const getSquaresData = () => {
@@ -4704,31 +4753,14 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
             items: matchingFractions
           });
         }
-      } else if (catId === 'squares') {
-        const matchingSquares = [];
-        for (let i = 1; i <= 100; i++) {
-          const numStr = `${i}`;
-          const sqStr = `${i * i}`;
-          if (numStr.includes(query) || sqStr.includes(query)) {
-            matchingSquares.push({ num: i, val: i * i });
-          }
-        }
-        if (matchingSquares.length > 0) {
-          matches.push({
-            categoryTitle: category.title,
-            categoryIcon: category.icon,
-            type: 'squares',
-            items: matchingSquares
-          });
-        }
       } else {
-        const matchingItems = category.items.filter(item => {
+        const matchingItems = category.items ? category.items.filter(item => {
           const inName = item.name.toLowerCase().includes(query);
           const inFormula = item.formula ? item.formula.toLowerCase().includes(query) : false;
           const inNote = item.note ? item.note.toLowerCase().includes(query) : false;
           const inExample = item.example ? (item.example.q.toLowerCase().includes(query) || item.example.ans.toLowerCase().includes(query)) : false;
           return inName || inFormula || inNote || inExample;
-        });
+        }) : [];
 
         if (matchingItems.length > 0) {
           matches.push({
@@ -4737,6 +4769,25 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
             type: 'standard',
             items: matchingItems
           });
+        }
+
+        if (catId === 'simple-arithmetic') {
+          const matchingSquares = [];
+          for (let i = 1; i <= 100; i++) {
+            const numStr = `${i}`;
+            const sqStr = `${i * i}`;
+            if (numStr.includes(query) || sqStr.includes(query)) {
+              matchingSquares.push({ num: i, val: i * i });
+            }
+          }
+          if (matchingSquares.length > 0) {
+            matches.push({
+              categoryTitle: "Square Numbers",
+              categoryIcon: "🔢",
+              type: 'squares',
+              items: matchingSquares
+            });
+          }
         }
       }
     });
@@ -4967,40 +5018,23 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
 
               <div style={{ padding: '8px 0 80px', animation: 'fadeIn 0.3s ease' }}>
                 {activeTab === 'percentages' ? (
-                  <div style={S.detailBox}>
-                    <div style={S.label}>Fraction to Percentage Conversion</div>
-                    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
-                      {aptitudeData.percentages.columns.map((col, colIdx) => (
-                        <div key={colIdx} style={{ flex: 1, minWidth: 140, background: 'var(--bg-mid)', padding: 10, borderRadius: 12, border: '1px solid var(--border-color)' }}>
-                          {col.map((row, rowIdx) => (
-                            <div key={rowIdx} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: rowIdx === col.length - 1 ? 'none' : '1px solid var(--border-color)', fontSize: 13 }}>
-                              <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{row.fraction}</span>
-                              <span style={{ color: 'var(--text-main)' }}>= {row.percentage}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
+                  <>
+                    <div style={S.detailBox}>
+                      <div style={S.label}>Fraction to Percentage Conversion</div>
+                      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
+                        {aptitudeData.percentages.columns.map((col, colIdx) => (
+                          <div key={colIdx} style={{ flex: 1, minWidth: 140, background: 'var(--bg-mid)', padding: 10, borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                            {col.map((row, rowIdx) => (
+                              <div key={rowIdx} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: rowIdx === col.length - 1 ? 'none' : '1px solid var(--border-color)', fontSize: 13 }}>
+                                <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{row.fraction}</span>
+                                <span style={{ color: 'var(--text-main)' }}>= {row.percentage}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ) : activeTab === 'squares' ? (
-                  <div style={S.detailBox}>
-                    <div style={S.label}>🔢 Square Numbers (1 to 100)</div>
-                    <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
-                      {squaresColumns.map((col, colIdx) => (
-                        <div key={colIdx} style={{ flex: 1, minWidth: 140, background: 'var(--bg-mid)', padding: 10, borderRadius: 12, border: '1px solid var(--border-color)' }}>
-                          {col.map((row, rowIdx) => (
-                            <div key={rowIdx} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: rowIdx === col.length - 1 ? 'none' : '1px solid var(--border-color)', fontSize: 13 }}>
-                              <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{row.num}²</span>
-                              <span style={{ color: 'var(--text-main)' }}>= {row.val}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  aptitudeData[activeTab] && aptitudeData[activeTab].items ? (
-                    aptitudeData[activeTab].items.map((item) => (
+                    {aptitudeData.percentages.items && aptitudeData.percentages.items.map((item) => (
                       <div key={item.id} style={S.detailBox}>
                         <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-main)' }}>{item.name}</div>
                         {item.formula && (
@@ -5029,13 +5063,67 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                           </div>
                         )}
                       </div>
-                    ))
-                  ) : (
-                    <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>
-                      <div style={{ fontSize: 40 }}>📖</div>
-                      <div style={{ marginTop: 8, fontWeight: 700 }}>Formula sheet empty for this section. Try the Practice Quiz!</div>
-                    </div>
-                  )
+                    ))}
+                  </>
+                ) : (
+                  <>
+                    {activeTab === 'simple-arithmetic' && (
+                      <div style={{ ...S.detailBox, marginBottom: 20 }}>
+                        <div style={S.label}>🔢 Square Numbers (1 to 100)</div>
+                        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10 }}>
+                          {squaresColumns.map((col, colIdx) => (
+                            <div key={colIdx} style={{ flex: 1, minWidth: 140, background: 'var(--bg-mid)', padding: 10, borderRadius: 12, border: '1px solid var(--border-color)' }}>
+                              {col.map((row, rowIdx) => (
+                                <div key={rowIdx} style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', borderBottom: rowIdx === col.length - 1 ? 'none' : '1px solid var(--border-color)', fontSize: 13 }}>
+                                  <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{row.num}²</span>
+                                  <span style={{ color: 'var(--text-main)' }}>= {row.val}</span>
+                                </div>
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {aptitudeData[activeTab] && aptitudeData[activeTab].items ? (
+                      aptitudeData[activeTab].items.map((item) => (
+                        <div key={item.id} style={S.detailBox}>
+                          <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-main)' }}>{item.name}</div>
+                          {item.formula && (
+                            <div className="math-box">{renderFormula(item.formula)}</div>
+                          )}
+                          {item.note && (
+                            <div style={{ fontSize: 12, color: 'var(--text-sub)', marginTop: 6, fontStyle: 'italic' }}>
+                              💡 Note: {renderFormula(item.note)}
+                            </div>
+                          )}
+                          {item.example && (
+                            <div className="example-box">
+                              <div style={{ fontSize: 12, fontWeight: 800, color: '#f59e0b' }}>✍️ Solved Practice:</div>
+                              <div style={{ fontSize: 13, color: 'var(--text-main)', marginTop: 4, fontWeight: 600 }}>{item.example.q}</div>
+                              {item.example.steps && (
+                                <div style={{ marginTop: 6 }}>
+                                  {item.example.steps.map((step, sIdx) => (
+                                    <div key={sIdx} className="step-row">
+                                      <span>•</span>
+                                      <span>{step}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                              <div className="ans-badge">Ans: {item.example.ans}</div>
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      (!aptitudeData[activeTab] || activeTab !== 'simple-arithmetic') && (
+                        <div style={{ textAlign: 'center', padding: 40, color: '#94a3b8' }}>
+                          <div style={{ fontSize: 40 }}>📖</div>
+                          <div style={{ marginTop: 8, fontWeight: 700 }}>Formula sheet empty for this section. Try the Practice Quiz!</div>
+                        </div>
+                      )
+                    )}
+                  </>
                 )}
               </div>
             </>
@@ -5096,7 +5184,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>🟢 EASY LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'easy').length} Qs Database
+                    {dbCounts[quizTopic]?.easy ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'easy').length} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>
@@ -5119,7 +5207,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#f59e0b' }}>🟡 MEDIUM LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'medium').length} Qs Database
+                    {dbCounts[quizTopic]?.medium ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'medium').length} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>
@@ -5142,7 +5230,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#ef4444' }}>🔴 HARD LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'hard').length} Qs Database
+                    {dbCounts[quizTopic]?.hard ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'hard').length} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>
@@ -5288,7 +5376,8 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                       padding: '8px 12px',
                       fontSize: '11px',
                       color: 'var(--text-sub)',
-                      lineHeight: 1.4
+                      lineHeight: 1.4,
+                      whiteSpace: 'pre-line'
                     }}>
                       {q.explanation}
                     </div>
@@ -5407,9 +5496,10 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                         };
                       } else {
                         optStyle = {
-                          background: 'rgba(255, 255, 255, 0.01)',
-                          borderColor: 'rgba(255, 255, 255, 0.05)',
-                          color: 'rgba(255, 255, 255, 0.3)',
+                          background: 'transparent',
+                          borderColor: 'var(--border-color)',
+                          color: 'var(--text-muted)',
+                          opacity: 0.5,
                           cursor: 'not-allowed'
                         };
                       }
@@ -5447,7 +5537,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                     <div style={{ fontSize: '13px', fontWeight: '800', color: '#f59e0b', marginBottom: '8px' }}>
                       ✍️ Solved Explanation:
                     </div>
-                    <p style={{ fontSize: '12px', color: 'var(--text-sub)', lineHeight: 1.5, margin: '0 0 12px 0' }}>
+                    <p style={{ fontSize: '12px', color: 'var(--text-sub)', lineHeight: 1.5, margin: '0 0 12px 0', whiteSpace: 'pre-line' }}>
                       {quizQuestions[currentIdx].explanation}
                     </p>
                     {quizQuestions[currentIdx].shortcut && (
@@ -6589,17 +6679,17 @@ function GeminiFloatingWindow({ onClose, soundEnabled, currentPage, selectedTren
 // ─── CAREER COMPARISON SYSTEM ────────────────────────────────────
 function ComparisonOverlay({ compareList, onRemove, onClose, t }) {
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(9, 15, 29, 0.96)', zIndex: 1000, overflowY: 'auto', padding: '20px 16px 100px', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'var(--bg-main)', zIndex: 1000, overflowY: 'auto', padding: '20px 16px 100px', fontFamily: 'Inter, sans-serif' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: 12, marginBottom: 16 }}>
         <div style={{ fontSize: 18, fontWeight: 900, color: 'var(--primary)', fontFamily: 'Outfit' }}>⚖️ {t('compareCareers')}</div>
-        <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.08)', border: 'none', color: '#fff', borderRadius: '50%', width: 30, height: 30, fontSize: 16, cursor: 'pointer' }}>✕</button>
+        <button onClick={onClose} style={{ background: 'var(--btn-bg)', border: '1px solid var(--btn-border)', color: 'var(--btn-text)', borderRadius: '50%', width: 30, height: 30, fontSize: 16, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
       </div>
 
       {compareList.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '100px 20px', color: '#94a3b8' }}>
+        <div style={{ textAlign: 'center', padding: '100px 20px', color: 'var(--text-sub)' }}>
           <div style={{ fontSize: 60, marginBottom: 12 }}>⚖️</div>
           <div style={{ fontSize: 15, fontWeight: 700 }}>No careers added to compare yet</div>
-          <div style={{ fontSize: 12, color: '#64748b', marginTop: 4 }}>Explore career detail pages and click "Add to Compare" to see side-by-side analysis.</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Explore career detail pages and click "Add to Compare" to see side-by-side analysis.</div>
         </div>
       ) : (
         <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 20 }}>
@@ -6617,14 +6707,14 @@ function ComparisonOverlay({ compareList, onRemove, onClose, t }) {
                 <button onClick={() => onRemove(item.id)} style={{ position: 'absolute', right: 12, top: 12, background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', borderRadius: '50%', width: 22, height: 22, fontSize: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>✕</button>
 
                 <div style={{ fontSize: 36, textAlign: 'center', margin: '8px 0' }}>{item.icon || '💼'}</div>
-                <div style={{ fontSize: 15, fontWeight: 900, color: '#fff', textAlign: 'center', minHeight: 38, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.title}</div>
+                <div style={{ fontSize: 15, fontWeight: 900, color: 'var(--text-main)', textAlign: 'center', minHeight: 38, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{item.title}</div>
                 <div style={{ fontSize: 10, color: 'var(--primary)', fontWeight: 800, textAlign: 'center', textTransform: 'uppercase', marginTop: 4 }}>{item.compareType}</div>
 
-                <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '12px 0' }} />
+                <div style={{ height: 1, background: 'var(--border-color)', margin: '12px 0' }} />
 
                 <div style={{ marginBottom: 12 }}>
                   <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>💰 SALARY RANGE</div>
-                  <div style={{ fontSize: 12, color: '#6dffa0', fontWeight: 700, marginTop: 4 }}>{salary}</div>
+                  <div style={{ fontSize: 12, color: 'var(--primary)', fontWeight: 700, marginTop: 4 }}>{salary}</div>
                 </div>
 
                 <div style={{ marginBottom: 12 }}>
@@ -6645,7 +6735,7 @@ function ComparisonOverlay({ compareList, onRemove, onClose, t }) {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>🧠 KEY SKILLS</div>
                     <div style={{ marginTop: 4, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {item.skills.slice(0, 3).map(s => <span key={s} style={{ ...S.tag, margin: 0, fontSize: 9, background: 'rgba(56,189,248,0.06)' }}>{s}</span>)}
+                      {item.skills.slice(0, 3).map(s => <span key={s} style={{ ...S.tag, margin: 0, fontSize: 9, background: 'rgba(4, 170, 109, 0.06)' }}>{s}</span>)}
                     </div>
                   </div>
                 )}
@@ -6654,7 +6744,7 @@ function ComparisonOverlay({ compareList, onRemove, onClose, t }) {
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase' }}>💼 ROLES</div>
                     <div style={{ marginTop: 4, display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                      {careerRoles.slice(0, 3).map(c => <span key={c.title || c} style={{ ...S.tag, margin: 0, fontSize: 9, color: '#f59e0b', borderColor: 'rgba(245,158,11,0.3)' }}>{c.title || c}</span>)}
+                      {careerRoles.slice(0, 3).map(c => <span key={c.title || c} style={{ ...S.tag, margin: 0, fontSize: 9, color: 'var(--accent)', borderColor: 'var(--accent)' }}>{c.title || c}</span>)}
                     </div>
                   </div>
                 )}
@@ -8063,7 +8153,14 @@ export default function App() {
   });
   const [soundType, setSoundType] = useState(() => localStorage.getItem('cp_sound_type') || 'chime');
 
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('cp_dark_mode');
+    if (saved !== null) {
+      return saved === 'true';
+    }
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
+    return mql.matches;
+  });
 
   // Sync state reference for native hardware back button handler
   const backStateRef = useRef({ page, navHistory, selectedTrendingJob, showGeminiChat });
@@ -8071,46 +8168,12 @@ export default function App() {
     backStateRef.current = { page, navHistory, selectedTrendingJob, showGeminiChat };
   }, [page, navHistory, selectedTrendingJob, showGeminiChat]);
 
-  // Handle Capacitor Android hardware back button
+  // Scroll to top on page or selected job change
   useEffect(() => {
-    let listenerPromise;
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [page, selectedTrendingJob]);
 
-    if (Capacitor.isNativePlatform()) {
-      const initBackButton = async () => {
-        try {
-          const { App: CapApp } = await import('@capacitor/app');
-          const l = await CapApp.addListener('backButton', () => {
-            if (backHandlerStack.length > 0) {
-              backHandlerStack[backHandlerStack.length - 1]();
-            } else {
-              const { page: currPage, navHistory: currHistory, selectedTrendingJob: currJob, showGeminiChat: currChat } = backStateRef.current;
-              if (currChat) {
-                setShowGeminiChat(false);
-              } else if (currJob) {
-                setSelectedTrendingJob(null);
-              } else if (currPage === 'home' || currHistory.length <= 1) {
-                CapApp.exitApp();
-              } else {
-                handleBack();
-              }
-            }
-          });
-          return l;
-        } catch (e) {
-          console.error('Failed to initialize Capacitor App hardware back button listener:', e);
-        }
-      };
-      listenerPromise = initBackButton();
-    }
 
-    return () => {
-      if (listenerPromise) {
-        listenerPromise.then(l => {
-          if (l) l.remove();
-        });
-      }
-    };
-  }, []);
 
   // Monitor Firebase Auth State and synchronize with local/database state
   useEffect(() => {
@@ -8174,36 +8237,81 @@ export default function App() {
 
   // Apply active theme dynamically to document root CSS variables
   useEffect(() => {
-    const themePalettes = {
-      cosmic: { primary: '#8b5cf6', secondary: '#d946ef', glow: 'rgba(139, 92, 246, 0.25)', border: 'rgba(168, 85, 247, 0.2)', textSub: '#c084fc' },
-      neon: { primary: '#ec4899', secondary: '#a855f7', glow: 'rgba(236, 72, 153, 0.28)', border: 'rgba(236, 72, 153, 0.25)', textSub: '#f472b6' },
-      emerald: { primary: '#10b981', secondary: '#06b6d4', glow: 'rgba(16, 185, 129, 0.28)', border: 'rgba(16, 185, 129, 0.25)', textSub: '#34d399' },
-      amber: { primary: '#f59e0b', secondary: '#ef4444', glow: 'rgba(245, 158, 11, 0.28)', border: 'rgba(245, 158, 11, 0.25)', textSub: '#fbbf24' },
-      sapphire: { primary: '#06b6d4', secondary: '#3b82f6', glow: 'rgba(6, 182, 212, 0.28)', border: 'rgba(6, 182, 212, 0.25)', textSub: '#38bdf8' },
-      ruby: { primary: '#f43f5e', secondary: '#fb7185', glow: 'rgba(244, 63, 94, 0.28)', border: 'rgba(244, 63, 94, 0.25)', textSub: '#fda4af' },
-      orchid: { primary: '#d946ef', secondary: '#8b5cf6', glow: 'rgba(217, 70, 239, 0.28)', border: 'rgba(217, 70, 239, 0.25)', textSub: '#f0abfc' },
-      sunset: { primary: '#f97316', secondary: '#e11d48', glow: 'rgba(249, 115, 22, 0.28)', border: 'rgba(249, 115, 22, 0.25)', textSub: '#fb923c' }
-    };
-
-    const activePalette = themePalettes[theme] || themePalettes.cosmic;
     const root = document.documentElement;
-    root.style.setProperty('--primary', activePalette.primary);
-    root.style.setProperty('--secondary', activePalette.secondary);
-    root.style.setProperty('--accent-glow', activePalette.glow);
-    root.style.setProperty('--border-color', activePalette.border);
-    root.style.setProperty('--text-sub', activePalette.textSub);
+    if (darkMode) {
+      root.setAttribute('data-theme', 'dark');
+      root.style.setProperty('--primary', '#04AA6D');
+      root.style.setProperty('--secondary', '#04AA6D');
+      root.style.setProperty('--accent', '#04AA6D');
+      root.style.setProperty('--accent-glow', 'rgba(4, 170, 109, 0.08)');
+      root.style.setProperty('--border-color', '#333333');
+      root.style.setProperty('--text-sub', '#D0D0D0');
+      root.style.setProperty('--bg-start', '#121212');
+      root.style.setProperty('--bg-mid', '#121212');
+      root.style.setProperty('--bg-end', '#121212');
+      root.style.setProperty('--card-bg', '#1E1E1E');
+      root.style.setProperty('--text-main', '#FFFFFF');
+      root.style.setProperty('--text-muted', '#A0A0A0');
+      root.style.setProperty('--bg-container', '#1E1E1E');
+      root.style.setProperty('--glass-shadow', 'none');
+      root.style.setProperty('--card-shadow', 'none');
+      root.style.setProperty('--input-bg', '#121212');
+      root.style.setProperty('--input-border', '#333333');
+      root.style.setProperty('--glass-bg', '#1E1E1E');
+      root.style.setProperty('--glass-bg-hover', '#2D2D2D');
+      root.style.setProperty('--divider', '#333333');
+      root.style.setProperty('--bg-active', '#2D2D2D');
+      root.style.setProperty('--btn-bg', '#121212');
+      root.style.setProperty('--btn-text', '#FFFFFF');
+      root.style.setProperty('--btn-border', '#FFFFFF');
+    } else {
+      root.setAttribute('data-theme', 'light');
+      root.style.setProperty('--primary', '#04AA6D');
+      root.style.setProperty('--secondary', '#04AA6D');
+      root.style.setProperty('--accent', '#04AA6D');
+      root.style.setProperty('--accent-glow', 'rgba(4, 170, 109, 0.08)');
+      root.style.setProperty('--border-color', '#E5E5E5');
+      root.style.setProperty('--text-sub', '#222222');
+      root.style.setProperty('--bg-start', '#FFFFFF');
+      root.style.setProperty('--bg-mid', '#FFFFFF');
+      root.style.setProperty('--bg-end', '#FFFFFF');
+      root.style.setProperty('--card-bg', '#F1F3F4');
+      root.style.setProperty('--text-main', '#000000');
+      root.style.setProperty('--text-muted', '#777777');
+      root.style.setProperty('--bg-container', '#F1F3F4');
+      root.style.setProperty('--glass-shadow', 'none');
+      root.style.setProperty('--card-shadow', 'none');
+      root.style.setProperty('--input-bg', '#FFFFFF');
+      root.style.setProperty('--input-border', '#E5E5E5');
+      root.style.setProperty('--glass-bg', '#F1F3F4');
+      root.style.setProperty('--glass-bg-hover', '#D9DDE0');
+      root.style.setProperty('--divider', '#E5E5E5');
+      root.style.setProperty('--bg-active', '#D9DDE0');
+      root.style.setProperty('--btn-bg', '#FFFFFF');
+      root.style.setProperty('--btn-text', '#000000');
+      root.style.setProperty('--btn-border', '#000000');
+    }
     document.body.className = `theme-${theme}`;
-  }, [theme]);
+    localStorage.setItem('cp_dark_mode', darkMode ? 'true' : 'false');
+  }, [theme, darkMode]);
 
   useEffect(() => {
     window.onGlobalThemeToggle = (nextDark) => {
-      setDarkMode(true);
-      localStorage.setItem('cp_dark_mode', 'true');
-      window.dispatchEvent(new CustomEvent('cp-theme-sync', { detail: { darkMode: true } }));
+      setDarkMode(nextDark);
+      localStorage.setItem('cp_dark_mode', nextDark ? 'true' : 'false');
+      window.dispatchEvent(new CustomEvent('cp-theme-sync', { detail: { darkMode: nextDark } }));
     };
     return () => {
       window.onGlobalThemeToggle = null;
     };
+  }, []);
+
+  useEffect(() => {
+    const handleSync = (e) => {
+      setDarkMode(e.detail.darkMode);
+    };
+    window.addEventListener('cp-theme-sync', handleSync);
+    return () => window.removeEventListener('cp-theme-sync', handleSync);
   }, []);
 
   // Reset scroll position on page change
@@ -8477,6 +8585,14 @@ export default function App() {
             onOpenSettings={() => handleNavChange('settings')}
           />
         );
+      case 'reasoning':
+        return (
+          <ReasoningPracticePage
+            onBack={handleBack}
+            t={t}
+            onOpenSettings={() => handleNavChange('settings')}
+          />
+        );
       case 'tech-learning':
         return (
           <TechLearningHubPage
@@ -8687,59 +8803,7 @@ export default function App() {
 
       {!isGameOrWorkspace && <BottomNav active={page} onNav={handleNavChange} t={t} />}
 
-      {/* Floating Gemini FAB */}
-      {user && page !== 'ai-workspace' && (
-        <>
-          <div
-            onClick={() => {
-              setShowGeminiChat(!showGeminiChat);
-              playClickSound(soundEnabled);
-            }}
-            style={{
-              position: 'fixed',
-              bottom: '90px',
-              right: '20px',
-              width: '56px',
-              height: '56px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, var(--primary), var(--secondary))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '28px',
-              cursor: 'pointer',
-              boxShadow: '0 8px 24px rgba(56, 189, 248, 0.4)',
-              zIndex: 999,
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            }}
-            onMouseEnter={e => {
-              e.currentTarget.style.transform = 'scale(1.1) rotate(10deg)';
-              e.currentTarget.style.boxShadow = '0 12px 30px rgba(56, 189, 248, 0.6)';
-            }}
-            onMouseLeave={e => {
-              e.currentTarget.style.transform = 'scale(1) rotate(0deg)';
-              e.currentTarget.style.boxShadow = '0 8px 24px rgba(56, 189, 248, 0.4)';
-            }}
-          >
-            🤖
-          </div>
 
-          {showGeminiChat && (
-            <AIWorkspace
-              isPageMode={false}
-              onClose={() => {
-                setShowGeminiChat(false);
-                playClickSound(soundEnabled);
-              }}
-              soundEnabled={soundEnabled}
-              currentPage={page}
-              selectedTrendingJob={selectedTrendingJob}
-              initialPrompt={initialChatPrompt}
-              onClearInitialPrompt={() => setInitialChatPrompt('')}
-            />
-          )}
-        </>
-      )}
 
       {/* Compare Overlay Dashboard */}
       {showCompare && (

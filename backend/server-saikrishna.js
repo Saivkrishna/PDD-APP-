@@ -28,7 +28,7 @@ const app = express();
 // Custom CORS middleware to allow cross-origin requests from the native app webview
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && (origin.startsWith('http://localhost') || origin.startsWith('capacitor://') || origin.startsWith('http://10.'))) {
+  if (origin && (origin.startsWith('http://localhost') || origin.startsWith('http://10.'))) {
     res.setHeader('Access-Control-Allow-Origin', origin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -422,7 +422,7 @@ async function updateTrendingJobs() {
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (apiKey && apiKey !== 'YOUR_GEMINI_API_KEY' && apiKey.trim() !== '') {
+  if (apiKey && apiKey !== 'YOUR_GEMINI_API_KEY' && apiKey.trim() !== '' && !apiKey.includes('REMOVED')) {
     try {
       console.log('🤖 Querying Google Gemini 2.5 Flash to analyze job market trends...');
       const { GoogleGenAI } = require('@google/genai');
@@ -924,7 +924,7 @@ app.post('/api/ai/recommendation', async (req, res) => {
     let recommendation;
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '') {
+    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '' || apiKey.includes('REMOVED')) {
       console.warn('⚠️ GEMINI_API_KEY is missing or empty. Using mock fallback recommendation.');
       recommendation = getMockAIRecommendation(quizType, answers);
     } else {
@@ -1169,7 +1169,7 @@ app.post('/api/chat', async (req, res) => {
     const mode = detectSmartMode(sanitizedMsg, image);
     const systemInst = buildDynamicSystemInstruction(mode);
 
-    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '') {
+    if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '' || apiKey.includes('REMOVED')) {
       const followUps = generateSuggestedFollowUps(mode, sanitizedMsg, '');
       return res.status(200).json({
         success: true,
@@ -1280,7 +1280,7 @@ app.post('/api/chat/stream', async (req, res) => {
   res.setHeader('Connection', 'keep-alive');
 
   const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '') {
+  if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '' || apiKey.includes('REMOVED')) {
     const offlineMsg = `🎯 **Direct Answer (Offline Mode)**\nGoogle Gemini API key is missing. Please set \`GEMINI_API_KEY\` in your \`backend/.env\` file.\n\nMode Detected: ${mode.icon} ${mode.name}`;
     res.write(`data: ${JSON.stringify({ chunk: offlineMsg, done: true, mode })}\n\n`);
     return res.end();

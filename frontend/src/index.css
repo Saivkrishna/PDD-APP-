@@ -14,20 +14,67 @@ body {
 }
 
 :root {
-  --primary: #38bdf8;
-  --secondary: #818cf8;
-  --bg-start: #090f1d;
-  --bg-mid: #0d1527;
-  --bg-end: #070b15;
-  --accent-glow: rgba(56, 189, 248, 0.15);
-  --card-bg: rgba(15, 23, 42, 0.45);
-  --border-color: rgba(56, 189, 248, 0.15);
-  --text-main: #f8fafc;
-  --text-sub: #94a3b8;
-  --text-muted: #64748b;
-  --bg-container: rgba(15, 23, 42, 0.65);
-  --glass-shadow: rgba(0, 0, 0, 0.25);
-  --card-shadow: rgba(0, 0, 0, 0.15);
+  --primary: #04AA6D;
+  --secondary: #04AA6D;
+  --accent: #04AA6D;
+  --bg-start: #121212;
+  --bg-mid: #121212;
+  --bg-end: #121212;
+  --accent-glow: rgba(4, 170, 109, 0.08);
+  --card-bg: #1E1E1E;
+  --border-color: #333333;
+  --text-main: #FFFFFF;
+  --text-sub: #D0D0D0;
+  --text-muted: #A0A0A0;
+  --bg-container: #1E1E1E;
+  --glass-shadow: none;
+  --card-shadow: none;
+  --input-bg: #121212;
+  --input-border: #333333;
+  --glass-bg: #1E1E1E;
+  --glass-bg-hover: #2D2D2D;
+  --divider: #333333;
+  --bg-active: #2D2D2D;
+  --btn-bg: #121212;
+  --btn-text: #FFFFFF;
+  --btn-border: #FFFFFF;
+  --radius-card: 28px;
+  --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='light'] {
+  --primary: #04AA6D;
+  --secondary: #04AA6D;
+  --accent: #04AA6D;
+  --bg-start: #FFFFFF;
+  --bg-mid: #FFFFFF;
+  --bg-end: #FFFFFF;
+  --accent-glow: rgba(4, 170, 109, 0.08);
+  --card-bg: #F1F3F4;
+  --border-color: #E5E5E5;
+  --text-main: #000000;
+  --text-sub: #222222;
+  --text-muted: #777777;
+  --bg-container: #F1F3F4;
+  --glass-shadow: none;
+  --card-shadow: none;
+  --input-bg: #FFFFFF;
+  --input-border: #E5E5E5;
+  --glass-bg: #F1F3F4;
+  --glass-bg-hover: #D9DDE0;
+  --divider: #E5E5E5;
+  --bg-active: #D9DDE0;
+  --btn-bg: #FFFFFF;
+  --btn-text: #000000;
+  --btn-border: #000000;
+}
+
+body, .bento-card, .premium-btn, button, input, textarea, select, .ai-workspace-container, .ai-sidebar, .ai-workspace-overlay-wrapper, .ai-chat-box {
+  transition: background 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Custom Scrollbars */
@@ -197,6 +244,7 @@ body {
 .text-gradient {
   background: linear-gradient(90deg, var(--primary), var(--secondary), #a5b4fc);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -258,4 +306,165 @@ body {
     size: A4;
     margin: 1.5cm;
   }
+}
+
+/* Global Theme and Accent overrides */
+*:not(.resume-print-area):not(.resume-print-area *) {
+  font-family: Arial, 'Inter', system-ui, -apple-system, sans-serif !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+body {
+  background: var(--bg-mid) !important;
+  color: var(--text-main) !important;
+}
+
+/* Gradients to solid colors */
+.text-gradient, .ai-header-title {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: var(--text-main) !important;
+  color: var(--text-main) !important;
+}
+
+/* Buttons style overrides */
+button, .premium-btn, .authBtn, .actionBtn, .backBtn, .ai-send-btn, .ai-new-chat-btn, .ai-quick-btn, .rain-tab, .splashBtn, .ai-prompt-chip, .ai-followup-chip {
+  background: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+  border: 1px solid var(--btn-border) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  background-image: none !important;
+  border-radius: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+button:hover, .premium-btn:hover, .authBtn:hover, .actionBtn:hover, .backBtn:hover, .ai-send-btn:hover, .ai-new-chat-btn:hover, .splashBtn:hover, .ai-prompt-chip:hover, .ai-followup-chip:hover {
+  background: var(--btn-text) !important;
+  color: var(--btn-bg) !important;
+  border-color: var(--btn-border) !important;
+  background-image: none !important;
+}
+
+/* Cards & Panel background styles */
+.bento-card, div[style*="var(--card-bg)"] {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+  background-image: none !important;
+}
+.bento-card::before {
+  display: none !important;
+}
+
+/* Input Fields styling */
+input, textarea, select {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--text-main) !important;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent) !important;
+  box-shadow: none !important;
+  background-color: var(--input-bg) !important;
+}
+
+/* AI Workspace styles */
+.ai-sidebar {
+  background: var(--bg-container) !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+.ai-sidebar-header, .ai-header {
+  border-bottom: 1px solid var(--border-color) !important;
+  background: var(--bg-container) !important;
+}
+.ai-chat-item.active {
+  background: var(--bg-active) !important;
+  border-left: 4px solid var(--accent) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+.ai-chat-item:hover {
+  background: var(--bg-active) !important;
+  color: var(--text-main) !important;
+}
+.ai-search-input {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--text-main) !important;
+}
+.ai-bubble {
+  background: var(--bg-container) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+  box-shadow: none !important;
+}
+.ai-message-row.user .ai-bubble {
+  background: var(--bg-active) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+.ai-message-row.model .ai-bubble {
+  background: var(--bg-container) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+.ai-textarea {
+  color: var(--text-main) !important;
+}
+.ai-input-wrapper {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+}
+.ai-input-area {
+  background: var(--bg-container) !important;
+  border-top: 1px solid var(--border-color) !important;
+}
+.ai-quick-actions {
+  border-top: 1px solid var(--border-color) !important;
+}
+
+/* Code block styles (readability visibility fixes) */
+.ai-code-block {
+  background: var(--bg-container) !important;
+  border: 1px solid var(--border-color) !important;
+}
+.ai-code-header {
+  background: var(--bg-active) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-muted) !important;
+}
+.ai-code-content {
+  color: var(--text-main) !important;
+}
+
+/* Custom Webkit Scrollbars styling */
+::-webkit-scrollbar-track {
+  background: var(--bg-mid) !important;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-active) !important;
+  border: 1px solid var(--bg-mid) !important;
+}
+
+/* Game Components adjustments */
+.rain-mode-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-main) !important;
+}
+.rain-mode-card:hover {
+  background: var(--bg-active) !important;
+  border-color: var(--accent) !important;
+}
+.rain-mode-card.active {
+  background: var(--bg-active) !important;
+  border-color: var(--accent) !important;
+  border-left: 4px solid var(--accent) !important;
+}
+
+.app-premium-bg {
+  display: none !important;
 }

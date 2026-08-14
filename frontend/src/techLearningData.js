@@ -56,220 +56,585 @@ export const techLearningData = [
 
 export const getYoutubeChannels = (techId) => {
   const mapping = {
-    html: {
-      en: { name: "Traversy Media", url: "https://www.youtube.com/@TraversyMedia" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
+  "html": {
+    "en": {
+      "name": "Traversy Media",
+      "url": "https://www.youtube.com/@TraversyMedia"
     },
-    css: {
-      en: { name: "Kevin Powell", url: "https://www.youtube.com/@KevinPowell" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    javascript: {
-      en: { name: "SuperSimpleDev", url: "https://www.youtube.com/@SuperSimpleDev" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    typescript: {
-      en: { name: "Codevolution", url: "https://www.youtube.com/@Codevolution" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    react: {
-      en: { name: "Codevolution", url: "https://www.youtube.com/@Codevolution" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    vuejs: {
-      en: { name: "Net Ninja", url: "https://www.youtube.com/@NetNinja" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    angular: {
-      en: { name: "Angular", url: "https://www.youtube.com/@Angular" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    nextjs: {
-      en: { name: "JS Mastery", url: "https://www.youtube.com/@javascriptmastery" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    nodejs: {
-      en: { name: "Codevolution", url: "https://www.youtube.com/@Codevolution" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    expressjs: {
-      en: { name: "Traversy Media", url: "https://www.youtube.com/@TraversyMedia" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    django: {
-      en: { name: "Dennis Ivy", url: "https://www.youtube.com/@DennisIvy" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    flask: {
-      en: { name: "Tech With Tim", url: "https://www.youtube.com/@TechWithTim" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    restapis: {
-      en: { name: "Hussein Nasser", url: "https://www.youtube.com/@hnasr" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    python: {
-      en: { name: "Programming with Mosh", url: "https://www.youtube.com/@programmingwithmosh" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    java: {
-      en: { name: "Telusko", url: "https://www.youtube.com/@Telusko" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    c: {
-      en: { name: "Neso Academy", url: "https://www.youtube.com/@nesoacademy" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    cpp: {
-      en: { name: "CodeBeauty", url: "https://www.youtube.com/@CodeBeauty" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    csharp: {
-      en: { name: "IAmTimCorey", url: "https://www.youtube.com/@IAmTimCorey" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    go: {
-      en: { name: "TechWorld with Nana", url: "https://www.youtube.com/@TechWorldwithNana" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    rust: {
-      en: { name: "Lets Get Rusty", url: "https://www.youtube.com/@letsgetrusty" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    php: {
-      en: { name: "Traversy Media", url: "https://www.youtube.com/@TraversyMedia" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    swift: {
-      en: { name: "Sean Allen", url: "https://www.youtube.com/@seanallen" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    sql: {
-      en: { name: "Alex The Analyst", url: "https://www.youtube.com/@AlexTheAnalyst" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    postgresql: {
-      en: { name: "freeCodeCamp", url: "https://www.youtube.com/@freecodecamp" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    mongodb: {
-      en: { name: "MongoDB", url: "https://www.youtube.com/@MongoDB" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    docker: {
-      en: { name: "TechWorld with Nana", url: "https://www.youtube.com/@TechWorldwithNana" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    kubernetes: {
-      en: { name: "KodeKloud", url: "https://www.youtube.com/@KodeKloud" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    terraform: {
-      en: { name: "HashiCorp", url: "https://www.youtube.com/@HashiCorp" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    jenkins: {
-      en: { name: "KodeKloud", url: "https://www.youtube.com/@KodeKloud" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    linux: {
-      en: { name: "LearnLinuxTV", url: "https://www.youtube.com/@LearnLinuxTV" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    flutter: {
-      en: { name: "Flutter Dev", url: "https://www.youtube.com/@flutterdev" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    android: {
-      en: { name: "Philipp Lackner", url: "https://www.youtube.com/@PhilippLackner" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    reactnative: {
-      en: { name: "notJust.dev", url: "https://www.youtube.com/@notJustdev" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    aibasics: {
-      en: { name: "freeCodeCamp", url: "https://www.youtube.com/@freecodecamp" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    tensorflow: {
-      en: { name: "TensorFlow", url: "https://www.youtube.com/@TensorFlow" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    pytorch: {
-      en: { name: "Aladdin Persson", url: "https://www.youtube.com/@aladdinpersson" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    gemini: {
-      en: { name: "Google Developers", url: "https://www.youtube.com/@GoogleDevelopers" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    aws: {
-      en: { name: "Amazon Web Services", url: "https://www.youtube.com/@amazonwebservices" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    azure: {
-      en: { name: "John Savill's Technical Training", url: "https://www.youtube.com/@NTFAQGuy" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    gcp: {
-      en: { name: "Google Cloud Tech", url: "https://www.youtube.com/@googlecloudtech" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    git: {
-      en: { name: "Net Ninja", url: "https://www.youtube.com/@NetNinja" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    designpatterns: {
-      en: { name: "Christopher Okhravi", url: "https://www.youtube.com/@ChristopherOkhravi" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    dsa: {
-      en: { name: "NeetCode", url: "https://www.youtube.com/@NeetCode" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    cs50: {
-      en: { name: "CS50", url: "https://www.youtube.com/@cs50" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    leetcode: {
-      en: { name: "NeetCode", url: "https://www.youtube.com/@NeetCode" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    hackerrank: {
-      en: { name: "HackerRank", url: "https://www.youtube.com/@HackerRank" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    codewars: {
-      en: { name: "Coding With John", url: "https://www.youtube.com/@CodingWithJohn" },
-      te: { name: "Telugu Web Guru", url: "https://www.youtube.com/@teluguwebguru" }
-    },
-    odinproject: {
-      en: { name: "The Odin Project", url: "https://www.youtube.com/@TheOdinProject" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
-    },
-    freecodecamp: {
-      en: { name: "freeCodeCamp", url: "https://www.youtube.com/@freecodecamp" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    // Fallback records for non-mapped items
-    tryhackme: {
-      en: { name: "John Hammond", url: "https://www.youtube.com/@JohnHammond" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    owasp: {
-      en: { name: "freeCodeCamp", url: "https://www.youtube.com/@freecodecamp" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    blockchain: {
-      en: { name: "Dapp University", url: "https://www.youtube.com/@DappUniversity" },
-      te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }
-    },
-    web3: {
-      en: { name: "Patrick Collins", url: "https://www.youtube.com/@PatrickCollins" },
-      te: { name: "Mass Coders", url: "https://www.youtube.com/@MassCoders" }
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
     }
-  };
+  },
+  "css": {
+    "en": {
+      "name": "Kevin Powell",
+      "url": "https://www.youtube.com/@KevinPowell"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "javascript": {
+    "en": {
+      "name": "SuperSimpleDev",
+      "url": "https://www.youtube.com/@SuperSimpleDev"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "typescript": {
+    "en": {
+      "name": "Codevolution",
+      "url": "https://www.youtube.com/@Codevolution"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "react": {
+    "en": {
+      "name": "Codevolution",
+      "url": "https://www.youtube.com/@Codevolution"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "vuejs": {
+    "en": {
+      "name": "Net Ninja",
+      "url": "https://www.youtube.com/@NetNinja"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "angular": {
+    "en": {
+      "name": "Angular",
+      "url": "https://www.youtube.com/@Angular"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "nextjs": {
+    "en": {
+      "name": "JS Mastery",
+      "url": "https://www.youtube.com/@javascriptmastery"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "nodejs": {
+    "en": {
+      "name": "Codevolution",
+      "url": "https://www.youtube.com/@Codevolution"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "expressjs": {
+    "en": {
+      "name": "Traversy Media",
+      "url": "https://www.youtube.com/@TraversyMedia"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "django": {
+    "en": {
+      "name": "Dennis Ivy",
+      "url": "https://www.youtube.com/@DennisIvy"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "flask": {
+    "en": {
+      "name": "Tech With Tim",
+      "url": "https://www.youtube.com/@TechWithTim"
+    },
+    "te": {
+      "name": "SoftwareSchool",
+      "url": "https://www.youtube.com/@software-school"
+    }
+  },
+  "restapis": {
+    "en": {
+      "name": "Hussein Nasser",
+      "url": "https://www.youtube.com/@hnasr"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "flutter": {
+    "en": {
+      "name": "Flutter Dev",
+      "url": "https://www.youtube.com/@flutterdev"
+    }
+  },
+  "android": {
+    "en": {
+      "name": "Philipp Lackner",
+      "url": "https://www.youtube.com/@PhilippLackner"
+    }
+  },
+  "reactnative": {
+    "en": {
+      "name": "notJust.dev",
+      "url": "https://www.youtube.com/@notjustdev"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "python": {
+    "en": {
+      "name": "Programming with Mosh",
+      "url": "https://www.youtube.com/@programmingwithmosh"
+    },
+    "te": {
+      "name": "Code With Swaroop",
+      "url": "https://www.youtube.com/@SwaroopVITB"
+    }
+  },
+  "java": {
+    "en": {
+      "name": "Telusko",
+      "url": "https://www.youtube.com/@Telusko"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "c": {
+    "en": {
+      "name": "Neso Academy",
+      "url": "https://www.youtube.com/@NesoAcademy"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "cpp": {
+    "en": {
+      "name": "CodeBeauty",
+      "url": "https://www.youtube.com/@CodeBeauty"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "csharp": {
+    "en": {
+      "name": "IAmTimCorey",
+      "url": "https://www.youtube.com/@IAmTimCorey"
+    }
+  },
+  "go": {
+    "en": {
+      "name": "TechWorld with Nana",
+      "url": "https://www.youtube.com/@TechWorldwithNana"
+    }
+  },
+  "rust": {
+    "en": {
+      "name": "Lets Get Rusty",
+      "url": "https://www.youtube.com/@letsgetrusty"
+    }
+  },
+  "php": {
+    "en": {
+      "name": "Traversy Media",
+      "url": "https://www.youtube.com/@TraversyMedia"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "swift": {
+    "en": {
+      "name": "Sean Allen",
+      "url": "https://www.youtube.com/@seanallen"
+    }
+  },
+  "sql": {
+    "en": {
+      "name": "Alex The Analyst",
+      "url": "https://www.youtube.com/@AlexTheAnalyst"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "postgresql": {
+    "en": {
+      "name": "freeCodeCamp",
+      "url": "https://www.youtube.com/@freecodecamp"
+    },
+    "te": {
+      "name": "SoftwareSchool",
+      "url": "https://www.youtube.com/@software-school"
+    }
+  },
+  "mongodb": {
+    "en": {
+      "name": "MongoDB",
+      "url": "https://www.youtube.com/@MongoDB"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "docker": {
+    "en": {
+      "name": "TechWorld with Nana",
+      "url": "https://www.youtube.com/@TechWorldwithNana"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "kubernetes": {
+    "en": {
+      "name": "KodeKloud",
+      "url": "https://www.youtube.com/@KodeKloud"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "terraform": {
+    "en": {
+      "name": "HashiCorp",
+      "url": "https://www.youtube.com/@HashiCorp"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "jenkins": {
+    "en": {
+      "name": "KodeKloud",
+      "url": "https://www.youtube.com/@KodeKloud"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "linux": {
+    "en": {
+      "name": "LearnLinuxTV",
+      "url": "https://www.youtube.com/@LearnLinuxTV"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "aibasics": {
+    "en": {
+      "name": "freeCodeCamp",
+      "url": "https://www.youtube.com/@freecodecamp"
+    }
+  },
+  "tensorflow": {
+    "en": {
+      "name": "TensorFlow",
+      "url": "https://www.youtube.com/@TensorFlow"
+    }
+  },
+  "pytorch": {
+    "en": {
+      "name": "Aladdin Persson",
+      "url": "https://www.youtube.com/@AladdinPersson"
+    }
+  },
+  "gemini": {
+    "en": {
+      "name": "Google Developers",
+      "url": "https://www.youtube.com/@GoogleDevelopers"
+    }
+  },
+  "aws": {
+    "en": {
+      "name": "Amazon Web Services",
+      "url": "https://www.youtube.com/@amazonwebservices"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "azure": {
+    "en": {
+      "name": "John Savill",
+      "url": "https://www.youtube.com/@NTFAQGuy"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "gcp": {
+    "en": {
+      "name": "Google Cloud Tech",
+      "url": "https://www.youtube.com/@googlecloudtech"
+    },
+    "te": {
+      "name": "Tech IT Factory",
+      "url": "https://www.youtube.com/@techitfactory"
+    }
+  },
+  "git": {
+    "en": {
+      "name": "Net Ninja",
+      "url": "https://www.youtube.com/@NetNinja"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "designpatterns": {
+    "en": {
+      "name": "Christopher Okhravi",
+      "url": "https://www.youtube.com/@ChristopherOkhravi"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "dsa": {
+    "en": {
+      "name": "NeetCode",
+      "url": "https://www.youtube.com/@NeetCode"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "cs50": {
+    "en": {
+      "name": "CS50",
+      "url": "https://www.youtube.com/@cs50"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "leetcode": {
+    "en": {
+      "name": "NeetCode",
+      "url": "https://www.youtube.com/@NeetCode"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "hackerrank": {
+    "en": {
+      "name": "HackerRank",
+      "url": "https://www.youtube.com/@HackerRankOfficial"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "codewars": {
+    "en": {
+      "name": "Coding With John",
+      "url": "https://www.youtube.com/@CodingWithJohn"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "odinproject": {
+    "en": {
+      "name": "The Odin Project",
+      "url": "https://www.youtube.com/@TheOdinProject"
+    },
+    "te": {
+      "name": "Mass Coders",
+      "url": "https://www.youtube.com/@niharrdg"
+    }
+  },
+  "ruby": {
+    "en": {
+      "name": "freeCodeCamp",
+      "url": "https://www.youtube.com/@freecodecamp"
+    }
+  },
+  "rubyonrails": {
+    "en": {
+      "name": "GoRails",
+      "url": "https://www.youtube.com/channel/UCIQmhQxCvLHRr3Beku77tww"
+    }
+  },
+  "kotlin": {
+    "en": {
+      "name": "Philipp Lackner",
+      "url": "https://www.youtube.com/@PhilippLackner"
+    }
+  },
+  "graphql": {
+    "en": {
+      "name": "Ben Awad",
+      "url": "https://www.youtube.com/@bawad"
+    }
+  },
+  "tailwindcss": {
+    "en": {
+      "name": "Kevin Powell",
+      "url": "https://www.youtube.com/@KevinPowell"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "bootstrap": {
+    "en": {
+      "name": "Traversy Media",
+      "url": "https://www.youtube.com/@TraversyMedia"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "svelte": {
+    "en": {
+      "name": "Net Ninja",
+      "url": "https://www.youtube.com/@NetNinja"
+    }
+  },
+  "systemdesign": {
+    "en": {
+      "name": "Gaurav Sen",
+      "url": "https://www.youtube.com/@gkcs"
+    }
+  },
+  "dbms": {
+    "en": {
+      "name": "Neso Academy",
+      "url": "https://www.youtube.com/@NesoAcademy"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "operatingsystems": {
+    "en": {
+      "name": "Neso Academy",
+      "url": "https://www.youtube.com/@NesoAcademy"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "computernetworks": {
+    "en": {
+      "name": "Neso Academy",
+      "url": "https://www.youtube.com/@NesoAcademy"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "machinelearning": {
+    "en": {
+      "name": "freeCodeCamp",
+      "url": "https://www.youtube.com/@freecodecamp"
+    }
+  },
+  "datascience": {
+    "en": {
+      "name": "Alex The Analyst",
+      "url": "https://www.youtube.com/@AlexTheAnalyst"
+    }
+  },
+  "uiux": {
+    "en": {
+      "name": "DesignCourse",
+      "url": "https://www.youtube.com/@DesignCourse"
+    }
+  },
+  "cybersecurity": {
+    "en": {
+      "name": "NetworkChuck",
+      "url": "https://www.youtube.com/@NetworkChuck"
+    }
+  },
+  "blockchain": {
+    "en": {
+      "name": "Patrick Collins",
+      "url": "https://www.youtube.com/@PatrickAlphaC"
+    }
+  },
+  "wordpress": {
+    "en": {
+      "name": "WPBeginner",
+      "url": "https://www.youtube.com/@WPBeginner"
+    },
+    "te": {
+      "name": "Telugu Web Guru",
+      "url": "https://www.youtube.com/@teluguwebguru"
+    }
+  },
+  "firebase": {
+    "en": {
+      "name": "Fireship",
+      "url": "https://www.youtube.com/@Fireship"
+    }
+  },
+  "vim": {
+    "en": {
+      "name": "ThePrimeagen",
+      "url": "https://www.youtube.com/@ThePrimeagen"
+    }
+  }
+};;;;
   return mapping[techId.toLowerCase()] || {
     en: { name: "freeCodeCamp", url: "https://www.youtube.com/@freecodecamp" },
     te: { name: "PythonLife", url: "https://www.youtube.com/@PythonLife" }

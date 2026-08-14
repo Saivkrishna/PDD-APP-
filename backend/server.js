@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const careerData = require('./data');
 const DB = require('./services/db');
+const { reasoningQuizQuestions } = require('./reasoningQuizQuestions');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -406,6 +407,9 @@ async function updateTrendingJobs() {
     return;
   }
 
+  // === DEPRECATED: Gemini API removed per org policy (2026-08-11) ===
+  // Original implementation preserved below for reference.
+  /*
   const apiKey = process.env.GEMINI_API_KEY;
   if (apiKey && apiKey !== 'YOUR_GEMINI_API_KEY' && apiKey.trim() !== '') {
     try {
@@ -458,6 +462,8 @@ Return ONLY a valid JSON array of these 10 career track objects. Do not include 
       console.error('❌ Google Gemini job market analysis failed, using keyword fallback:', geminiError.message);
     }
   }
+  */
+  // === END DEPRECATED BLOCK ===
 
   // Fallback to local keyword processing if Gemini is unavailable or fails
   try {
@@ -475,6 +481,144 @@ Return ONLY a valid JSON array of these 10 career track objects. Do not include 
 // Fetch on startup and then every 10 minutes
 updateTrendingJobs();
 setInterval(updateTrendingJobs, 10 * 60 * 1000);
+
+app.get('/api/reasoning/quiz', (req, res) => {
+  try {
+    const { topic, difficulty, testMode } = req.query;
+
+    if (testMode === 'true') {
+      // Test Mode: Pick exactly 10 easy, 10 medium, and 10 hard questions across all topics
+      const easy = reasoningQuizQuestions.filter(q => q.difficulty === 'easy');
+      const medium = reasoningQuizQuestions.filter(q => q.difficulty === 'medium');
+      const hard = reasoningQuizQuestions.filter(q => q.difficulty === 'hard');
+
+      const selectRandom = (arr, count) => {
+        const shuffled = [...arr].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+      };
+
+      if (easy.length < 10 || medium.length < 10 || hard.length < 10) {
+        return res.status(400).json({ error: "Insufficient questions in database" });
+      }
+
+      const selectedEasy = selectRandom(easy, 10);
+      const selectedMedium = selectRandom(medium, 10);
+      const selectedHard = selectRandom(hard, 10);
+
+      // Combine and shuffle the 30 questions
+      const finalQuiz = [...selectedEasy, ...selectedMedium, ...selectedHard].sort(() => 0.5 - Math.random());
+      return res.json(finalQuiz);
+    }
+
+    // Practice/Review Mode: Get questions for a specific topic
+    if (!topic) {
+      return res.status(400).json({ error: "Topic is required for practice mode" });
+    }
+
+    let filtered = reasoningQuizQuestions.filter(q => q.topic === topic);
+    if (difficulty && difficulty !== 'all' && topic !== 'series') {
+      filtered = filtered.filter(q => q.difficulty === difficulty);
+    }
+
+    return res.json(filtered);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ─── APTITUDE ENDPOINTS ──────────────────────────────────────────
+app.get('/api/aptitude/questions/:topic/:difficulty', async (req, res) => {
+  try {
+    let { topic, difficulty } = req.params;
+    if (topic === 'percentage') topic = 'percentages'; // Normalization
+    
+    const questions = await DB.getAptitudeQuestions(topic, difficulty);
+    res.json(questions);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/aptitude/counts', async (req, res) => {
+  try {
+    const TOPICS = [
+      'lcm-hcf', 'divisibility-remainder', 'problems-ages', 'probability', 'equation',
+      'series-progression', 'mensuration', 'geometry-perimeter', 'percentages', 'profit-loss',
+      'time-work', 'clocks-calendar', 'ratio-proportion', 'mixture-alligation',
+      'time-speed-distance', 'permutation-combination', 'mean-median-mode',
+      'data-interpretation', 'pie-chart', 'graphical-chart', 'simple-arithmetic', 'averages'
+    ];
+    const counts = {};
+    for (const topic of TOPICS) {
+      const qs = await DB.getAptitudeQuestions(topic, 'all');
+      counts[topic] = {
+        easy: qs.filter(q => q.difficulty === 'easy').length,
+        medium: qs.filter(q => q.difficulty === 'medium').length,
+        hard: qs.filter(q => q.difficulty === 'hard').length,
+        total: qs.length
+      };
+    }
+    res.json(counts);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/aptitude/status', async (req, res) => {
+  try {
+    const TOPICS = [
+      'lcm-hcf', 'divisibility-remainder', 'problems-ages', 'probability', 'equation',
+      'series-progression', 'mensuration', 'geometry-perimeter', 'percentages', 'profit-loss',
+      'time-work', 'clocks-calendar', 'ratio-proportion', 'mixture-alligation',
+      'time-speed-distance', 'permutation-combination', 'mean-median-mode',
+      'data-interpretation', 'pie-chart', 'graphical-chart', 'simple-arithmetic', 'averages'
+    ];
+    const status = [];
+    let totalExisting = 0;
+    let totalGemini = 0;
+    let totalQuestions = 0;
+    let totalMissing = 0;
+
+    for (const topic of TOPICS) {
+      const qs = await DB.getAptitudeQuestions(topic, 'all');
+      const easy = qs.filter(q => q.difficulty === 'easy');
+      const medium = qs.filter(q => q.difficulty === 'medium');
+      const hard = qs.filter(q => q.difficulty === 'hard');
+
+      const existing = qs.filter(q => q.source === 'existing').length;
+      const gemini = qs.filter(q => q.source === 'gemini').length;
+
+      totalExisting += existing;
+      totalGemini += gemini;
+      totalQuestions += qs.length;
+
+      const missingEasy = Math.max(0, 10 - easy.length);
+      const missingMedium = Math.max(0, 10 - medium.length);
+      const missingHard = Math.max(0, 10 - hard.length);
+      totalMissing += (missingEasy + missingMedium + missingHard);
+
+      status.push({
+        topic,
+        easy: { count: easy.length, missing: missingEasy },
+        medium: { count: medium.length, missing: missingMedium },
+        hard: { count: hard.length, missing: missingHard },
+        existing,
+        gemini
+      });
+    }
+    res.json({
+      topics: status,
+      summary: {
+        totalExisting,
+        totalGemini,
+        totalQuestions,
+        totalMissing
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 app.get('/api/overview', (req, res) => {
   res.json({
@@ -858,26 +1002,99 @@ app.post('/api/profile/reset-data', async (req, res) => {
 
 // ─── GOOGLE GEMINI AI RECOMMENDATIONS ENDPOINT ───────────────────
 
-function getMockAIRecommendation(quizType, answers) {
+function getLocalAIRecommendation(quizType, answers) {
+  const answerStr = (Array.isArray(answers) ? answers.join(', ') : JSON.stringify(answers)).toLowerCase();
+  
+  if (answerStr.includes('code') || answerStr.includes('program') || answerStr.includes('software') || answerStr.includes('engineer') || answerStr.includes('tech') || answerStr.includes('science')) {
+    return {
+      title: "Software & AI Solutions Engineer",
+      description: "Based on your technical interest and problem-solving aptitude, this track focuses on building modern software products, web services, and AI integrations using languages like Python and JavaScript.",
+      salary: "₹6,50,000 - ₹18,00,000 per annum",
+      milestones: [
+        { step: "1", title: "Programming Basics & DSA", description: "Learn fundamentals of JavaScript/TypeScript, Python, and basic data structures.", duration: "3-4 Months" },
+        { step: "2", title: "Full-Stack Development Frameworks", description: "Build real-world application components with React/React Native, Express, and Firebase.", duration: "4 Months" },
+        { step: "3", title: "System Design & DevOps", description: "Deploy cloud architectures, use containers (Docker), and configure continuous integration.", duration: "3 Months" },
+        { step: "4", title: "Portfolio Prep & Internships", description: "Contribute to open source, build a strong GitHub presence, and secure technical internship roles.", duration: "Ongoing" }
+      ],
+      skillsAcquired: ["JavaScript / Python", "React Native & Node.js", "SQL & Firestore Databases", "RESTful API Integration"],
+      skillsGaps: [
+        { skill: "Data Structures & Algorithms", importance: "High", actionPlan: "Solve coding challenges on LeetCode/HackerRank daily." },
+        { skill: "Cloud Deployments", importance: "Medium", actionPlan: "Practice container configuration and deploy services on platforms like Vercel or AWS." }
+      ],
+      marketDemand: {
+        growthRate: "34% YoY",
+        activeVacancies: "Very High",
+        outlook: "Excellent long-term outlook with exponential growth in cloud and AI domains."
+      }
+    };
+  }
+
+  if (answerStr.includes('medical') || answerStr.includes('doctor') || answerStr.includes('biology') || answerStr.includes('bipc') || answerStr.includes('medicine')) {
+    return {
+      title: "Biotechnology & Healthcare Analyst",
+      description: "Combining life sciences with research, this pathway is designed to lead you towards medical diagnostics, clinical trials, or bioinformatics engineering.",
+      salary: "₹5,0,000 - ₹14,0,000 per annum",
+      milestones: [
+        { step: "1", title: "Biomolecular Foundations", description: "Master fundamental molecular biology, biochemistry, and human genetics concepts.", duration: "6 Months" },
+        { step: "2", title: "Laboratory Certifications", description: "Acquire hands-on training with PCR setups, chromatography, and clinical assays.", duration: "3 Months" },
+        { step: "3", title: "Bioinformatics & Data Analytics", description: "Learn data science basics (Python/R) to parse genetic sequence datasets.", duration: "3 Months" },
+        { step: "4", title: "Clinical Internships", description: "Gain field experience at local healthcare research centers or diagnostic labs.", duration: "Ongoing" }
+      ],
+      skillsAcquired: ["Molecular Diagnostics", "Data Analytics (Python / R)", "Clinical Trial Standards", "Microbiological Assays"],
+      skillsGaps: [
+        { skill: "Computational Biology Data Tools", importance: "High", actionPlan: "Complete online courses on genomic sequencing analysis." },
+        { skill: "Regulatory Certifications", importance: "Medium", actionPlan: "Earn professional credentials in Good Laboratory Practices (GLP)." }
+      ],
+      marketDemand: {
+        growthRate: "22% YoY",
+        activeVacancies: "High",
+        outlook: "Highly stable career track driven by constant investments in clinical research and diagnostics."
+      }
+    };
+  }
+
+  if (answerStr.includes('commerce') || answerStr.includes('finance') || answerStr.includes('business') || answerStr.includes('management') || answerStr.includes('ca')) {
+    return {
+      title: "Financial Analyst & Management Consultant",
+      description: "Perfect for students interested in economics, asset valuation, business administration, and accounting. Prepares you for critical corporate roles.",
+      salary: "₹6,0,000 - ₹16,50,000 per annum",
+      milestones: [
+        { step: "1", title: "Accounting Foundations & Excel", description: "Master double-entry bookkeeping, corporate finance formulas, and advanced spreadsheet modeling.", duration: "4 Months" },
+        { step: "2", title: "Market Valuation & Reporting", description: "Analyze balance sheets, profit statements, and learn cash-flow analysis methodologies.", duration: "4 Months" },
+        { step: "3", title: "Professional Preparations", description: "Study for certifications like CFA Level 1 or prepare for CA intermediate groups.", duration: "6 Months" },
+        { step: "4", title: "Advisory Projects", description: "Take up business management projects and apply to corporate finance internships.", duration: "Ongoing" }
+      ],
+      skillsAcquired: ["Financial Modeling", "Excel & PowerBI Reporting", "Corporate Tax Law", "Strategic Risk Assessment"],
+      skillsGaps: [
+        { skill: "SQL & Data Querying", importance: "Medium", actionPlan: "Take up SQL training to query business intelligence schemas directly." },
+        { skill: "Presentation & Communication", importance: "High", actionPlan: "Conduct mock presentations and practice case-study solving." }
+      ],
+      marketDemand: {
+        growthRate: "18% YoY",
+        activeVacancies: "High",
+        outlook: "Steady growth with strong placement statistics across fintech, auditing, and strategy firms."
+      }
+    };
+  }
+
   return {
-    title: `AI Recommended Track (${quizType === 'suggestions-10th' ? 'After 10th' : 'After 12th'})`,
-    description: `Please set up your GEMINI_API_KEY in the backend/.env file to enable live Gemini AI-powered recommendations. Currently showing a default track based on your selection of "${JSON.stringify(answers)}".`,
-    salary: "₹6,0,000 - ₹15,00,000 per annum",
+    title: "General Professional Track",
+    description: "A balanced pathway focusing on transferable analytical skills, professional communication, and digital competency to fit modern workplace requirements.",
+    salary: "₹5,00,000 - ₹12,00,000 per annum",
     milestones: [
-      { step: "1", title: "Fundamental Learning", description: "Master the basic concepts and foundations of your selected path.", duration: "6 Months" },
-      { step: "2", title: "Hands-on Projects", description: "Build 3-4 real-world projects to build your portfolio.", duration: "3 Months" },
-      { step: "3", title: "Specialized Certification", description: "Prepare for and earn industry-standard certifications.", duration: "3 Months" },
-      { step: "4", title: "Internship & Job Search", description: "Apply for roles and gain industry experience.", duration: "Ongoing" }
+      { step: "1", title: "Analytical & Digital Skill Building", description: "Improve your technical and quant capabilities through practice tests.", duration: "3 Months" },
+      { step: "2", title: "Industry Familiarization", description: "Read case studies and research trends across technology, finance, and services.", duration: "3 Months" },
+      { step: "3", title: "Professional Branding", description: "Build a premium LinkedIn profile, write structured cover letters, and polish resume sections.", duration: "2 Months" },
+      { step: "4", title: "Networking & Placement Drives", description: "Apply to multiple entry-level jobs and practice interview rounds.", duration: "Ongoing" }
     ],
-    skillsAcquired: ["Core Competency", "Problem Solving", "Technical Communication", "Project Building"],
+    skillsAcquired: ["Logical Reasoning", "Digital Workspace Tools", "Technical Writing", "Project Management Basics"],
     skillsGaps: [
-      { skill: "Practical Portfolio", importance: "High", actionPlan: "Develop open-source contributions and deploy live projects on GitHub." },
-      { skill: "Interview Readiness", importance: "Medium", actionPlan: "Practice behavioral questions and mock technical challenges." }
+      { skill: "Niche Domain Expertise", importance: "High", actionPlan: "Pick a specific specialization (e.g. digital marketing, product operations, sales analysis) and earn a nano-degree." }
     ],
     marketDemand: {
-      growthRate: "28% YoY",
-      activeVacancies: "High",
-      outlook: "Excellent long-term growth across public and private sectors."
+      growthRate: "15% YoY",
+      activeVacancies: "Moderate",
+      outlook: "Good demand for versatile professionals who can adapt to changing operational roles."
     }
   };
 }
@@ -905,7 +1122,9 @@ app.post('/api/ai/recommendation', async (req, res) => {
       return res.status(200).json({ success: true, data: cached.recommendation, cached: true });
     }
 
-    // 2. Generate recommendation
+    // === DEPRECATED: Gemini API removed per org policy (2026-08-11) ===
+    // Original implementation preserved below for reference.
+    /*
     let recommendation;
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -1006,6 +1225,10 @@ You must output valid JSON conforming exactly to the schema:
         recommendation = getMockAIRecommendation(quizType, answers);
       }
     }
+    */
+    // === END DEPRECATED BLOCK ===
+
+    const recommendation = getLocalAIRecommendation(quizType, answers);
 
     // 3. Cache inside Firestore
     try {
@@ -1145,7 +1368,51 @@ function generateSuggestedFollowUps(mode, promptText, aiResponse) {
   ];
 }
 
+function generateLocalResponse(message, history, screenContext, mode) {
+  const query = (message || '').toLowerCase();
+  
+  if (query.includes('software') || query.includes('developer') || query.includes('coding') || query.includes('computer') || query.includes('programming')) {
+    return `💻 **Career Advice: Software Engineering & Development**\n\nSoftware engineering is one of the highest-growth domains globally. Based on your interest in coding:\n\n### 🚀 Recommended Pathways\n1. **Core Languages**: Master JavaScript/TypeScript, Python, or Java.\n2. **Specializations**: Focus on Full-Stack Web Development, Cloud Computing, or AI/Machine Learning.\n3. **Practical Portfolio**: Build 3-4 distinct projects (e.g., a responsive web app, a REST API, or an offline React Native app).\n\n### 📈 Market & Job Roles\n- **Entry Roles**: Junior Developer, QA Engineer, Associate Frontend/Backend Developer.\n- **Salary Scope (India)**: ₹5,50,000 to ₹18,00,000+ per annum depending on skillset.\n- **Next Steps**: Focus on Data Structures & Algorithms (DSA) and deploy your projects on GitHub!`;
+  }
+  
+  if (query.includes('medical') || query.includes('doctor') || query.includes('bipc') || query.includes('biology') || query.includes('pharmacy')) {
+    return `🩺 **Career Advice: Medical & Healthcare Fields**\n\nHealthcare offers stable and deeply rewarding career options. Here is a breakdown of the key pathways:\n\n### 🚀 Recommended Pathways\n1. **Undergraduate Study**: NEET preparation for MBBS, BDS, or BAMS.\n2. **Allied Sciences**: Explore Biotechnology, Nursing, Physiotherapy (BPT), or Pharmacy (B.Pharm).\n3. **Clinical Experience**: Focus on internships, lab certifications, and clinical diagnostics.\n\n### 📈 Market & Job Roles\n- **Roles**: Medical Officer, Biotech Analyst, Clinical Pharmacist, Research Assistant.\n- **Salary Scope (India)**: ₹4,00,000 to ₹15,0,000+ per annum.\n- **Next Steps**: Gather practice certifications and look into postgraduate specialization courses (MD/MS or PG diplomas).`;
+  }
+
+  if (query.includes('10th') || query.includes('tenth') || query.includes('after 10')) {
+    return `🎒 **Pathway Advice: Options After 10th Standard**\n\nThe choice you make after 10th sets the foundation for your higher studies:\n\n### 🚀 Primary Streams\n- **Science (MPC / BiPC)**: Opens doors for Engineering, Medicine, IT, and Pure Sciences.\n- **Commerce (CEC / MEC)**: Leads to Chartered Accountancy (CA), Business Administration, and Finance.\n- **Arts / Humanities (HEC)**: Perfect for Civil Services, Law, Design, and Journalism.\n- **Polytechnic / ITI**: Technical diplomas for direct entry into job markets.\n\n### 💡 Advisor Tips\nSelect a stream based on your natural aptitude (e.g., Math vs. Biology vs. Creativity) rather than peer pressure. You can explore full details on our **After 10th** tab!`;
+  }
+
+  if (query.includes('12th') || query.includes('twelfth') || query.includes('after 12')) {
+    return `🎓 **Pathway Advice: Options After 12th Standard**\n\nAfter completing 12th standard, you can choose from academic degrees or vocational tracks:\n\n### 🚀 Popular Degree Programs\n- **Engineering (B.Tech / B.E.)**: Focus on Computer Science, Electronics, Mechanical, etc.\n- **Medical / Allied**: MBBS, BDS, B.Pharm, BSc Nursing, or BSc Biotech.\n- **Commerce & Management**: B.Com, BBA, BMS, or Integrated MBA courses.\n- **Arts & Design**: BA in English/History, B.Des, Law (BA-LLB), or Hotel Management.\n\n### 💡 Advisor Tips\nPrepare for national level entrance exams (JEE, NEET, CUET, CLAT) to secure admissions in tier-1 institutions which offer the best placements.`;
+  }
+
+  if (query.includes('abroad') || query.includes('study abroad') || query.includes('foreign') || query.includes('ms')) {
+    return `✈️ **Global Education: Study Abroad Pathways**\n\nStudying abroad offers global exposure and high career returns:\n\n### 🚀 Step-by-Step Preparation\n1. **Standardized Tests**: Prepare for GRE/GMAT and English proficiency tests (IELTS/TOEFL).\n2. **Shortlist Countries**: \n   - **USA**: Best for IT and research; higher costs.\n   - **Germany**: Free/low tuition public universities; requires learning German.\n   - **UK/Canada**: Flexible visa rules and post-study work permits.\n3. **Application Assets**: Draft a strong Statement of Purpose (SOP) and obtain Letter of Recommendations (LORs).\n\n### 💼 Financial Planning\nLook for research assistantships, scholarships, and educational loans early.`;
+  }
+
+  if (query.includes('aptitude') || query.includes('math') || query.includes('quant') || query.includes('reasoning')) {
+    return `🧠 **Aptitude & Reasoning Practice Strategy**\n\nAptitude testing is the gateway for campus placements and competitive exams:\n\n### 🚀 High-Weightage Topics\n- **Quantitative**: Percentages, Profit & Loss, Ratio & Proportion, Permutations.\n- **Logical**: Number Series, Syllogisms, Blood Relations, Coding-Decoding.\n\n### 💡 Practice Guidelines\n1. **Formula Mastery**: Use the built-in cheatsheets to review definitions.\n2. **Time Management**: Take timed practice tests to improve speed.\n3. **Error Log**: Track questions you got wrong and review their solutions.`;
+  }
+
+  const modeKey = mode.key || 'general';
+  if (modeKey === 'coding') {
+    return `💻 **Technical Advisor Response**\n\nAs your technical architecture coach, here is my guidance:\n\n- **Implementation Focus**: Keep your backend stateless, modular, and use optimized database queries.\n- **Code Cleanliness**: Implement clean error-boundaries and type-safety check loops.\n- **Suggested Action**: Let me know if you would like me to draft a specific code scaffold, schema definition, or API endpoint snippet for your career goals.`;
+  }
+  if (modeKey === 'writing') {
+    return `📝 **Communications Advisor Response**\n\nAs your writing and editorial consultant, here is my feedback:\n\n- **Clarity & Tone**: Prioritize active voice and keep your bullet points highly scannable.\n- **Formatting**: Use clean headers, blockquotes for emphasis, and bullet lists for process steps.\n- **Suggested Action**: Provide the text or resume excerpt you want to revise, and I will rewrite it to sound professional and punchy.`;
+  }
+  if (modeKey === 'creative') {
+    return `🎨 **Design Director Response**\n\nAs your creative design director, here is my aesthetic advice:\n\n- **UX Design Rules**: Stick to a consistent spacing scale, utilize contrasting typography, and add subtle micro-interactions.\n- **Color Choices**: Use premium dark mode combinations (like slate and emerald accent).\n- **Suggested Action**: Tell me what interface, page, or logo layout you are designing, and we can map out a UI hierarchy.`;
+  }
+
+  return `🤖 **CareerPath AI Advisor Response**\n\nThank you for sharing that! As your self-hosted Career Advisor, here is my advice:\n\n### 📌 Key Recommendation\n- Focus on building **practical competencies** (projects, coding challenges, resume polish) over theoretical study.\n- Research active vacancy statistics using our built-in Search database to see which companies are actively hiring for similar roles.\n\n### 🧭 Recommended Next Steps\n1. Take the **Aptitude or Reasoning Quizzes** to baseline your analytical preparation.\n2. Bookmark matching career profiles in the Stage view to track your roadmap details.\n3. Let me know if you want detailed roadmaps for a specific job title!`;
+}
+
 app.post('/api/chat', async (req, res) => {
+  // === DEPRECATED: Gemini API removed per org policy (2026-08-11) ===
+  // Original implementation preserved below for reference.
+  /*
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     const { message, history, screenContext, image, customAction } = req.body;
@@ -1160,7 +1427,7 @@ app.post('/api/chat', async (req, res) => {
         success: true,
         mode: mode,
         suggestedFollowUps: followUps,
-        response: `🎯 **Direct Answer (Offline Assistant Mode)**\n\nGoogle Gemini API is currently offline because no valid \`GEMINI_API_KEY\` was configured in the backend \`.env\` file.\n\n📖 **Explanation**\nI am currently running in structured offline mode to ensure your application continues working seamlessly.\n\n🛣 **Step-by-Step Setup Guide**\n1. Open your \`backend/.env\` file.\n2. Add your key: \`GEMINI_API_KEY=AIzaSy...\`\n3. Save and restart the backend server.\n\n💡 **Current Context & Mode**\n- **Detected Mode:** ${mode.icon} ${mode.name}\n- **Screen Location:** ${screenContext?.currentPage || 'Workspace'}`
+        response: `🎯 **Direct Answer (Offline Assistant Mode)**\n\nGoogle Gemini API is currently offline because no valid \`GEMINI_API_KEY\` was configured in the backend \dots`
       });
     }
 
@@ -1251,6 +1518,30 @@ app.post('/api/chat', async (req, res) => {
       response: `🎯 **Direct Answer**\nAn error occurred while contacting the Gemini service: ${err.message}.\n\n📖 **Troubleshooting**\n1. Verify your network connection.\n2. Ensure your \`GEMINI_API_KEY\` is valid and has remaining quota.`
     });
   }
+  */
+  // === END DEPRECATED BLOCK ===
+
+  try {
+    const { message, history, screenContext, image } = req.body;
+    const sanitizedMsg = message ? message.trim() : '';
+    const mode = detectSmartMode(sanitizedMsg, image);
+    const responseText = generateLocalResponse(sanitizedMsg, history, screenContext, mode);
+    const followUps = generateSuggestedFollowUps(mode, sanitizedMsg, responseText);
+
+    res.status(200).json({
+      success: true,
+      mode: mode,
+      suggestedFollowUps: followUps,
+      response: responseText
+    });
+  } catch (err) {
+    res.status(200).json({
+      success: true,
+      mode: { key: 'general', name: 'AI Assistant', icon: '🤖', description: 'General AI Assistant' },
+      suggestedFollowUps: ["Check system logs"],
+      response: `An error occurred in the local response generator: ${err.message}`
+    });
+  }
 });
 
 // SSE Streaming Endpoint for Real-time Chunked Delivery
@@ -1264,6 +1555,9 @@ app.post('/api/chat/stream', async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
 
+  // === DEPRECATED: Gemini API removed per org policy (2026-08-11) ===
+  // Original implementation preserved below for reference.
+  /*
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY' || apiKey.trim() === '') {
     const offlineMsg = `🎯 **Direct Answer (Offline Mode)**\nGoogle Gemini API key is missing. Please set \`GEMINI_API_KEY\` in your \`backend/.env\` file.\n\nMode Detected: ${mode.icon} ${mode.name}`;
@@ -1309,6 +1603,27 @@ app.post('/api/chat/stream', async (req, res) => {
     res.end();
   } catch (e) {
     console.error('Error in SSE streaming chat:', e);
+    res.write(`data: ${JSON.stringify({ error: e.message, done: true })}\n\n`);
+    res.end();
+  }
+  */
+  // === END DEPRECATED BLOCK ===
+
+  try {
+    const responseText = generateLocalResponse(sanitizedMsg, history, screenContext, mode);
+    
+    const chunks = responseText.split(' ');
+    for (let i = 0; i < chunks.length; i++) {
+      const piece = chunks[i] + (i === chunks.length - 1 ? '' : ' ');
+      res.write(`data: ${JSON.stringify({ chunk: piece, mode })}\n\n`);
+      await new Promise(r => setTimeout(r, 10));
+    }
+    
+    const followUps = generateSuggestedFollowUps(mode, sanitizedMsg, responseText);
+    res.write(`data: ${JSON.stringify({ done: true, suggestedFollowUps: followUps, mode })}\n\n`);
+    res.end();
+  } catch (e) {
+    console.error('Error in local SSE streaming chat:', e);
     res.write(`data: ${JSON.stringify({ error: e.message, done: true })}\n\n`);
     res.end();
   }
@@ -1733,6 +2048,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 2259;
+app.listen(PORT, () => {
+  console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
+  
+  // Automatically open browser
+  const { exec } = require('child_process');
+  const url = `http://localhost:${PORT}`;
+  const startCommand = process.platform === 'win32' 
+    ? `start ${url}` 
+    : process.platform === 'darwin' 
+      ? `open ${url}` 
+      : `xdg-open ${url}`;
+  
+  exec(startCommand, (err) => {
+    if (err) {
+      console.log(`💡 To access the app, open: ${url}`);
+    }
+  });
+});
 

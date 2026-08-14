@@ -16,26 +16,22 @@ import { useBackHandler } from '../../utils/backHandler';
 // Scoped layout styling
 const CSS_ANIMATIONS = `
 .memory-matrix-theme {
-  --bg-primary: #FAF9F5;
-  --bg-card: rgba(255, 255, 255, 0.95);
-  --text-main: #2E3A2F;
-  --text-sub: #6B7F6C;
-  --color-primary: #4B7E58;
-  --color-primary-light: #E9EFE9;
-  --color-accent: #E1A63C;
-  --color-tile-empty: #E3E8E3;
-  --color-tile-active: #8FAF93;
-  --color-tile-success: #4B7E58;
+  --bg-primary: var(--bg-main);
+  --bg-card: var(--card-bg);
+  --text-main: var(--text-main);
+  --text-sub: var(--text-sub);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--bg-active);
+  --color-accent: var(--primary);
+  --color-tile-empty: var(--border-color);
+  --color-tile-active: var(--bg-active);
+  --color-tile-success: var(--primary);
   --color-tile-failed: #D26E6E;
-  --border-color: #E2E7E2;
-  --shadow-soft: 0 8px 30px rgba(75, 126, 88, 0.04);
-  --shadow-medium: 0 12px 40px rgba(75, 126, 88, 0.08);
+  --border-color: var(--border-color);
+  --shadow-soft: none;
+  --shadow-medium: none;
 
-  background-image: url("/matrix_bg.png") !important;
-  background-size: cover !important;
-  background-position: center bottom !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
+  background-color: var(--bg-main) !important;
   color: var(--text-main) !important;
   font-family: 'Outfit', 'Inter', sans-serif !important;
   height: 100vh;
