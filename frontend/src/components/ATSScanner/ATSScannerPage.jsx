@@ -250,10 +250,21 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
   const renderProgressBar = (label, value) => {
     const intVal = Math.round(value || 0);
+    const hasSemanticTooltip = label.startsWith('Experience Relevance') || label.startsWith('Project Relevance');
     return (
       <div style={{ marginBottom: '14px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px', fontWeight: 'bold' }}>
-          <span style={{ color: 'var(--text-sub)' }}>{label}</span>
+          <span style={{ color: 'var(--text-sub)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {label}
+            {hasSemanticTooltip && (
+              <span className="skill-badge-container">
+                <span style={{ fontSize: '11px', color: 'var(--primary)', cursor: 'help' }}>🧠</span>
+                <span className="skill-badge-tooltip" style={{ width: '220px', marginLeft: '-110px' }}>
+                  Augmented with local AI semantic similarity meaning match (Xenova Model).
+                </span>
+              </span>
+            )}
+          </span>
           <span style={{ color: 'var(--text-main)' }}>{intVal}%</span>
         </div>
         <div style={{ height: '8px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>

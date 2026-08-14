@@ -93,6 +93,19 @@ async function main() {
       }
     };
 
+    // Register an asynchronous test case run
+    const runTestAsync = async (id, name, assertionFn) => {
+      try {
+        await assertionFn();
+        testResults.push({ id, name, status: 'PASSED' });
+        passedCount++;
+        console.log(`[PASS] Test #${id}: ${name}`);
+      } catch (err) {
+        testResults.push({ id, name, status: 'FAILED', error: err.message });
+        console.log(`[FAIL] Test #${id}: ${name} - Error: ${err.message}`);
+      }
+    };
+
     console.log("\n[+] Executing 300 Test Cases...\n");
 
     // ==========================================
@@ -292,7 +305,7 @@ async function main() {
     // ==========================================
     const { calculateScore } = require('./backend/services/ats/scoringEngine');
 
-    runTest(307, 'Scoring Engine: Strong match score calculation', () => {
+    await runTestAsync(307, 'Scoring Engine: Strong match score calculation', async () => {
       const resumeSections = {
         SUMMARY: 'A passionate developer with years of experience.',
         SKILLS: 'React, TypeScript, AWS, Docker',
@@ -320,12 +333,12 @@ async function main() {
         { skill: 'docker', category: 'preferred', matchType: 'exact' }
       ];
 
-      const result = calculateScore(resumeSections, parsedJd, matchedSkills, []);
+      const result = await calculateScore(resumeSections, parsedJd, matchedSkills, []);
       if (result.overallScore < 80) throw new Error(`Expected strong match score (>=80), got: ${result.overallScore}`);
       if (result.matchLabel !== 'Strong Match') throw new Error(`Expected Strong Match, got: ${result.matchLabel}`);
     });
 
-    runTest(308, 'Scoring Engine: Weak match score calculation', () => {
+    await runTestAsync(308, 'Scoring Engine: Weak match score calculation', async () => {
       const resumeSections = {
         SKILLS: 'HTML, CSS'
       };
@@ -342,12 +355,12 @@ async function main() {
         optionalSkills: []
       };
 
-      const result = calculateScore(resumeSections, parsedJd, [], []);
+      const result = await calculateScore(resumeSections, parsedJd, [], []);
       if (result.overallScore > 40) throw new Error(`Expected weak match score (<=40), got: ${result.overallScore}`);
       if (result.matchLabel !== 'Needs Improvement') throw new Error(`Expected Needs Improvement, got: ${result.matchLabel}`);
     });
 
-    runTest(309, 'Scoring Engine: Checks weight boundaries and crash resilience', () => {
+    await runTestAsync(309, 'Scoring Engine: Checks weight boundaries and crash resilience', async () => {
       const resumeSections = {};
       const parsedJd = {
         jobTitle: '',
@@ -361,7 +374,7 @@ async function main() {
         optionalSkills: []
       };
 
-      const result = calculateScore(resumeSections, parsedJd, [], []);
+      const result = await calculateScore(resumeSections, parsedJd, [], []);
       if (result.overallScore < 0 || result.overallScore > 100) {
         throw new Error(`Score out of bounds: ${result.overallScore}`);
       }
@@ -415,16 +428,54 @@ async function main() {
       if (nonImageCheck.status !== 'fail') throw new Error('Non-Image Check should be fail for short texts');
     });
 
+    // ==========================================
+    // GROUP 12: SEMANTIC SIMILARITY LAYER (Tests 313-315)
+    // ==========================================
+    const { getSemanticScore } = require('./backend/services/ats/semanticMatcher');
+
+    await runTestAsync(313, 'Semantic Matcher: Different wording but matching meaning returns high score', async () => {
+      const textA = 'built scalable backend services';
+      const textB = 'develop distributed systems';
+      const score = await getSemanticScore(textA, textB);
+      if (score < 60) throw new Error(`Expected high semantic similarity score, got: ${score}`);
+    });
+
+    await runTestAsync(314, 'Semantic Matcher: Genuinely unrelated texts return low score', async () => {
+      const textA = 'expert in nursing care';
+      const textB = 'develop distributed systems';
+      const score = await getSemanticScore(textA, textB);
+      if (score > 35) throw new Error(`Expected low semantic similarity score, got: ${score}`);
+    });
+
+    await runTestAsync(315, 'Semantic Matcher: timing and performance caching check', async () => {
+      const textA = 'react developer';
+      const textB = 'ui engineer';
+      
+      const t0 = Date.now();
+      await getSemanticScore(textA, textB);
+      const firstDuration = Date.now() - t0;
+      
+      const t1 = Date.now();
+      await getSemanticScore(textA, textB);
+      const secondDuration = Date.now() - t1;
+      
+      console.log(`[Semantic Timing] First Call: ${firstDuration}ms, Cached Second Call: ${secondDuration}ms`);
+      
+      if (secondDuration > 300) {
+        throw new Error(`Cached model call was too slow, took: ${secondDuration}ms`);
+      }
+    });
+
     console.log("\n====================================================");
     console.log("                TEST RUN SUMMARY                     ");
     console.log("====================================================");
-    console.log(`Total Tests Run: 312`);
+    console.log(`Total Tests Run: 315`);
     console.log(`Passed:         ${passedCount}`);
-    console.log(`Failed:         ${312 - passedCount}`);
+    console.log(`Failed:         ${315 - passedCount}`);
     console.log("====================================================\n");
 
-    if (passedCount === 312) {
-      console.log("[SUCCESS] ALL 312 TEST CASES PASSED SUCCESSFULLY!");
+    if (passedCount === 315) {
+      console.log("[SUCCESS] ALL 315 TEST CASES PASSED SUCCESSFULLY!");
       process.exit(0);
     } else {
       console.log("[FAILURE] Some test cases did not pass.");

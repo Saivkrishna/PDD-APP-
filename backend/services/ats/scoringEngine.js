@@ -35,6 +35,8 @@ try {
   console.error('[Scoring Engine] Failed to load weights configuration:', err.message);
 }
 
+const { getSemanticScore } = require('./semanticMatcher');
+
 /**
  * Calculates CareerPath AI ATS Compatibility Score and sub-scores.
  * @param {Object} resumeSections - Extracted sections from resume.
@@ -43,7 +45,7 @@ try {
  * @param {Array} missingSkills - Missing skills list from skillMatcher.
  * @returns {Object} Score details and breakdown.
  */
-function calculateScore(resumeSections, parsedJd, matchedSkills = [], missingSkills = []) {
+async function calculateScore(resumeSections, parsedJd, matchedSkills = [], missingSkills = []) {
   const fullResumeText = Object.values(resumeSections || {}).join('\n').toLowerCase();
   
   // 1. Keyword Match (25%)
@@ -102,13 +104,22 @@ function calculateScore(resumeSections, parsedJd, matchedSkills = [], missingSki
   const titleOverlapCount = titleWords.filter(w => experienceText.includes(w)).length;
   const titleOverlapScore = titleWords.length > 0 ? (titleOverlapCount / titleWords.length) * 100 : 100;
 
-  const experienceRelevance = (experienceYearsScore * 0.6) + (titleOverlapScore * 0.4);
+  const experienceRelevanceHeuristic = (experienceYearsScore * 0.6) + (titleOverlapScore * 0.4);
+
+  // C. Semantic similarity calculation
+  const jdExpTarget = [...(parsedJd.requiredSkills || []), ...(parsedJd.responsibilities || [])].join(' ');
+  const expSemanticScore = await getSemanticScore(experienceText, jdExpTarget);
+  const blendRatio = config.semanticBlendRatio !== undefined ? config.semanticBlendRatio : 0.30;
+  const experienceRelevance = (experienceRelevanceHeuristic * (1 - blendRatio)) + (expSemanticScore * blendRatio);
 
   // 4. Project Relevance (10%)
   const projectsText = (resumeSections.PROJECTS || '').toLowerCase();
   const allJdSkills = [...(parsedJd.requiredSkills || []), ...(parsedJd.preferredSkills || [])];
   const matchedProjectSkillsCount = allJdSkills.filter(s => projectsText.includes(s.toLowerCase())).length;
-  const projectRelevance = allJdSkills.length > 0 ? (matchedProjectSkillsCount / allJdSkills.length) * 100 : 100;
+  const projectRelevanceHeuristic = allJdSkills.length > 0 ? (matchedProjectSkillsCount / allJdSkills.length) * 100 : 100;
+
+  const projSemanticScore = await getSemanticScore(projectsText, allJdSkills.join(' '));
+  const projectRelevance = (projectRelevanceHeuristic * (1 - blendRatio)) + (projSemanticScore * blendRatio);
 
   // 5. Resume Structure (10%)
   const expectedSections = ['SUMMARY', 'SKILLS', 'EXPERIENCE', 'PROJECTS', 'EDUCATION'];

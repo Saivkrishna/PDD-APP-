@@ -9,6 +9,7 @@ const { parseJd } = require('./services/ats/jdParser');
 const { matchSkills } = require('./services/ats/skillMatcher');
 const { calculateScore } = require('./services/ats/scoringEngine');
 const { checkFormatting } = require('./services/ats/formattingChecker');
+const { getSemanticScore } = require('./services/ats/semanticMatcher');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -1818,13 +1819,32 @@ app.post('/api/ats/score', async (req, res) => {
       return res.status(400).json({ error: 'resumeSections and parsedJd are required' });
     }
 
-    const scoreResults = calculateScore(resumeSections, parsedJd, matchedSkills, missingSkills);
+    const scoreResults = await calculateScore(resumeSections, parsedJd, matchedSkills, missingSkills);
     res.json({
       success: true,
       ...scoreResults
     });
   } catch (err) {
     console.error('Error in /api/ats/score:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ATS Semantic Matcher Route
+app.post('/api/ats/semantic-match', async (req, res) => {
+  try {
+    const { textA, textB } = req.body;
+    if (!textA || !textB) {
+      return res.status(400).json({ error: 'textA and textB are required' });
+    }
+
+    const similarityScore = await getSemanticScore(textA, textB);
+    res.json({
+      success: true,
+      similarityScore
+    });
+  } catch (err) {
+    console.error('Error in /api/ats/semantic-match:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

@@ -14,5 +14,6 @@
     "strong": 80,
     "good": 65,
     "potential": 50
-  }
+  },
+  "semanticBlendRatio": 0.30
 }
