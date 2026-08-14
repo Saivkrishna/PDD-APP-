@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: careerpath-ai-backend
+    runtime: node
+    buildCommand: npm install --prefix backend
+    startCommand: node backend/server.js
+    envVars:
+      - key: NODE_ENV
+        value: production

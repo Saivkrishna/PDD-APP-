@@ -649,6 +649,7 @@ app.get('/api/aptitude/status', async (req, res) => {
 });
 
 app.get('/api/overview', (req, res) => {
+  console.log('[API ROUTE HIT]: /api/overview');
   res.json({
     tagline: "Your Dreams Begin With the Right Path",
     trending: liveTrendingJobs.length > 0 ? liveTrendingJobs : defaultTrending
@@ -965,8 +966,8 @@ app.post('/api/profile/update', async (req, res) => {
   }
 });
 
-// --- SAVED CAREERS ROUTES ---
 app.get('/api/saved-careers', async (req, res) => {
+  console.log('[API ROUTE HIT]: /api/saved-careers for user:', req.query.userId);
   try {
     const userId = sanitizeInput(req.query.userId);
     if (!userId) {
@@ -2194,30 +2195,23 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
-// Only listen to port if run directly (development / local monolith mode)
-if (require.main === module || !process.env.FUNCTION_TARGET) {
-  const PORT = process.env.PORT || 2259;
-  app.listen(PORT, () => {
-    console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
-    
-    // Automatically open browser
-    const { exec } = require('child_process');
-    const url = `http://localhost:${PORT}`;
-    const startCommand = process.platform === 'win32' 
-      ? `start ${url}` 
-      : process.platform === 'darwin' 
-        ? `open ${url}` 
-        : `xdg-open ${url}`;
-    
-    exec(startCommand, (err) => {
-      if (err) {
-        console.log(`💡 To access the app, open: ${url}`);
-      }
-    });
+const PORT = process.env.PORT || 2259;
+app.listen(PORT, () => {
+  console.log(`✅ CareerPath AI Monolith running on http://localhost:${PORT}`);
+  
+  // Automatically open browser
+  const { exec } = require('child_process');
+  const url = `http://localhost:${PORT}`;
+  const startCommand = process.platform === 'win32' 
+    ? `start ${url}` 
+    : process.platform === 'darwin' 
+      ? `open ${url}` 
+      : `xdg-open ${url}`;
+  
+  exec(startCommand, (err) => {
+    if (err) {
+      console.log(`💡 To access the app, open: ${url}`);
+    }
   });
-}
-
-// Export the Express app as a Firebase Cloud Function (v2 HTTPS trigger)
-const { onRequest } = require('firebase-functions/v2/https');
-exports.api = onRequest({ cors: true, memory: '1GiB', timeoutSeconds: 60 }, app);
+});
 

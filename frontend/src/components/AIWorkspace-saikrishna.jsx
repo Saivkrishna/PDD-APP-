@@ -298,7 +298,7 @@ export default function AIWorkspace({
         id: 'msg_err_' + Date.now(),
         sender: 'gemini',
         mode: { key: 'error', name: 'System Notice', icon: '⚠️' },
-        text: `🎯 **Connection Status Update**\n\nI was unable to process your request via live Gemini models.\n\n📖 **Details:** ${err.message}\n\n💡 **Action:** Please check if the backend server is running and your \`GEMINI_API_KEY\` in \`backend/.env\` is active.`
+        text: `⚠️ **Connection Error**\n\nI was unable to connect to the advisor service.\n\n📖 **Details:** ${err.message}\n\n💡 **Action:** Please verify if the backend server is running and reachable.`
       };
 
       setChats(prev => prev.map(c => {
