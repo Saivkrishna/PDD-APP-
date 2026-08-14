@@ -13,6 +13,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
   const [overallScore, setOverallScore] = useState(0);
   const [matchLabel, setMatchLabel] = useState('');
   const [subScores, setSubScores] = useState(null);
+  const [formattingChecks, setFormattingChecks] = useState([]);
 
   // Tabs for the panels in step 3
   const [activeResumeTab, setActiveResumeTab] = useState('ALL');
@@ -188,6 +189,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       setOverallScore(scoreData.overallScore);
       setMatchLabel(scoreData.matchLabel);
       setSubScores(scoreData.subScores);
+      setFormattingChecks(scoreData.formattingChecks || []);
       setStep(3); // Go to results dashboard
     } catch (err) {
       setError(err.message || 'An error occurred during parsing or score calculation.');
@@ -206,6 +208,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     setOverallScore(0);
     setMatchLabel('');
     setSubScores(null);
+    setFormattingChecks([]);
     setError('');
     setStep(1);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -662,6 +665,12 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                 Skills Match
               </button>
               <button
+                className={`section-tab-btn ${activeJdTab === 'formatting-check' ? 'active' : ''}`}
+                onClick={() => setActiveJdTab('formatting-check')}
+              >
+                Formatting & Structure
+              </button>
+              <button
                 className={`section-tab-btn ${activeJdTab === 'resume-ref' ? 'active' : ''}`}
                 onClick={() => setActiveJdTab('resume-ref')}
               >
@@ -747,6 +756,72 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
                     ) : (
                       <span style={{ fontSize: '13px', color: 'var(--text-main)', fontWeight: 'bold' }}>🎉 Perfect Match! No missing skills.</span>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {/* Formatting & Structure Checklist */}
+              {activeJdTab === 'formatting-check' && (
+                <div>
+                  <div style={styles.subHeading}>ATS Formatting Checklist</div>
+                  <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '14px' }}>
+                    Heuristic evaluation showing potential layout/format compatibility flags.
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {formattingChecks.map((chk, idx) => {
+                      let statusColor = '#04AA6D'; // green for pass
+                      let statusIcon = '✓';
+                      let statusBg = 'rgba(4, 170, 109, 0.1)';
+                      if (chk.status === 'warning') {
+                        statusColor = '#f59e0b'; // orange for warning
+                        statusIcon = '⚠️';
+                        statusBg = 'rgba(245, 158, 11, 0.1)';
+                      } else if (chk.status === 'fail') {
+                        statusColor = '#ff8b8b'; // red for fail
+                        statusIcon = '✗';
+                        statusBg = 'rgba(255, 139, 139, 0.1)';
+                      }
+                      return (
+                        <div
+                          key={idx}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            gap: '12px',
+                            padding: '12px',
+                            border: '1px solid var(--border-color)',
+                            borderRadius: '10px',
+                            background: 'var(--bg-container)'
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: '24px',
+                              height: '24px',
+                              borderRadius: '50%',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '13px',
+                              fontWeight: 'bold',
+                              color: statusColor,
+                              backgroundColor: statusBg,
+                              flexShrink: 0
+                            }}
+                          >
+                            {statusIcon}
+                          </span>
+                          <div>
+                            <div style={{ fontWeight: 'bold', fontSize: '13px', color: 'var(--text-main)' }}>
+                              {chk.checkName}
+                            </div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '2px', lineHeight: 1.4 }}>
+                              {chk.message}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}

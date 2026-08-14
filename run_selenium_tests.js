@@ -367,16 +367,64 @@ async function main() {
       }
     });
 
+    // ==========================================
+    // GROUP 11: FORMATTING CHECKER TESTS (Tests 310-312)
+    // ==========================================
+    const { checkFormatting } = require('./backend/services/ats/formattingChecker');
+
+    runTest(310, 'Formatting Checker: Well-formatted resume passes checks', () => {
+      const resumeText = 'Saikrishna Dev. Email: test@example.com Phone: 123-456-7890. Summary: Web developer with expertise in building responsive applications. Experience: Senior Developer at Tech Corp for three years, doing frontend react dev. Education: Bachelor of Science in Computer Science from state university. Skills: React, Node, SQL, AWS, Javascript, CSS, HTML, Git.';
+      const resumeSections = {
+        SUMMARY: 'Web developer with expertise in building responsive applications.',
+        SKILLS: 'React, Node, SQL, AWS, Javascript, CSS, HTML, Git',
+        EXPERIENCE: 'Worked 3 years at tech corp designing premium user interfaces.',
+        EDUCATION: 'BS in Computer Science from State University'
+      };
+
+      const result = checkFormatting(resumeText, resumeSections);
+      if (result.formattingScore < 80) throw new Error(`Expected high formatting score, got: ${result.formattingScore}`);
+      const hasFail = result.checks.some(c => c.status === 'fail');
+      if (hasFail) throw new Error('A well-formatted resume should not contain fail status checks');
+    });
+
+    runTest(311, 'Formatting Checker: Catches missing details and inconsistent dates', () => {
+      const resumeText = 'John Doe. Experience: 2028-2035 at Future Corp.';
+      const resumeSections = {
+        EXPERIENCE: 'Worked in the future.'
+      };
+
+      const result = checkFormatting(resumeText, resumeSections);
+      
+      const contactCheck = result.checks.find(c => c.checkName === 'Contact Information');
+      if (contactCheck.status !== 'fail') throw new Error('Contact info check should be fail');
+
+      const dateCheck = result.checks.find(c => c.checkName === 'Date Consistency Check');
+      if (dateCheck.status !== 'warning') throw new Error('Future dates check should be warning');
+    });
+
+    runTest(312, 'Formatting Checker: Handles scanned/image-only fail scenario', () => {
+      const resumeText = 'Short text';
+      const resumeSections = {};
+
+      const result = checkFormatting(resumeText, resumeSections);
+      
+      const extractCheck = result.checks.find(c => c.checkName === 'Text Extractability');
+      if (extractCheck.status !== 'warning') throw new Error('Short text extractability should be warning');
+
+      const nonImageCheck = result.checks.find(c => c.checkName === 'Non-Image Content Check');
+      if (nonImageCheck.status !== 'fail') throw new Error('Non-Image Check should be fail for short texts');
+    });
+
     console.log("\n====================================================");
     console.log("                TEST RUN SUMMARY                     ");
     console.log("====================================================");
-    console.log(`Total Tests Run: 309`);
+    console.log(`Total Tests Run: 312`);
     console.log(`Passed:         ${passedCount}`);
-    console.log(`Failed:         ${309 - passedCount}`);
+    console.log(`Failed:         ${312 - passedCount}`);
     console.log("====================================================\n");
 
-    if (passedCount === 309) {
-      console.log("[SUCCESS] ALL 309 TEST CASES PASSED SUCCESSFULLY!");
+    if (passedCount === 312) {
+      console.log("[SUCCESS] ALL 312 TEST CASES PASSED SUCCESSFULLY!");
       process.exit(0);
     } else {
       console.log("[FAILURE] Some test cases did not pass.");

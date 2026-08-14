@@ -6,6 +6,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { checkFormatting } = require('./formattingChecker');
 
 // Load weights safely
 let config = {
@@ -155,8 +156,8 @@ function calculateScore(resumeSections, parsedJd, matchedSkills = [], missingSki
   const achievements = metricsCount >= 3 ? 100 : metricsCount === 2 ? 75 : metricsCount === 1 ? 50 : 0;
 
   // 9. ATS Formatting (5%)
-  // Placeholder for Phase 6 checks
-  const atsFormatting = 100;
+  const formattingResult = checkFormatting(fullResumeText, resumeSections);
+  const atsFormatting = formattingResult.formattingScore;
 
   // Weighted Sum Calculation
   const subScores = {
@@ -191,7 +192,8 @@ function calculateScore(resumeSections, parsedJd, matchedSkills = [], missingSki
   return {
     overallScore,
     matchLabel,
-    subScores
+    subScores,
+    formattingChecks: formattingResult.checks
   };
 }
 

@@ -9,6 +9,7 @@ const { detectSections } = require('./services/ats/detector');
 const { parseJd } = require('./services/ats/jdParser');
 const { matchSkills } = require('./services/ats/skillMatcher');
 const { calculateScore } = require('./services/ats/scoringEngine');
+const { checkFormatting } = require('./services/ats/formattingChecker');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -2124,6 +2125,25 @@ app.post('/api/ats/score', async (req, res) => {
     });
   } catch (err) {
     console.error('Error in /api/ats/score:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ATS Formatting Checker Route
+app.post('/api/ats/check-formatting', async (req, res) => {
+  try {
+    const { resumeText, resumeSections } = req.body;
+    if (!resumeSections) {
+      return res.status(400).json({ error: 'resumeSections is required' });
+    }
+
+    const formattingResults = checkFormatting(resumeText || '', resumeSections);
+    res.json({
+      success: true,
+      ...formattingResults
+    });
+  } catch (err) {
+    console.error('Error in /api/ats/check-formatting:', err.message);
     res.status(500).json({ error: err.message });
   }
 });
