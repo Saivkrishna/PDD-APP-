@@ -6879,7 +6879,7 @@ function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateT
         </div>
       </div>
 
-      {/* Sound Settings */}
+      {/* Sound Settings (Commented out to hide from the UI)
       <div style={S.detailBox}>
         <div style={S.label}>{t('sounds')}</div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10, borderBottom: soundEnabled ? '1px solid var(--border-color)' : 'none', paddingBottom: soundEnabled ? 10 : 0 }}>
@@ -6925,6 +6925,7 @@ function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateT
           </div>
         )}
       </div>
+      */}
 
 
 
