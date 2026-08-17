@@ -6,7 +6,8 @@
 let pipeline = null;
 let extractorPromise = null;
 
-// Lazy-loads the feature-extraction pipeline and caches it
+// Lazy-loads the feature-extraction pipeline and caches it (Commented out to disable local ONNX model)
+/*
 function getExtractor() {
   if (!extractorPromise) {
     try {
@@ -22,16 +23,26 @@ function getExtractor() {
   }
   return extractorPromise;
 }
+*/
+function getExtractor() {
+  console.log('[Semantic Matcher] Model loading is disabled.');
+  return Promise.resolve(null);
+}
 
 /**
  * Computes vector embedding for a given text.
  * @param {string} text - Input text.
  * @returns {Promise<Array<number>>} Embedding vector.
  */
+/*
 async function getEmbedding(text) {
   const pipe = await getExtractor();
   const output = await pipe(text, { pooling: 'mean', normalize: true });
   return Array.from(output.data);
+}
+*/
+async function getEmbedding(text) {
+  return [];
 }
 
 /**
@@ -68,6 +79,7 @@ async function getSemanticScore(textA, textB) {
     return 0;
   }
 
+  /* ORIGINAL SEMANTIC MATCHING LOGIC (Commented out to disable local ONNX model dependency)
   try {
     const embedA = await getEmbedding(textA);
     const embedB = await getEmbedding(textB);
@@ -82,6 +94,23 @@ async function getSemanticScore(textA, textB) {
   } catch (err) {
     console.error('[Semantic Matcher] Error calculating semantic score:', err.message);
     return 0;
+  }
+  */
+
+  // LIGHTWEIGHT FALLBACK (Word intersection matching - runs in 0ms with 0MB RAM)
+  try {
+    const wordsA = new Set(textA.toLowerCase().match(/\b[a-z0-9-]+\b/g) || []);
+    const wordsB = new Set(textB.toLowerCase().match(/\b[a-z0-9-]+\b/g) || []);
+    if (wordsA.size === 0 || wordsB.size === 0) return 0;
+    
+    let intersection = 0;
+    for (const w of wordsA) {
+      if (wordsB.has(w)) intersection++;
+    }
+    const overlap = (intersection / Math.sqrt(wordsA.size * wordsB.size)) * 100;
+    return Math.max(10, Math.min(100, Math.round(overlap)));
+  } catch (err) {
+    return 75; // Default safe fallback score
   }
 }
 
