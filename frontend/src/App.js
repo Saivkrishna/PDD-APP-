@@ -7056,12 +7056,24 @@ export default function App() {
   // Apply active theme dynamically to document root CSS variables
   useEffect(() => {
     const root = document.documentElement;
+    const colorsMap = {
+      cosmic: { primary: '#38bdf8', secondary: '#6366f1', accent: '#38bdf8', glow: 'rgba(56, 189, 248, 0.08)' },
+      neon: { primary: '#ec4899', secondary: '#a855f7', accent: '#ec4899', glow: 'rgba(236, 72, 153, 0.08)' },
+      emerald: { primary: '#10b981', secondary: '#059669', accent: '#10b981', glow: 'rgba(16, 185, 129, 0.08)' },
+      amber: { primary: '#fbbf24', secondary: '#f59e0b', accent: '#fbbf24', glow: 'rgba(251, 191, 36, 0.08)' },
+      sapphire: { primary: '#06b6d4', secondary: '#3b82f6', accent: '#06b6d4', glow: 'rgba(6, 182, 212, 0.08)' },
+      ruby: { primary: '#f43f5e', secondary: '#e11d48', accent: '#f43f5e', glow: 'rgba(244, 63, 94, 0.08)' },
+      orchid: { primary: '#d946ef', secondary: '#8b5cf6', accent: '#d946ef', glow: 'rgba(217, 70, 239, 0.08)' },
+      sunset: { primary: '#f97316', secondary: '#ef4444', accent: '#f97316', glow: 'rgba(249, 115, 22, 0.08)' }
+    };
+    const activeThemeColors = colorsMap[theme] || colorsMap.cosmic;
+
     if (darkMode) {
       root.setAttribute('data-theme', 'dark');
-      root.style.setProperty('--primary', '#04AA6D');
-      root.style.setProperty('--secondary', '#04AA6D');
-      root.style.setProperty('--accent', '#04AA6D');
-      root.style.setProperty('--accent-glow', 'rgba(4, 170, 109, 0.08)');
+      root.style.setProperty('--primary', activeThemeColors.primary);
+      root.style.setProperty('--secondary', activeThemeColors.secondary);
+      root.style.setProperty('--accent', activeThemeColors.accent);
+      root.style.setProperty('--accent-glow', activeThemeColors.glow);
       root.style.setProperty('--border-color', '#333333');
       root.style.setProperty('--text-sub', '#D0D0D0');
       root.style.setProperty('--bg-start', '#121212');
@@ -7084,10 +7096,10 @@ export default function App() {
       root.style.setProperty('--btn-border', '#FFFFFF');
     } else {
       root.setAttribute('data-theme', 'light');
-      root.style.setProperty('--primary', '#04AA6D');
-      root.style.setProperty('--secondary', '#04AA6D');
-      root.style.setProperty('--accent', '#04AA6D');
-      root.style.setProperty('--accent-glow', 'rgba(4, 170, 109, 0.08)');
+      root.style.setProperty('--primary', activeThemeColors.primary);
+      root.style.setProperty('--secondary', activeThemeColors.secondary);
+      root.style.setProperty('--accent', activeThemeColors.accent);
+      root.style.setProperty('--accent-glow', activeThemeColors.glow);
       root.style.setProperty('--border-color', '#E5E5E5');
       root.style.setProperty('--text-sub', '#222222');
       root.style.setProperty('--bg-start', '#FFFFFF');
