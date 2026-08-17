@@ -6932,7 +6932,7 @@ function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateT
         <div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.6, marginTop: 8 }}>
           <div>Product Name: <b>CareerPath AI</b></div>
           <div>Version: <b>2.1.0-Release</b></div>
-          <div>Database Sync: <b>Graduation: 29K entries | 10th: 40 entries</b></div>
+          {/* <div>Database Sync: <b>Graduation: 29K entries | 10th: 40 entries</b></div> */}
           <div style={{ marginTop: 6 }}>© 2026 CareerPath AI Team. All Rights Reserved.</div>
         </div>
       </div>
