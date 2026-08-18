@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, useColorScheme, Modal } from 'react-native';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { auth } from '../firebase';
 import { Colors, Spacing } from '@/constants/theme';
-import { API_URL } from '../config';
+import { API_URL, GOOGLE_WEB_CLIENT_ID } from '../config';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 interface LoginProps {
   onLogin: (user: any) => void;
@@ -25,6 +26,15 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
 
   const scheme = useColorScheme() || 'dark';
   const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
+
+  useEffect(() => {
+    if (GOOGLE_WEB_CLIENT_ID && !GOOGLE_WEB_CLIENT_ID.includes('YOUR_CLIENT_ID')) {
+      GoogleSignin.configure({
+        webClientId: GOOGLE_WEB_CLIENT_ID,
+        offlineAccess: true,
+      });
+    }
+  }, []);
 
   const handleLogin = async () => {
     setError('');
@@ -58,6 +68,63 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
     } catch (e: any) {
       console.error("Login error:", e);
       setError(e.message.replace('Firebase: ', '') || 'Invalid email or password');
+    }
+    setLoading(false);
+  };
+
+  const handleGoogleLogin = async () => {
+    setError('');
+    
+    // Check if client ID has been replaced
+    if (!GOOGLE_WEB_CLIENT_ID || GOOGLE_WEB_CLIENT_ID.includes('YOUR_CLIENT_ID')) {
+      setError('Google Sign-In has not been configured with a Web Client ID in config.ts yet.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const userInfo = await GoogleSignin.signIn();
+      const idToken = userInfo.data?.idToken || userInfo.idToken;
+      
+      if (!idToken) {
+        throw new Error('Google Sign-In completed, but no ID Token was received. Verify credentials in Google Cloud Console.');
+      }
+      
+      const credential = GoogleAuthProvider.credential(idToken);
+      const userCredential = await signInWithCredential(auth, credential);
+      
+      const syncRes = await fetch(`${API_URL}/auth/sync`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: userCredential.user.uid,
+          name: userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Google User',
+          email: userCredential.user.email
+        })
+      });
+      
+      if (syncRes.ok) {
+        const syncData = await syncRes.json();
+        onLogin(syncData.user);
+      } else {
+        onLogin({
+          id: userCredential.user.uid,
+          name: userCredential.user.displayName || userCredential.user.email?.split('@')[0] || 'Google User',
+          email: userCredential.user.email
+        });
+      }
+    } catch (e: any) {
+      console.error("Google Sign-In Exception details:", e);
+      if (e.code === statusCodes.SIGN_IN_CANCELLED) {
+        setError('Sign-in cancelled by user.');
+      } else if (e.code === statusCodes.IN_PROGRESS) {
+        setError('Google Sign-in is already in progress.');
+      } else if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        setError('Google Play Services are not available or need updating.');
+      } else {
+        setError(e.message || 'An error occurred during Google Sign-In.');
+      }
     }
     setLoading(false);
   };
@@ -139,14 +206,21 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
         </View>
 
         <TouchableOpacity
-          style={[styles.googleBtn, { borderColor: colors.borderColor }]}
-          onPress={() => setError('Google Sign-In requires active native provider setup. Please use Email/Password.')}
+          style={[styles.googleBtn, { borderColor: colors.borderColor, opacity: loading ? 0.7 : 1 }]}
+          onPress={handleGoogleLogin}
+          disabled={loading}
         >
-          <Image
-            source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
-            style={styles.googleIcon}
-          />
-          <Text style={[styles.googleBtnText, { color: colors.textMain }]}>Continue with Google</Text>
+          {loading ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : (
+            <>
+              <Image
+                source={{ uri: 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg' }}
+                style={styles.googleIcon}
+              />
+              <Text style={[styles.googleBtnText, { color: colors.textMain }]}>Continue with Google</Text>
+            </>
+          )}
         </TouchableOpacity>
 
         <View style={styles.registerRow}>
