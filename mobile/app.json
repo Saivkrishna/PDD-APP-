@@ -9,8 +9,7 @@
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.saikrishna.careerpath",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.saikrishna.careerpath"
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +19,6 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "package": "com.saikrishna.careerpath",
-      "googleServicesFile": "./google-services.json",
       "predictiveBackGestureEnabled": false
     },
     "web": {
