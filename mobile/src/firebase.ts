@@ -20,7 +20,8 @@ if (Platform.OS === 'web') {
 } else {
     // @ts-ignore
     const { getReactNativePersistence } = require("firebase/auth");
-    const AsyncStorage = require("@react-native-async-storage/async-storage").default;
+    const AsyncStorageModule = require("@react-native-async-storage/async-storage");
+    const AsyncStorage = AsyncStorageModule.default || AsyncStorageModule;
     auth = initializeAuth(app, {
         persistence: getReactNativePersistence(AsyncStorage)
     });

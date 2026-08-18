@@ -82,34 +82,54 @@ export default function AppEntry() {
   // 2. Track Firebase Auth state change and sync to backend DB
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const res = await fetch(`${API_URL}/auth/sync`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              id: firebaseUser.uid,
-              name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
-              email: firebaseUser.email
-            })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            setUser(data.user);
-            await AsyncStorage.setItem('cp_user', JSON.stringify(data.user));
-          } else {
+      try {
+        if (firebaseUser) {
+          try {
+            const res = await fetch(`${API_URL}/auth/sync`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id: firebaseUser.uid,
+                name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'User',
+                email: firebaseUser.email
+              })
+            });
+            if (res.ok) {
+              const data = await res.json();
+              setUser(data.user);
+              try {
+                await AsyncStorage.setItem('cp_user', JSON.stringify(data.user));
+              } catch (err) {
+                console.warn('Failed to cache user state in AsyncStorage:', err);
+              }
+            } else {
+              const fallback = { id: firebaseUser.uid, name: firebaseUser.displayName || firebaseUser.email?.split('@')[0], email: firebaseUser.email };
+              setUser(fallback);
+              try {
+                await AsyncStorage.setItem('cp_user', JSON.stringify(fallback));
+              } catch (err) {
+                console.warn('Failed to cache user fallback state in AsyncStorage:', err);
+              }
+            }
+          } catch (e) {
             const fallback = { id: firebaseUser.uid, name: firebaseUser.displayName || firebaseUser.email?.split('@')[0], email: firebaseUser.email };
             setUser(fallback);
-            await AsyncStorage.setItem('cp_user', JSON.stringify(fallback));
+            try {
+              await AsyncStorage.setItem('cp_user', JSON.stringify(fallback));
+            } catch (err) {
+              console.warn('Failed to cache user fallback state after fetch failure:', err);
+            }
           }
-        } catch (e) {
-          const fallback = { id: firebaseUser.uid, name: firebaseUser.displayName || firebaseUser.email?.split('@')[0], email: firebaseUser.email };
-          setUser(fallback);
-          await AsyncStorage.setItem('cp_user', JSON.stringify(fallback));
+        } else {
+          setUser(null);
+          try {
+            await AsyncStorage.removeItem('cp_user');
+          } catch (err) {
+            console.warn('Failed to clear user cache in AsyncStorage:', err);
+          }
         }
-      } else {
-        setUser(null);
-        await AsyncStorage.removeItem('cp_user');
+      } catch (globalErr) {
+        console.warn('Uncaught error in auth state transition:', globalErr);
       }
     });
     return () => unsubscribe();
@@ -216,28 +236,48 @@ export default function AppEntry() {
 
   const handleUpdateLang = async (nextLang: string) => {
     setLang(nextLang);
-    await AsyncStorage.setItem('cp_lang', nextLang);
+    try {
+      await AsyncStorage.setItem('cp_lang', nextLang);
+    } catch (e) {
+      console.warn('AsyncStorage error in handleUpdateLang:', e);
+    }
   };
 
   const handleUpdateTheme = async (nextTheme: string) => {
     setTheme(nextTheme);
-    await AsyncStorage.setItem('cp_theme', nextTheme);
+    try {
+      await AsyncStorage.setItem('cp_theme', nextTheme);
+    } catch (e) {
+      console.warn('AsyncStorage error in handleUpdateTheme:', e);
+    }
   };
 
   const handleUpdateSound = async (enabled: boolean) => {
     setSoundEnabled(enabled);
-    await AsyncStorage.setItem('cp_sound', enabled ? 'true' : 'false');
+    try {
+      await AsyncStorage.setItem('cp_sound', enabled ? 'true' : 'false');
+    } catch (e) {
+      console.warn('AsyncStorage error in handleUpdateSound:', e);
+    }
   };
 
   const handleUpdateSoundType = async (type: string) => {
     setSoundType(type);
-    await AsyncStorage.setItem('cp_sound_type', type);
+    try {
+      await AsyncStorage.setItem('cp_sound_type', type);
+    } catch (e) {
+      console.warn('AsyncStorage error in handleUpdateSoundType:', e);
+    }
   };
 
   const handleToggleThemeMode = async () => {
     const nextDark = !darkMode;
     setDarkMode(nextDark);
-    await AsyncStorage.setItem('cp_dark_mode', nextDark ? 'true' : 'false');
+    try {
+      await AsyncStorage.setItem('cp_dark_mode', nextDark ? 'true' : 'false');
+    } catch (e) {
+      console.warn('AsyncStorage error in handleToggleThemeMode:', e);
+    }
   };
 
   const translationHelper = (key: string) => t(key, lang);
