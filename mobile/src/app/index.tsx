@@ -24,6 +24,7 @@ import ArithmeticRainGame from '../components/ArithmeticRainGame';
 import EducationHubPage from '../components/EducationHubPage';
 import ReasoningPracticePage from '../components/ReasoningPracticePage';
 import SearchPage from '../components/SearchPage';
+import TechLearningPage from '../components/TechLearningPage';
 
 export default function AppEntry() {
   const [showSplash, setShowSplash] = useState(true);
@@ -379,6 +380,9 @@ export default function AppEntry() {
             savedCareers={savedCareers}
             onSelectSavedCareer={(item) => handleNavigateToPayload(item.payload)}
           />
+        )}
+        {page === 'tech-learning' && (
+          <TechLearningPage onBack={handleBack} t={translationHelper} />
         )}
         {page === 'memory-matrix' && (
           <MemoryMatrixGame onBack={handleBack} />
