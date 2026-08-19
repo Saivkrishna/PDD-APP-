@@ -6963,7 +6963,6 @@ export default function App() {
   const [navHistory, setNavHistory] = useState(['home']);
   const [selectedTrendingJob, setSelectedTrendingJob] = useState(null);
   const [navTarget, setNavTarget] = useState(null);
-  const [showGeminiChat, setShowGeminiChat] = useState(false);
 
   const [initialChatPrompt, setInitialChatPrompt] = useState('');
 
@@ -6990,10 +6989,10 @@ export default function App() {
   });
 
   // Sync state reference for native hardware back button handler
-  const backStateRef = useRef({ page, navHistory, selectedTrendingJob, showGeminiChat });
+  const backStateRef = useRef({ page, navHistory, selectedTrendingJob });
   useEffect(() => {
-    backStateRef.current = { page, navHistory, selectedTrendingJob, showGeminiChat };
-  }, [page, navHistory, selectedTrendingJob, showGeminiChat]);
+    backStateRef.current = { page, navHistory, selectedTrendingJob };
+  }, [page, navHistory, selectedTrendingJob]);
 
   // Scroll to top on page or selected job change
   useEffect(() => {
@@ -7344,8 +7343,6 @@ export default function App() {
             user={user}
             onTriggerChatPrompt={(prompt) => {
               playClickSound(soundEnabled);
-              setInitialChatPrompt(prompt);
-              setShowGeminiChat(true);
             }}
             darkMode={darkMode}
           />
@@ -7576,8 +7573,6 @@ export default function App() {
             user={user}
             onTriggerChatPrompt={(prompt) => {
               playClickSound(soundEnabled);
-              setInitialChatPrompt(prompt);
-              setShowGeminiChat(true);
             }}
             darkMode={darkMode}
           />
@@ -7642,49 +7637,6 @@ export default function App() {
 
       {!isGameOrWorkspace && <BottomNav active={page} onNav={handleNavChange} t={t} />}
 
-      {/* Floating AI Chatbot Button (FAB) */}
-      {!isGameOrWorkspace && !showGeminiChat && (
-        <button
-          onClick={() => {
-            playClickSound(soundEnabled);
-            setShowGeminiChat(true);
-          }}
-          aria-label="Open AI Career Assistant"
-          title="Open AI Career Assistant"
-          className="premium-ai-fab"
-          style={{
-            position: 'fixed',
-            bottom: '95px',
-            right: '24px',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, var(--primary, #6366f1), var(--secondary, #a855f7))',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            color: '#fff',
-            fontSize: '28px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)',
-            zIndex: 999,
-            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-            padding: 0
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 12px 35px rgba(99, 102, 241, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = 'scale(1) translateY(0)';
-            e.currentTarget.style.boxShadow = '0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)';
-          }}
-        >
-          🤖
-        </button>
-      )}
-
       {/* Compare Overlay Dashboard */}
       {showCompare && (
         <ComparisonOverlay
@@ -7692,19 +7644,6 @@ export default function App() {
           onRemove={handleRemoveFromCompare}
           onClose={() => { setShowCompare(false); playClickSound(soundEnabled); }}
           t={t}
-        />
-      )}
-
-      {/* AI Workspace Overlay Chatbot */}
-      {showGeminiChat && (
-        <AIWorkspace
-          isPageMode={false}
-          onClose={() => { playClickSound(soundEnabled); setShowGeminiChat(false); }}
-          soundEnabled={soundEnabled}
-          currentPage={page}
-          selectedTrendingJob={selectedTrendingJob}
-          initialPrompt={initialChatPrompt}
-          onClearInitialPrompt={() => setInitialChatPrompt('')}
         />
       )}
     </div>
