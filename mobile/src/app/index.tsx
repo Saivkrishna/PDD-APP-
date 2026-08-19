@@ -27,6 +27,7 @@ import EducationHubPage from '../components/EducationHubPage';
 import ReasoningPracticePage from '../components/ReasoningPracticePage';
 import SearchPage from '../components/SearchPage';
 import TechLearningPage from '../components/TechLearningPage';
+import ATSScannerPage from '../components/ATSScannerPage';
 
 export default function AppEntry() {
   const [showSplash, setShowSplash] = useState(true);
@@ -393,6 +394,9 @@ export default function AppEntry() {
         )}
         {page === 'arithmetic-rain' && (
           <ArithmeticRainGame onBack={handleBack} />
+        )}
+        {page === 'ats-scanner' && (
+          <ATSScannerPage onBack={handleBack} t={translationHelper} user={user} />
         )}
       </View>
 

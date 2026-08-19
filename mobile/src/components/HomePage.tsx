@@ -332,20 +332,20 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
         })}
       </View>
 
-      {/* Brain Games & Quizzes section */}
-      <Text style={[styles.sectionHeader, { color: colors.textMain }]}>Brain Training & Quizzes</Text>
-      
-      {/* Aptitude card */}
+      {/* Career & Interview Prep section */}
+      <Text style={[styles.sectionHeader, { color: colors.textMain }]}>Career & Interview Prep</Text>
+
+      {/* ATS Resume Scanner card */}
       <TouchableOpacity
         style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}
-        onPress={() => onNav('aptitude')}
+        onPress={() => onNav('ats-scanner')}
       >
-        <Text style={styles.cardHeaderIcon}>📝</Text>
-        <Text style={[styles.cardTitle, { color: colors.textMain }]}>Aptitude Practice</Text>
+        <Text style={styles.cardHeaderIcon}>🔎</Text>
+        <Text style={[styles.cardTitle, { color: colors.textMain }]}>ATS Resume Scanner</Text>
         <Text style={[styles.cardDesc, { color: colors.textSub }]}>
-          LCM/GCD, ratio methods, percentage fractions, and solved practice questions for entrance exam hacks.
+          Check your resume's ATS compatibility score, identify missing keywords/skills, and get actionable recommendations.
         </Text>
-        <Text style={[styles.arrowLink, { color: colors.primary }]}>Practice Aptitude →</Text>
+        <Text style={[styles.arrowLink, { color: colors.primary }]}>Scan Resume →</Text>
       </TouchableOpacity>
 
       {/* Learning Hub card */}
@@ -360,6 +360,35 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
         </Text>
         <Text style={[styles.arrowLink, { color: colors.primary }]}>Explore Hub →</Text>
       </TouchableOpacity>
+
+      {/* Aptitude card */}
+      <TouchableOpacity
+        style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}
+        onPress={() => onNav('aptitude')}
+      >
+        <Text style={styles.cardHeaderIcon}>📝</Text>
+        <Text style={[styles.cardTitle, { color: colors.textMain }]}>Aptitude Practice</Text>
+        <Text style={[styles.cardDesc, { color: colors.textSub }]}>
+          LCM/GCD, ratio methods, percentage fractions, and solved practice questions for entrance exam hacks.
+        </Text>
+        <Text style={[styles.arrowLink, { color: colors.primary }]}>Practice Aptitude →</Text>
+      </TouchableOpacity>
+
+      {/* Reasoning card */}
+      <TouchableOpacity
+        style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}
+        onPress={() => onNav('reasoning')}
+      >
+        <Text style={styles.cardHeaderIcon}>🧩</Text>
+        <Text style={[styles.cardTitle, { color: colors.textMain }]}>Reasoning Practice</Text>
+        <Text style={[styles.cardDesc, { color: colors.textSub }]}>
+          Syllogisms, circular seating arrangements, blood relation puzzles, and solved logic questions for placements.
+        </Text>
+        <Text style={[styles.arrowLink, { color: colors.primary }]}>Practice Reasoning →</Text>
+      </TouchableOpacity>
+
+      {/* Brain Games & Quizzes section */}
+      <Text style={[styles.sectionHeader, { color: colors.textMain }]}>Brain Training & Memory</Text>
 
       {/* Memory Matrix card */}
       <TouchableOpacity
