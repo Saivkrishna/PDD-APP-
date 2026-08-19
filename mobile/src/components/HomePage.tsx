@@ -13,6 +13,7 @@ interface HomePageProps {
 export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
   const [trending, setTrending] = useState<any[]>([]);
   const [quoteIdx, setQuoteIdx] = useState(0);
+  const [selectedTrendingJob, setSelectedTrendingJob] = useState<any>(null);
 
   const scheme = useColorScheme() || 'dark';
   const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
@@ -27,6 +28,19 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
     { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
     { text: "It always seems impossible until it's done.", author: "Nelson Mandela" }
   ];
+
+  const exams = [
+    { name: "JEE Main 2027", date: "2027-01-15T09:00:00", info: "Engineering entrance for IITs/NITs" },
+    { name: "NEET UG 2027", date: "2027-05-02T10:00:00", info: "Medical entrance for MBBS/BDS" },
+    { name: "CLAT 2027", date: "2026-12-06T14:00:00", info: "Law entrance for National Law Universities" },
+    { name: "CAT 2026", date: "2026-11-29T09:00:00", info: "Post-graduate business entrance for IIMs" }
+  ];
+
+  const calculateDaysLeft = (targetDate: string) => {
+    const difference = +new Date(targetDate) - +new Date();
+    let days = Math.ceil(difference / (1000 * 60 * 60 * 24));
+    return days > 0 ? days : 0;
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/overview`)
@@ -43,6 +57,133 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
     const greetWord = hr < 12 ? 'Good morning' : hr < 17 ? 'Good afternoon' : 'Good evening';
     return name ? `${greetWord}, ${name}! 👋` : `${greetWord}! 👋`;
   };
+
+  if (selectedTrendingJob) {
+    return (
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        {/* Header */}
+        <View style={[styles.detailHeader, { borderBottomColor: colors.borderColor }]}>
+          <TouchableOpacity style={[styles.backBtn, { borderColor: colors.borderColor }]} onPress={() => setSelectedTrendingJob(null)}>
+            <Text style={{ color: colors.textMain, fontWeight: '700' }}>← Back</Text>
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: colors.textMain }]} numberOfLines={1}>
+            {selectedTrendingJob.icon || '🔥'} {selectedTrendingJob.title}
+          </Text>
+        </View>
+
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          {/* Hero */}
+          <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor, alignItems: 'center', padding: Spacing.four }]}>
+            <Text style={{ fontSize: 48, marginBottom: Spacing.one }}>{selectedTrendingJob.icon || '🔥'}</Text>
+            <Text style={[styles.title, { color: colors.textMain, fontSize: 18, textAlign: 'center' }]}>{selectedTrendingJob.title}</Text>
+            <View style={[styles.trendingGrowthBadge, { backgroundColor: 'rgba(16, 185, 129, 0.1)', marginTop: Spacing.one, paddingHorizontal: 12, paddingVertical: 4 }]}>
+              <Text style={[styles.trendingGrowthText, { color: '#10b981', fontSize: 10 }]}>🔥 {selectedTrendingJob.growth || 'High'} Growth</Text>
+            </View>
+          </View>
+
+          {/* Salary Package */}
+          <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+            <Text style={[styles.label, { color: colors.primary }]}>💰 SALARY PACKAGE</Text>
+            <Text style={{ color: '#34d399', fontWeight: '800', fontSize: 16, marginTop: 4 }}>{selectedTrendingJob.salary}</Text>
+          </View>
+
+          {/* Roadmap */}
+          <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+            <Text style={[styles.label, { color: colors.primary }]}>🗺️ CAREER ROADMAP</Text>
+            {[
+              { title: "Build academic base", subtitle: "Complete baseline studies", desc: selectedTrendingJob.higherStudies && selectedTrendingJob.higherStudies.length > 0 ? `Acquire educational credentials: ${selectedTrendingJob.higherStudies.slice(0, 2).join(', ')}.` : "Complete baseline college studies in relevant disciplines." },
+              { title: "Focus on hot skills", subtitle: "Master modern methods", desc: selectedTrendingJob.skills && selectedTrendingJob.skills.length > 0 ? `Develop trending industry capabilities: ${selectedTrendingJob.skills.slice(0, 3).join(', ')}.` : "Develop specialized and high-demand domain competencies." },
+              { title: "Gain tool mastery", subtitle: "Learn industry software", desc: selectedTrendingJob.tools && selectedTrendingJob.tools.length > 0 ? `Gain advanced fluency in critical industry tools: ${selectedTrendingJob.tools.slice(0, 3).join(', ')}.` : "Master essential software platforms and tech systems." },
+              { title: "Verify your expertise", subtitle: "Earn technical credentials", desc: selectedTrendingJob.certifications && selectedTrendingJob.certifications.length > 0 ? `Validate your abilities by securing credentials: ${selectedTrendingJob.certifications.slice(0, 3).join(', ')}.` : "Secure key professional certifications to stand out." },
+              { title: "Scale your career", subtitle: "Settle in top tech hubs", desc: `Apply for premium opportunities in leading employment markets: ${selectedTrendingJob.locations && selectedTrendingJob.locations.length > 0 ? selectedTrendingJob.locations.slice(0, 3).join(', ') : 'major metropolitan areas'} with a high starting salary of ${selectedTrendingJob.salary || 'competitive figures'}.` }
+            ].map((step, idx) => (
+              <View key={idx} style={styles.roadmapStep}>
+                <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                  <Text style={styles.roadmapStepNumberText}>{idx + 1}</Text>
+                </View>
+                <View style={styles.roadmapStepContent}>
+                  <Text style={{ color: colors.textMain, fontWeight: '700', fontSize: 13 }}>{step.title}</Text>
+                  <Text style={{ color: colors.textSub, fontSize: 11, marginTop: 2 }}>{step.desc}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+
+          {/* Job Description */}
+          <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+            <Text style={[styles.label, { color: colors.primary }]}>📋 JOB DESCRIPTION</Text>
+            <Text style={[styles.desc, { color: colors.textSub, marginTop: 4 }]}>{selectedTrendingJob.description}</Text>
+          </View>
+
+          {/* Skills Required */}
+          {selectedTrendingJob.skills && selectedTrendingJob.skills.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🧠 SKILLS REQUIRED</Text>
+              <View style={styles.skillsContainer}>
+                {selectedTrendingJob.skills.map((skill: string) => (
+                  <View key={skill} style={[styles.skillPill, { backgroundColor: 'rgba(99, 102, 241, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: colors.primary }]}>{skill}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Tools & Technologies */}
+          {selectedTrendingJob.tools && selectedTrendingJob.tools.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🛠️ TOOLS & TECHNOLOGIES</Text>
+              <View style={styles.skillsContainer}>
+                {selectedTrendingJob.tools.map((tool: string) => (
+                  <View key={tool} style={[styles.skillPill, { backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: '#10b981' }]}>{tool}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Certifications */}
+          {selectedTrendingJob.certifications && selectedTrendingJob.certifications.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🏆 CERTIFICATIONS</Text>
+              <View style={styles.skillsContainer}>
+                {selectedTrendingJob.certifications.map((cert: string) => (
+                  <View key={cert} style={[styles.skillPill, { backgroundColor: 'rgba(245, 158, 11, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: '#f59e0b' }]}>{cert}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Future Scope */}
+          {selectedTrendingJob.futureScope && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🔮 FUTURE SCOPE</Text>
+              <Text style={[styles.desc, { color: colors.textSub, marginTop: 4 }]}>{selectedTrendingJob.futureScope}</Text>
+            </View>
+          )}
+
+          {/* Best Locations */}
+          {selectedTrendingJob.locations && selectedTrendingJob.locations.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>📍 BEST LOCATIONS</Text>
+              <View style={styles.skillsContainer}>
+                {selectedTrendingJob.locations.map((loc: string) => (
+                  <View key={loc} style={[styles.skillPill, { backgroundColor: 'rgba(99, 102, 241, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: colors.primary }]}>{loc}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+          
+          <View style={{ height: 60 }} />
+        </ScrollView>
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -87,8 +228,6 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
         </TouchableOpacity>
       </View>
 
-
-
       {/* Education stages section title */}
       <Text style={[styles.sectionHeader, { color: colors.textMain }]}>Explore Education Stages</Text>
       <View style={styles.stageGrid}>
@@ -124,6 +263,73 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
           <Text style={[styles.stageDesc, { color: colors.textSub }]}>PG roadmaps, study abroad guidelines, and placements vacancy.</Text>
           <Text style={[styles.stageLink, { color: colors.primary }]}>Explore →</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* TRENDING CAREERS (Matches Web App Bento Cards) */}
+      {trending.length > 0 && (
+        <View style={styles.trendingContainer}>
+          <Text style={[styles.sectionHeader, { color: colors.textMain }]}>🔥 Trending Careers 2026</Text>
+          <Text style={{ color: colors.textSub, fontSize: 12, marginTop: -Spacing.one, marginBottom: Spacing.two }}>
+            High-growth tracks with strong future demand
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.trendingList}
+          >
+            {trending.slice(0, 10).map((tVal, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.trendingCard, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}
+                onPress={() => setSelectedTrendingJob(tVal)}
+              >
+                <View style={styles.trendingCardTop}>
+                  <Text style={styles.trendingCardIcon}>{tVal.icon || '🔥'}</Text>
+                  <View style={[styles.trendingGrowthBadge, { backgroundColor: 'rgba(99, 102, 241, 0.12)' }]}>
+                    <Text style={[styles.trendingGrowthText, { color: colors.primary }]}>🔥 {tVal.growth || 'High'}</Text>
+                  </View>
+                </View>
+                <View style={{ marginTop: Spacing.two }}>
+                  <Text style={[styles.trendingCardTitle, { color: colors.textMain }]} numberOfLines={2}>
+                    {tVal.title}
+                  </Text>
+                  <Text style={[styles.trendingCardSalary, { color: '#10b981' }]}>
+                    {tVal.salary}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* UPCOMING EXAMS CALENDAR (Matches Web App) */}
+      <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+        <Text style={[styles.label, { color: colors.primary }]}>📅 UPCOMING ENTRANCE EXAMS</Text>
+        <Text style={{ color: colors.textSub, fontSize: 12, marginBottom: Spacing.two }}>
+          Days remaining and schedules for key admissions tests
+        </Text>
+        {exams.map(exam => {
+          const days = calculateDaysLeft(exam.date);
+          const percent = Math.max(0, Math.min(100, (days / 365) * 100));
+          return (
+            <View key={exam.name} style={styles.examItem}>
+              <View style={styles.examRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.examName, { color: colors.textMain }]}>{exam.name}</Text>
+                  <Text style={[styles.examInfo, { color: colors.textSub }]} numberOfLines={1}>{exam.info}</Text>
+                </View>
+                <View style={styles.examDaysContainer}>
+                  <Text style={[styles.examDaysNumber, { color: days < 100 ? '#f87171' : colors.primary }]}>{days}</Text>
+                  <Text style={[styles.examDaysLabel, { color: colors.textSub }]}>DAYS LEFT</Text>
+                </View>
+              </View>
+              <View style={styles.progressBar}>
+                <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${Math.max(10, 100 - percent)}%` }]} />
+              </View>
+            </View>
+          );
+        })}
       </View>
 
       {/* Brain Games & Quizzes section */}
@@ -327,5 +533,170 @@ const styles = StyleSheet.create({
   stageLink: {
     fontSize: 11,
     fontWeight: '800',
+  },
+  label: {
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: Spacing.one,
+  },
+  detailHeader: {
+    height: 64,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+    borderBottomWidth: 1,
+    gap: Spacing.two,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    flex: 1,
+  },
+  backBtn: {
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+  scrollContent: {
+    padding: Spacing.three,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  title: {
+    fontWeight: '900',
+    marginBottom: Spacing.one,
+  },
+  desc: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 4,
+  },
+  bullet: {
+    fontSize: 13,
+    marginVertical: 3,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+    marginTop: Spacing.two,
+  },
+  skillPill: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+  skillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  roadmapStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.two,
+    gap: Spacing.three,
+  },
+  roadmapStepNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roadmapStepNumberText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  roadmapStepContent: {
+    flex: 1,
+  },
+  trendingContainer: {
+    marginBottom: Spacing.three,
+  },
+  trendingList: {
+    paddingVertical: 4,
+  },
+  trendingCard: {
+    width: 170,
+    borderWidth: 1,
+    borderRadius: 18,
+    padding: Spacing.three,
+    marginRight: Spacing.two,
+    minHeight: 120,
+    justifyContent: 'space-between',
+  },
+  trendingCardTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  trendingCardIcon: {
+    fontSize: 24,
+  },
+  trendingGrowthBadge: {
+    borderRadius: 8,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  trendingGrowthText: {
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  trendingCardTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    marginTop: Spacing.two,
+  },
+  trendingCardSalary: {
+    fontSize: 10,
+    fontWeight: '700',
+    marginTop: 2,
+  },
+  examItem: {
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 12,
+    marginVertical: 6,
+  },
+  examRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  examName: {
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  examInfo: {
+    fontSize: 10,
+    marginTop: 2,
+  },
+  examDaysContainer: {
+    alignItems: 'flex-end',
+  },
+  examDaysNumber: {
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  examDaysLabel: {
+    fontSize: 8,
+    fontWeight: '800',
+  },
+  progressBar: {
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255, 255, 255, 0.06)',
+    marginTop: 8,
+    overflow: 'hidden',
+  },
+  progressBarFill: {
+    height: '100%',
+    borderRadius: 2,
   },
 });
