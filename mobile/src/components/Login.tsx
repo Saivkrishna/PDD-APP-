@@ -237,6 +237,21 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
           )}
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={[styles.guestBtn, { borderColor: colors.borderColor }]}
+          onPress={() => {
+            onLogin({
+              id: 'guest_user_123',
+              name: 'Guest Developer',
+              email: 'guest@careerpath.ai',
+              coins: 50,
+              badge: 'Explorer'
+            });
+          }}
+        >
+          <Text style={[styles.guestBtnText, { color: colors.textMain }]}>👤 Continue as Guest</Text>
+        </TouchableOpacity>
+
         <View style={styles.registerRow}>
           <Text style={{ color: colors.textSub, fontSize: 13 }}>Don't have an account? </Text>
           <TouchableOpacity onPress={onGoRegister}>
@@ -394,6 +409,21 @@ const styles = StyleSheet.create({
     height: 18,
   },
   googleBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  guestBtn: {
+    borderWidth: 1,
+    borderRadius: 16,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    backgroundColor: 'rgba(255,255,255,0.02)',
+    marginTop: 12,
+  },
+  guestBtnText: {
     fontSize: 14,
     fontWeight: '700',
   },
