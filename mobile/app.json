@@ -40,6 +40,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ea9517f3-2976-4874-a23e-ee1a57ecae42"
+      }
+    },
+    "owner": "saikrishna_123"
   }
 }
