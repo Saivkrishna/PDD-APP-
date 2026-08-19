@@ -8,6 +8,7 @@ import { allAptitudeQuestions } from './allQuizQuestions';
 import MemoryMatrixGame from './components/MemoryMatrix/MemoryMatrixGame-saikrishna';
 import ReasoningPracticePage from './components/ReasoningPracticePage';
 import ArithmeticRainGame from './components/ArithmeticRain/ArithmeticRainGame-saikrishna';
+import ATSScannerPage from './components/ATSScanner/ATSScannerPage';
 import { auth, googleProvider } from './firebase';
 import { 
   createUserWithEmailAndPassword, 
@@ -1739,6 +1740,31 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
         </div>
 
 
+
+        {/* ATS SCANNER CARD (span-12) */}
+        <div
+          className="bento-card span-12 premium-glass-card"
+          onClick={() => onNav('ats-scanner')}
+          style={{ minHeight: '180px', cursor: 'pointer', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '20px', justifyContent: 'space-between' }}
+        >
+          <div style={{ flex: '1 1 300px' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>ATS Resume Scanner</h3>
+            <p style={{ color: 'var(--text-sub)', fontSize: '13px', marginTop: '6px', lineHeight: 1.5 }}>
+              Check your resume's ATS compatibility score, identify missing keywords/skills, and get actionable recommendations.
+            </p>
+            <button
+              className="premium-btn"
+              style={{ width: 'fit-content', padding: '10px 20px', fontSize: '12px', marginTop: '14px' }}
+              onClick={(e) => { e.stopPropagation(); onNav('ats-scanner'); }}
+            >
+              Scan Resume →
+            </button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+            <ATSScannerIllustration />
+            <span style={{ fontSize: '24px', color: 'var(--primary)', marginRight: '10px' }}>↗</span>
+          </div>
+        </div>
 
         {/* EDUCATION STAGE SELECTORS (After 10th, After 12th, Graduation) */}
         <div className="bento-card span-4 premium-glass-card" onClick={() => onNav('after10th')} style={{ cursor: 'pointer' }}>
@@ -7479,6 +7505,16 @@ export default function App() {
               playClickSound(soundEnabled);
               handleNavigateToPayload(career.payload);
             }}
+          />
+        );
+
+      case 'ats-scanner':
+        return (
+          <ATSScannerPage
+            onBack={handleBack}
+            t={t}
+            user={user}
+            soundEnabled={soundEnabled}
           />
         );
 
