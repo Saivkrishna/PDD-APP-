@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail, GoogleAuthProvider,
 import { auth } from '../firebase';
 import { Colors, Spacing } from '@/constants/theme';
 import { API_URL, GOOGLE_WEB_CLIENT_ID } from '../config';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+
 
 interface LoginProps {
   onLogin: (user: any) => void;
@@ -29,10 +29,15 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
 
   useEffect(() => {
     if (GOOGLE_WEB_CLIENT_ID && !GOOGLE_WEB_CLIENT_ID.includes('YOUR_CLIENT_ID')) {
-      GoogleSignin.configure({
-        webClientId: GOOGLE_WEB_CLIENT_ID,
-        offlineAccess: true,
-      });
+      try {
+        const { GoogleSignin } = require('@react-native-google-signin/google-signin');
+        GoogleSignin.configure({
+          webClientId: GOOGLE_WEB_CLIENT_ID,
+          offlineAccess: true,
+        });
+      } catch (e) {
+        console.warn('Google Sign-in is not supported on this platform/client.');
+      }
     }
   }, []);
 
@@ -71,7 +76,6 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
     }
     setLoading(false);
   };
-
   const handleGoogleLogin = async () => {
     setError('');
     
@@ -82,7 +86,17 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
     }
 
     setLoading(true);
+    let statusCodes: any = null;
     try {
+      let GoogleSignin;
+      try {
+        const GoogleSigninModule = require('@react-native-google-signin/google-signin');
+        GoogleSignin = GoogleSigninModule.GoogleSignin;
+        statusCodes = GoogleSigninModule.statusCodes;
+      } catch (err) {
+        throw new Error('Google Sign-In is only available in the standalone app build. Please use Email & Password to log in on Expo Go.');
+      }
+
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const userInfo = await GoogleSignin.signIn();
       const idToken = (userInfo as any).data?.idToken || (userInfo as any).idToken;
@@ -116,11 +130,11 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
       }
     } catch (e: any) {
       console.error("Google Sign-In Exception details:", e);
-      if (e.code === statusCodes.SIGN_IN_CANCELLED) {
+      if (statusCodes && e.code === statusCodes.SIGN_IN_CANCELLED) {
         setError('Sign-in cancelled by user.');
-      } else if (e.code === statusCodes.IN_PROGRESS) {
+      } else if (statusCodes && e.code === statusCodes.IN_PROGRESS) {
         setError('Google Sign-in is already in progress.');
-      } else if (e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+      } else if (statusCodes && e.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
         setError('Google Play Services are not available or need updating.');
       } else {
         setError(e.message || 'An error occurred during Google Sign-In.');
