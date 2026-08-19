@@ -34,15 +34,23 @@ async function initDemoUser() {
 
 const app = express();
 
-// Enable CORS for Firebase Hosting domains
+// Custom robust CORS middleware allowing local development and production domains
 app.use((req, res, next) => {
+  const origin = req.headers.origin;
   const allowedOrigins = [
     'https://career-guidance-app-9aba0.web.app',
-    'https://career-guidance-app-9aba0.firebaseapp.com'
-  ];
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+    'https://career-guidance-app-9aba0.firebaseapp.com',
+    process.env.FRONTEND_URL
+  ].filter(Boolean);
+
+  const isLocal = origin && (
+    origin.startsWith('http://localhost') || 
+    origin.startsWith('http://127.0.0.1') || 
+    origin.startsWith('http://10.')
+  );
+
+  if (!origin || isLocal || allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -78,6 +86,16 @@ function sanitizeInput(str) {
   if (typeof str !== 'string') return '';
   return str.replace(/<[^>]*>/g, '').trim();
 }
+
+// ─── HEALTH DIAGNOSTICS ENDPOINT ─────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'production',
+    db: global.firestoreDisabled ? 'fallback-local' : 'firestore'
+  });
+});
 
 // ─── AUTHENTICATION ROUTES ───────────────────────────────────────
 app.post('/api/auth/register', async (req, res) => {

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { reasoningQuizQuestions } from '../reasoningQuizData';
 
+const API = process.env.REACT_APP_API_URL || '/api';
+
 export default function ReasoningPracticePage({ onBack, t, onOpenSettings }) {
   // Topic definitions
   const topics = [
@@ -106,7 +108,7 @@ export default function ReasoningPracticePage({ onBack, t, onOpenSettings }) {
     }
 
     // Determine query parameters for Practice or Test Mode
-    let url = '/api/reasoning/quiz';
+    let url = `${API}/reasoning/quiz`;
     if (mode === 'test') {
       url += '?testMode=true';
     } else {

@@ -365,6 +365,16 @@ if (typeof document !== 'undefined') {
       border: 1px solid var(--border-color) !important;
       box-shadow: 0 8px 32px var(--glass-shadow);
     }
+    
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); }
+      50% { box-shadow: 0 8px 35px rgba(99, 102, 241, 0.7), 0 0 35px rgba(168, 85, 247, 0.5); }
+      100% { box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2); }
+    }
+    
+    .premium-ai-fab {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
   `;
   document.head.appendChild(styleTag);
 }
@@ -4572,7 +4582,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
   const [dbCounts, setDbCounts] = useState({});
 
   useEffect(() => {
-    fetch('/api/aptitude/counts')
+    fetch(`${API}/aptitude/counts`)
       .then(res => res.json())
       .then(data => setDbCounts(data))
       .catch(err => console.warn('⚠️ Failed to load database counts:', err.message));
@@ -4591,7 +4601,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
   const handleStartQuiz = async (diff, topicId = quizTopic) => {
     try {
       const normalizedTopic = topicId === 'percentage' ? 'percentages' : topicId;
-      const res = await fetch(`/api/aptitude/questions/${normalizedTopic}/${diff}`);
+      const res = await fetch(`${API}/aptitude/questions/${normalizedTopic}/${diff}`);
       if (!res.ok) throw new Error('API response not ok');
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
@@ -7634,7 +7644,48 @@ export default function App() {
 
       {!isGameOrWorkspace && <BottomNav active={page} onNav={handleNavChange} t={t} />}
 
-
+      {/* Floating AI Chatbot Button (FAB) */}
+      {!isGameOrWorkspace && !showGeminiChat && (
+        <button
+          onClick={() => {
+            playClickSound(soundEnabled);
+            setShowGeminiChat(true);
+          }}
+          aria-label="Open AI Career Assistant"
+          title="Open AI Career Assistant"
+          className="premium-ai-fab"
+          style={{
+            position: 'fixed',
+            bottom: '95px',
+            right: '24px',
+            width: '56px',
+            height: '56px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, var(--primary, #6366f1), var(--secondary, #a855f7))',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            color: '#fff',
+            fontSize: '28px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)',
+            zIndex: 999,
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            padding: 0
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'scale(1.1) translateY(-2px)';
+            e.currentTarget.style.boxShadow = '0 12px 35px rgba(99, 102, 241, 0.6), 0 0 30px rgba(168, 85, 247, 0.4)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'scale(1) translateY(0)';
+            e.currentTarget.style.boxShadow = '0 8px 30px rgba(99, 102, 241, 0.4), 0 0 20px rgba(168, 85, 247, 0.2)';
+          }}
+        >
+          🤖
+        </button>
+      )}
 
       {/* Compare Overlay Dashboard */}
       {showCompare && (
@@ -7643,6 +7694,19 @@ export default function App() {
           onRemove={handleRemoveFromCompare}
           onClose={() => { setShowCompare(false); playClickSound(soundEnabled); }}
           t={t}
+        />
+      )}
+
+      {/* AI Workspace Overlay Chatbot */}
+      {showGeminiChat && (
+        <AIWorkspace
+          isPageMode={false}
+          onClose={() => { playClickSound(soundEnabled); setShowGeminiChat(false); }}
+          soundEnabled={soundEnabled}
+          currentPage={page}
+          selectedTrendingJob={selectedTrendingJob}
+          initialPrompt={initialChatPrompt}
+          onClearInitialPrompt={() => setInitialChatPrompt('')}
         />
       )}
     </div>

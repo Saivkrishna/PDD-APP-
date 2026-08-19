@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 
+const API = process.env.REACT_APP_API_URL || '/api';
+
 export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
   // Steps: 1: Upload Resume, 2: Paste Job Description, 3: Dashboard Results
   const [step, setStep] = useState(1);
@@ -86,7 +88,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
     reader.onloadend = async () => {
       try {
         const base64Data = reader.result.split(',')[1];
-        const response = await fetch('/api/ats/extract', {
+        const response = await fetch(`${API}/ats/extract`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -130,7 +132,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
 
     try {
       // 1. Parse Job Description requirements
-      const response = await fetch('/api/ats/parse-jd', {
+      const response = await fetch(`${API}/ats/parse-jd`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -148,7 +150,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       setParsedJd(data.parsedJd);
 
       // 2. Perform Skill & Keyword Matching
-      const matchResponse = await fetch('/api/ats/match-skills', {
+      const matchResponse = await fetch(`${API}/ats/match-skills`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -168,7 +170,7 @@ export default function ATSScannerPage({ onBack, t, user, soundEnabled }) {
       setMissingSkills(matchData.missingSkills);
 
       // 3. Compute Rule-Based ATS score
-      const scoreResponse = await fetch('/api/ats/score', {
+      const scoreResponse = await fetch(`${API}/ats/score`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
