@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, useColorScheme, StatusBar, Alert, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, useColorScheme, StatusBar, Alert, Text, TouchableOpacity, LogBox } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { API_URL } from '../config';
 import { Colors } from '@/constants/theme';
 import { t } from '../utils/translations';
+
+LogBox.ignoreAllLogs();
 
 // Components
 import Header from '../components/Header';
@@ -307,14 +309,16 @@ export default function AppEntry() {
       <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
 
       {/* Dynamic Header */}
-      <Header
-        title={page === 'home' ? translationHelper('appName') : translationHelper(page)}
-        showBack={page !== 'home'}
-        onBack={handleBack}
-        darkMode={darkMode}
-        onToggleTheme={handleToggleThemeMode}
-        onOpenSettings={() => handleNav('settings')}
-      />
+      {(page === 'home' || page === 'settings') && (
+        <Header
+          title={page === 'home' ? translationHelper('appName') : translationHelper(page)}
+          showBack={page !== 'home'}
+          onBack={handleBack}
+          darkMode={darkMode}
+          onToggleTheme={handleToggleThemeMode}
+          onOpenSettings={() => handleNav('settings')}
+        />
+      )}
 
       {/* Main Screen Router */}
       <View style={styles.screenContainer}>
