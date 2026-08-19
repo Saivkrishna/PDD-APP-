@@ -85,7 +85,7 @@ export default function Login({ onLogin, onGoRegister }: LoginProps) {
     try {
       await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
       const userInfo = await GoogleSignin.signIn();
-      const idToken = userInfo.data?.idToken || userInfo.idToken;
+      const idToken = (userInfo as any).data?.idToken || (userInfo as any).idToken;
       
       if (!idToken) {
         throw new Error('Google Sign-In completed, but no ID Token was received. Verify credentials in Google Cloud Console.');

@@ -19,7 +19,6 @@ import After10thPage from '../components/After10thPage';
 import After12thPage from '../components/After12thPage';
 import GraduationPage from '../components/GraduationPage';
 import AptitudeCheatsheetPage from '../components/AptitudeCheatsheetPage';
-import AIWorkspace from '../components/AIWorkspace';
 import MemoryMatrixGame from '../components/MemoryMatrixGame';
 import ArithmeticRainGame from '../components/ArithmeticRainGame';
 import EducationHubPage from '../components/EducationHubPage';
@@ -31,7 +30,6 @@ export default function AppEntry() {
   const [user, setUser] = useState<any>(null);
   const [page, setPage] = useState<string>('home');
   const [navHistory, setNavHistory] = useState<string[]>(['home']);
-  const [showGeminiChat, setShowGeminiChat] = useState(false);
   const [savedCareers, setSavedCareers] = useState<any[]>([]);
   const [initialTarget, setInitialTarget] = useState<any>(null);
 
@@ -301,15 +299,7 @@ export default function AppEntry() {
     );
   }
 
-  // AI Chat Overlay
-  if (showGeminiChat) {
-    return (
-      <View style={[styles.appWrapper, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle={darkMode ? 'light-content' : 'dark-content'} />
-        <AIWorkspace onClose={() => setShowGeminiChat(false)} currentPage={page} />
-      </View>
-    );
-  }
+
 
   return (
     <View style={[styles.appWrapper, { backgroundColor: colors.background }]}>
@@ -398,13 +388,7 @@ export default function AppEntry() {
         )}
       </View>
 
-      {/* Floating AI Bubble */}
-      <TouchableOpacity
-        style={[styles.floatingAiBtn, { backgroundColor: colors.primary }]}
-        onPress={() => setShowGeminiChat(true)}
-      >
-        <Text style={styles.floatingAiText}>🤖 AI Advisor</Text>
-      </TouchableOpacity>
+
 
       {/* Bottom Navigation */}
       <BottomNav active={page} onNav={handleNav} t={translationHelper} />
