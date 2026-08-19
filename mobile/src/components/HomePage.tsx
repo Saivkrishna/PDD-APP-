@@ -54,7 +54,7 @@ export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
       <View style={styles.heroBox}>
         <Text style={[styles.greeting, { color: colors.textMain }]}>{getGreeting()}</Text>
         <Text style={[styles.heroSub, { color: colors.textSub }]}>
-          Ready to construct your future path? Explore curated roadmaps, test strategies, and utilize Gemini-powered AI guidance.
+          Ready to construct your future path? Explore curated roadmaps, study streams, direct job requirements, and test strategies.
         </Text>
 
         {/* Search bar button */}

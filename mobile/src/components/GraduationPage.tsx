@@ -196,6 +196,69 @@ export default function GraduationPage({
             </View>
           )}
 
+          {/* Item Skills */}
+          {((selectedItemDetail.skills && selectedItemDetail.skills.length > 0) || (selectedItemDetail.skillsRequired && selectedItemDetail.skillsRequired.length > 0)) && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🛠️ KEY SKILLS TO DEVELOP</Text>
+              <View style={styles.skillsContainer}>
+                {(selectedItemDetail.skills || selectedItemDetail.skillsRequired).map((s: string, idx: number) => (
+                  <View key={idx} style={[styles.skillPill, { backgroundColor: 'rgba(99, 102, 241, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: colors.primary }]}>{s}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Item Roadmap */}
+          {selectedItemDetail.howToBecome && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🗺️ ADVANCEMENT ROADMAP</Text>
+              {Array.isArray(selectedItemDetail.howToBecome) ? (
+                selectedItemDetail.howToBecome.map((step: string, idx: number) => (
+                  <View key={idx} style={styles.roadmapStep}>
+                    <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                      <Text style={styles.roadmapStepNumberText}>{idx + 1}</Text>
+                    </View>
+                    <View style={styles.roadmapStepContent}>
+                      <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>{step}</Text>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.roadmapStep}>
+                  <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.roadmapStepNumberText}>1</Text>
+                  </View>
+                  <View style={styles.roadmapStepContent}>
+                    <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>
+                      {selectedItemDetail.howToBecome}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* Item Workplaces */}
+          {selectedItemDetail.workplaces && selectedItemDetail.workplaces.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🏢 COMMON WORKPLACES</Text>
+              {selectedItemDetail.workplaces.map((wp: string, idx: number) => (
+                <Text key={idx} style={[styles.bullet, { color: colors.textMain }]}>• {wp}</Text>
+              ))}
+            </View>
+          )}
+
+          {selectedItemDetail.exams && selectedItemDetail.exams.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>📝 ELIGIBILITY EXAMS</Text>
+              {selectedItemDetail.exams.map((ex: any, idx: number) => (
+                <Text key={idx} style={[styles.bullet, { color: colors.textMain }]}>• {ex}</Text>
+              ))}
+            </View>
+          )}
+
           {selectedItemDetail.universities && (
             <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
               <Text style={[styles.label, { color: colors.primary }]}>🏛️ POPULAR UNIVERSITIES</Text>
@@ -495,5 +558,42 @@ const styles = StyleSheet.create({
   bullet: {
     fontSize: 13,
     marginVertical: 3,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+    marginTop: Spacing.two,
+  },
+  skillPill: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+  skillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  roadmapStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.two,
+    gap: Spacing.three,
+  },
+  roadmapStepNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roadmapStepNumberText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  roadmapStepContent: {
+    flex: 1,
   },
 });

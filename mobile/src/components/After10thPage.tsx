@@ -188,6 +188,50 @@ export default function After10thPage({
             </View>
           )}
 
+          {/* Course Skills */}
+          {((courseDetail.skillsRequired && courseDetail.skillsRequired.length > 0) || (courseDetail.skills && courseDetail.skills.length > 0)) && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🛠️ KEY SKILLS YOU WILL ACQUIRE</Text>
+              <View style={styles.skillsContainer}>
+                {(courseDetail.skillsRequired || courseDetail.skills).map((s: string, idx: number) => (
+                  <View key={idx} style={[styles.skillPill, { backgroundColor: 'rgba(99, 102, 241, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: colors.primary }]}>{s}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Course Roadmap */}
+          {courseDetail.howToBecome && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🗺️ STUDY & CAREER ROADMAP</Text>
+              {Array.isArray(courseDetail.howToBecome) ? (
+                courseDetail.howToBecome.map((step: string, idx: number) => (
+                  <View key={idx} style={styles.roadmapStep}>
+                    <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                      <Text style={styles.roadmapStepNumberText}>{idx + 1}</Text>
+                    </View>
+                    <View style={styles.roadmapStepContent}>
+                      <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>{step}</Text>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.roadmapStep}>
+                  <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.roadmapStepNumberText}>1</Text>
+                  </View>
+                  <View style={styles.roadmapStepContent}>
+                    <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>
+                      {courseDetail.howToBecome}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+
           {courseDetail.jobs && courseDetail.jobs.length > 0 && (
             <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
               <Text style={[styles.label, { color: colors.primary }]}>💼 POPULAR CAREER ROLES</Text>
@@ -275,6 +319,60 @@ export default function After10thPage({
             <Text style={{ color: colors.textMain, fontWeight: '800', fontSize: 16 }}>💰 {selectedJob.salary || 'Competitive base scale'}</Text>
             <Text style={{ color: colors.textSub, marginTop: Spacing.one }}>Growth potential: {selectedJob.growth || 'Steady recruitment demand.'}</Text>
           </View>
+
+          {/* Job Skills */}
+          {((selectedJob.skills && selectedJob.skills.length > 0) || (selectedJob.skillsRequired && selectedJob.skillsRequired.length > 0)) && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🛠️ KEY SKILLS NEEDED</Text>
+              <View style={styles.skillsContainer}>
+                {(selectedJob.skills || selectedJob.skillsRequired).map((s: string, idx: number) => (
+                  <View key={idx} style={[styles.skillPill, { backgroundColor: 'rgba(99, 102, 241, 0.1)', borderColor: colors.borderColor }]}>
+                    <Text style={[styles.skillText, { color: colors.primary }]}>{s}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Job Roadmap */}
+          {selectedJob.howToBecome && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🗺️ CAREER ROADMAP</Text>
+              {Array.isArray(selectedJob.howToBecome) ? (
+                selectedJob.howToBecome.map((step: string, idx: number) => (
+                  <View key={idx} style={styles.roadmapStep}>
+                    <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                      <Text style={styles.roadmapStepNumberText}>{idx + 1}</Text>
+                    </View>
+                    <View style={styles.roadmapStepContent}>
+                      <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>{step}</Text>
+                    </View>
+                  </View>
+                ))
+              ) : (
+                <View style={styles.roadmapStep}>
+                  <View style={[styles.roadmapStepNumber, { backgroundColor: colors.primary }]}>
+                    <Text style={styles.roadmapStepNumberText}>1</Text>
+                  </View>
+                  <View style={styles.roadmapStepContent}>
+                    <Text style={[styles.bullet, { color: colors.textMain, fontWeight: '700' }]}>
+                      {selectedJob.howToBecome}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* Job Workplaces */}
+          {selectedJob.workplaces && selectedJob.workplaces.length > 0 && (
+            <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
+              <Text style={[styles.label, { color: colors.primary }]}>🏢 COMMON WORKPLACES</Text>
+              {selectedJob.workplaces.map((wp: string, idx: number) => (
+                <Text key={idx} style={[styles.bullet, { color: colors.textMain }]}>• {wp}</Text>
+              ))}
+            </View>
+          )}
 
           {selectedJob.exams && selectedJob.exams.length > 0 && (
             <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
@@ -455,5 +553,42 @@ const styles = StyleSheet.create({
   bullet: {
     fontSize: 13,
     marginVertical: 3,
+  },
+  skillsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.two,
+    marginTop: Spacing.two,
+  },
+  skillPill: {
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+  },
+  skillText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  roadmapStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: Spacing.two,
+    gap: Spacing.three,
+  },
+  roadmapStepNumber: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  roadmapStepNumberText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  roadmapStepContent: {
+    flex: 1,
   },
 });
