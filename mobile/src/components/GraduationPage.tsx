@@ -10,6 +10,7 @@ interface GraduationPageProps {
   clearTarget?: () => void;
   savedCareers?: any[];
   onToggleSave?: (career: any) => void;
+  colors: any;
 }
 
 type TabType = 'sectors' | 'higherStudy' | 'studyAbroad' | 'jobs';
@@ -20,7 +21,8 @@ export default function GraduationPage({
   initialTarget,
   clearTarget,
   savedCareers = [],
-  onToggleSave
+  onToggleSave,
+  colors
 }: GraduationPageProps) {
   const [tab, setTab] = useState<TabType>('sectors');
   
@@ -36,9 +38,6 @@ export default function GraduationPage({
   const [loadingDeptDetails, setLoadingDeptDetails] = useState(false);
 
   const [selectedItemDetail, setSelectedItemDetail] = useState<any>(null);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   useEffect(() => {
     setLoading(true);

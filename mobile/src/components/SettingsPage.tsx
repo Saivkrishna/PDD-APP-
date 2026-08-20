@@ -18,6 +18,7 @@ interface SettingsPageProps {
   onBack: () => void;
   savedCareers: any[];
   onSelectSavedCareer: (career: any) => void;
+  colors: any;
 }
 
 export default function SettingsPage({
@@ -34,10 +35,9 @@ export default function SettingsPage({
   onLogout,
   onBack,
   savedCareers = [],
-  onSelectSavedCareer
+  onSelectSavedCareer,
+  colors
 }: SettingsPageProps) {
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   const translationHelper = (key: string) => t(key, lang);
 

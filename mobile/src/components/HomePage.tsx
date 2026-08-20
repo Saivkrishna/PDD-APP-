@@ -8,15 +8,13 @@ interface HomePageProps {
   t: (key: string) => string;
   user: any;
   darkMode: boolean;
+  colors: any;
 }
 
-export default function HomePage({ onNav, t, user, darkMode }: HomePageProps) {
+export default function HomePage({ onNav, t, user, darkMode, colors }: HomePageProps) {
   const [trending, setTrending] = useState<any[]>([]);
   const [quoteIdx, setQuoteIdx] = useState(0);
   const [selectedTrendingJob, setSelectedTrendingJob] = useState<any>(null);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   const quotes = [
     { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
@@ -439,11 +437,13 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 26,
     fontWeight: '900',
+    fontFamily: 'Outfit',
     marginBottom: Spacing.one,
   },
   heroSub: {
     fontSize: 13,
     lineHeight: 18,
+    fontFamily: 'Inter',
     marginBottom: Spacing.three,
   },
   searchBarBtn: {
@@ -462,10 +462,11 @@ const styles = StyleSheet.create({
   searchText: {
     fontSize: 13,
     fontWeight: '500',
+    fontFamily: 'Inter',
   },
   card: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: Spacing.three,
     marginBottom: Spacing.three,
   },
@@ -488,18 +489,21 @@ const styles = StyleSheet.create({
     color: '#fbbf24',
     fontSize: 10,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   quoteText: {
     fontSize: 13,
     fontWeight: '600',
     fontStyle: 'italic',
     lineHeight: 18,
+    fontFamily: 'Inter',
   },
   quoteAuthor: {
     fontSize: 11,
     fontWeight: '800',
     alignSelf: 'flex-end',
     marginTop: Spacing.one,
+    fontFamily: 'Outfit',
   },
   nextQuoteBtn: {
     alignSelf: 'flex-start',
@@ -516,20 +520,24 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 17,
     fontWeight: '900',
+    fontFamily: 'Outfit',
   },
   cardDesc: {
     fontSize: 12,
     lineHeight: 16,
     marginTop: 4,
     marginBottom: 8,
+    fontFamily: 'Inter',
   },
   arrowLink: {
     fontSize: 12,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   sectionHeader: {
     fontSize: 18,
     fontWeight: '900',
+    fontFamily: 'Outfit',
     marginVertical: Spacing.three,
   },
   stageGrid: {
@@ -540,7 +548,7 @@ const styles = StyleSheet.create({
   stageCard: {
     flex: 1,
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 20,
     padding: Spacing.two,
     justifyContent: 'space-between',
     minHeight: 160,
@@ -552,22 +560,26 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     marginTop: 4,
+    fontFamily: 'Outfit',
   },
   stageDesc: {
     fontSize: 10,
     lineHeight: 13,
     marginTop: 2,
     marginBottom: 6,
+    fontFamily: 'Inter',
   },
   stageLink: {
     fontSize: 11,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   label: {
     fontSize: 10,
     fontWeight: '900',
     letterSpacing: 1.5,
     marginBottom: Spacing.one,
+    fontFamily: 'Outfit',
   },
   detailHeader: {
     height: 64,
@@ -581,6 +593,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
     flex: 1,
+    fontFamily: 'Outfit',
   },
   backBtn: {
     borderWidth: 1,
@@ -597,15 +610,18 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: '900',
     marginBottom: Spacing.one,
+    fontFamily: 'Outfit',
   },
   desc: {
     fontSize: 13,
     lineHeight: 18,
     marginTop: 4,
+    fontFamily: 'Inter',
   },
   bullet: {
     fontSize: 13,
     marginVertical: 3,
+    fontFamily: 'Inter',
   },
   skillsContainer: {
     flexDirection: 'row',
@@ -622,6 +638,7 @@ const styles = StyleSheet.create({
   skillText: {
     fontSize: 12,
     fontWeight: '700',
+    fontFamily: 'Inter',
   },
   roadmapStep: {
     flexDirection: 'row',
@@ -640,6 +657,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '800',
+    fontFamily: 'Outfit',
   },
   roadmapStepContent: {
     flex: 1,
@@ -653,7 +671,7 @@ const styles = StyleSheet.create({
   trendingCard: {
     width: 170,
     borderWidth: 1,
-    borderRadius: 18,
+    borderRadius: 20,
     padding: Spacing.three,
     marginRight: Spacing.two,
     minHeight: 120,
@@ -675,21 +693,24 @@ const styles = StyleSheet.create({
   trendingGrowthText: {
     fontSize: 9,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   trendingCardTitle: {
     fontSize: 12,
     fontWeight: '800',
     marginTop: Spacing.two,
+    fontFamily: 'Outfit',
   },
   trendingCardSalary: {
     fontSize: 10,
     fontWeight: '700',
     marginTop: 2,
+    fontFamily: 'Inter',
   },
   examItem: {
     backgroundColor: 'rgba(255, 255, 255, 0.02)',
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 16,
     padding: 12,
     marginVertical: 6,
   },
@@ -701,10 +722,12 @@ const styles = StyleSheet.create({
   examName: {
     fontSize: 13,
     fontWeight: '800',
+    fontFamily: 'Outfit',
   },
   examInfo: {
     fontSize: 10,
     marginTop: 2,
+    fontFamily: 'Inter',
   },
   examDaysContainer: {
     alignItems: 'flex-end',
@@ -712,10 +735,12 @@ const styles = StyleSheet.create({
   examDaysNumber: {
     fontSize: 14,
     fontWeight: '900',
+    fontFamily: 'Outfit',
   },
   examDaysLabel: {
     fontSize: 8,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   progressBar: {
     height: 4,

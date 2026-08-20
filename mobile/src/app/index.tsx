@@ -4,8 +4,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { API_URL } from '../config';
-import { Colors } from '@/constants/theme';
+import { Colors, getThemeColors } from '@/constants/theme';
 import { t } from '../utils/translations';
+import { useFonts } from 'expo-font';
+import { Inter_300Light, Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, Inter_800ExtraBold } from '@expo-google-fonts/inter';
+import { Outfit_400Regular, Outfit_600SemiBold, Outfit_700Bold, Outfit_800ExtraBold, Outfit_900Black } from '@expo-google-fonts/outfit';
 
 LogBox.ignoreAllLogs();
 
@@ -44,8 +47,15 @@ export default function AppEntry() {
   const [soundType, setSoundType] = useState('chime');
   const [darkMode, setDarkMode] = useState(true);
 
+  const [fontsLoaded] = useFonts({
+    'Inter': Inter_400Regular,
+    'Inter-Bold': Inter_700Bold,
+    'Outfit': Outfit_700Bold,
+    'Outfit-Bold': Outfit_900Black,
+  });
+
   const systemScheme = useColorScheme();
-  const colors = Colors[darkMode ? 'dark' : 'light'];
+  const colors = getThemeColors(theme, darkMode);
 
   // 1. Initial configuration loading from AsyncStorage
   useEffect(() => {
@@ -286,7 +296,7 @@ export default function AppEntry() {
 
   // ─── RENDERING FLOW ───────────
 
-  if (showSplash) {
+  if (showSplash || !fontsLoaded) {
     return <Splash onEnter={() => setShowSplash(false)} />;
   }
 
@@ -318,13 +328,14 @@ export default function AppEntry() {
           darkMode={darkMode}
           onToggleTheme={handleToggleThemeMode}
           onOpenSettings={() => handleNav('settings')}
+          colors={colors}
         />
       )}
 
       {/* Main Screen Router */}
       <View style={styles.screenContainer}>
         {page === 'home' && (
-          <HomePage onNav={handleNav} t={translationHelper} user={user} darkMode={darkMode} />
+          <HomePage onNav={handleNav} t={translationHelper} user={user} darkMode={darkMode} colors={colors} />
         )}
         {page === 'after10th' && (
           <After10thPage
@@ -334,6 +345,7 @@ export default function AppEntry() {
             clearTarget={() => setInitialTarget(null)}
             savedCareers={savedCareers}
             onToggleSave={handleToggleSave}
+            colors={colors}
           />
         )}
         {page === 'after12th' && (
@@ -344,6 +356,7 @@ export default function AppEntry() {
             clearTarget={() => setInitialTarget(null)}
             savedCareers={savedCareers}
             onToggleSave={handleToggleSave}
+            colors={colors}
           />
         )}
         {page === 'graduation' && (
@@ -354,19 +367,20 @@ export default function AppEntry() {
             clearTarget={() => setInitialTarget(null)}
             savedCareers={savedCareers}
             onToggleSave={handleToggleSave}
+            colors={colors}
           />
         )}
         {page === 'education' && (
-          <EducationHubPage onNav={handleNav} t={translationHelper} />
+          <EducationHubPage onNav={handleNav} t={translationHelper} colors={colors} />
         )}
         {page === 'reasoning' && (
-          <ReasoningPracticePage onBack={handleBack} t={translationHelper} />
+          <ReasoningPracticePage onBack={handleBack} t={translationHelper} colors={colors} />
         )}
         {page === 'search' && (
-          <SearchPage onBack={handleBack} t={translationHelper} onSelectResult={handleNavigateToPayload} />
+          <SearchPage onBack={handleBack} t={translationHelper} onSelectResult={handleNavigateToPayload} colors={colors} />
         )}
         {page === 'aptitude' && (
-          <AptitudeCheatsheetPage onBack={handleBack} t={translationHelper} />
+          <AptitudeCheatsheetPage onBack={handleBack} t={translationHelper} colors={colors} />
         )}
         {page === 'settings' && (
           <SettingsPage
@@ -384,10 +398,11 @@ export default function AppEntry() {
             onBack={handleBack}
             savedCareers={savedCareers}
             onSelectSavedCareer={(item) => handleNavigateToPayload(item.payload)}
+            colors={colors}
           />
         )}
         {page === 'tech-learning' && (
-          <TechLearningPage onBack={handleBack} t={translationHelper} />
+          <TechLearningPage onBack={handleBack} t={translationHelper} colors={colors} />
         )}
         {page === 'memory-matrix' && (
           <MemoryMatrixGame onBack={handleBack} />
@@ -396,14 +411,12 @@ export default function AppEntry() {
           <ArithmeticRainGame onBack={handleBack} />
         )}
         {page === 'ats-scanner' && (
-          <ATSScannerPage onBack={handleBack} t={translationHelper} user={user} />
+          <ATSScannerPage onBack={handleBack} t={translationHelper} user={user} colors={colors} />
         )}
       </View>
 
-
-
       {/* Bottom Navigation */}
-      <BottomNav active={page} onNav={handleNav} t={translationHelper} />
+      <BottomNav active={page} onNav={handleNav} t={translationHelper} colors={colors} />
     </View>
   );
 }

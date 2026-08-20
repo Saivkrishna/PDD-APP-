@@ -9,9 +9,10 @@ interface ATSScannerPageProps {
   onBack: () => void;
   t: (key: string) => string;
   user: any;
+  colors: any;
 }
 
-export default function ATSScannerPage({ onBack, t, user }: ATSScannerPageProps) {
+export default function ATSScannerPage({ onBack, t, user, colors }: ATSScannerPageProps) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,9 +35,6 @@ export default function ATSScannerPage({ onBack, t, user }: ATSScannerPageProps)
 
   // Results Tab
   const [activeTab, setActiveTab] = useState<'MATCH' | 'KEYWORDS' | 'FORMATTING'>('MATCH');
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   // Helper to convert string to Base64
   const toBase64 = (str: string) => {

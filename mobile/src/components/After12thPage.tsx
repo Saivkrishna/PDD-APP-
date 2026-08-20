@@ -10,6 +10,7 @@ interface After12thPageProps {
   clearTarget?: () => void;
   savedCareers?: any[];
   onToggleSave?: (career: any) => void;
+  colors: any;
 }
 
 export default function After12thPage({
@@ -18,7 +19,8 @@ export default function After12thPage({
   initialTarget,
   clearTarget,
   savedCareers = [],
-  onToggleSave
+  onToggleSave,
+  colors
 }: After12thPageProps) {
   const [tab, setTab] = useState<'streams' | 'jobs'>('streams');
   const [streams, setStreams] = useState<any[]>([]);
@@ -33,9 +35,6 @@ export default function After12thPage({
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const [selectedJob, setSelectedJob] = useState<any>(null);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   useEffect(() => {
     fetch(`${API_URL}/after12th/streams`)

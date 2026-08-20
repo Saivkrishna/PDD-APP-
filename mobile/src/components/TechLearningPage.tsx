@@ -8,12 +8,10 @@ import { API_URL } from '../config';
 interface TechLearningProps {
   onBack: () => void;
   t: (key: string) => string;
+  colors: any;
 }
 
-export default function TechLearningPage({ onBack, t }: TechLearningProps) {
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
-  
+export default function TechLearningPage({ onBack, t, colors }: TechLearningProps) {
   const [search, setSearch] = useState('');
   const [selectedCat, setSelectedCat] = useState('All');
   const [techs, setTechs] = useState<any[]>([]);

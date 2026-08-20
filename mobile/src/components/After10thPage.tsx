@@ -10,6 +10,7 @@ interface After10thPageProps {
   clearTarget?: () => void;
   savedCareers?: any[];
   onToggleSave?: (career: any) => void;
+  colors: any;
 }
 
 export default function After10thPage({
@@ -18,7 +19,8 @@ export default function After10thPage({
   initialTarget,
   clearTarget,
   savedCareers = [],
-  onToggleSave
+  onToggleSave,
+  colors
 }: After10thPageProps) {
   const [tab, setTab] = useState<'streams' | 'jobs'>('streams');
   const [categories, setCategories] = useState<any[]>([]);
@@ -33,9 +35,6 @@ export default function After10thPage({
   const [loadingDetails, setLoadingDetails] = useState(false);
 
   const [selectedJob, setSelectedJob] = useState<any>(null);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   useEffect(() => {
     fetch(`${API_URL}/after10th/categories`)

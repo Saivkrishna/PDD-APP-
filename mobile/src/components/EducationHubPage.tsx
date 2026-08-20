@@ -5,12 +5,10 @@ import { Colors, Spacing } from '@/constants/theme';
 interface EducationHubProps {
   onNav: (page: string) => void;
   t: (key: string) => string;
+  colors: any;
 }
 
-export default function EducationHubPage({ onNav, t }: EducationHubProps) {
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
-
+export default function EducationHubPage({ onNav, t, colors }: EducationHubProps) {
   const stages = [
     {
       id: 'after10th',
@@ -85,11 +83,13 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     marginBottom: Spacing.one,
+    fontFamily: 'Outfit',
   },
   subtitle: {
     fontSize: 13,
     textAlign: 'center',
     paddingHorizontal: Spacing.three,
+    fontFamily: 'Inter',
   },
   grid: {
     gap: Spacing.three,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: Spacing.three,
     gap: 16,
     elevation: 2,
@@ -116,10 +116,12 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 16,
     fontWeight: '800',
+    fontFamily: 'Outfit',
   },
   cardSub: {
     fontSize: 12,
     marginTop: 4,
     lineHeight: 16,
+    fontFamily: 'Inter',
   },
 });

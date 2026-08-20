@@ -7,9 +7,10 @@ import { reasoningQuizQuestions } from '../data/reasoningQuizData';
 interface ReasoningProps {
   onBack: () => void;
   t: (key: string) => string;
+  colors: any;
 }
 
-export default function ReasoningPracticePage({ onBack, t }: ReasoningProps) {
+export default function ReasoningPracticePage({ onBack, t, colors }: ReasoningProps) {
   const topics = [
     { id: 'series', name: 'Series', icon: '📈', totalQs: 15 },
     { id: 'coding-decoding', name: 'Coding-Decoding', icon: '🔐', totalQs: 15 },
@@ -32,9 +33,6 @@ export default function ReasoningPracticePage({ onBack, t }: ReasoningProps) {
 
   const [attemptedQIds, setAttemptedQIds] = useState<string[]>([]);
   const [progressData, setProgressData] = useState<Record<string, { attempted: number, correct: number }>>({});
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   // Load progress metrics from AsyncStorage on mount
   useEffect(() => {
@@ -299,6 +297,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '900',
+    fontFamily: 'Outfit',
     flex: 1,
   },
   scrollContent: {
@@ -309,7 +308,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderRadius: 20,
+    borderRadius: 24,
     padding: Spacing.three,
     marginBottom: Spacing.three,
   },
@@ -318,15 +317,18 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     letterSpacing: 1.5,
     marginBottom: Spacing.one,
+    fontFamily: 'Outfit',
   },
   title: {
     fontWeight: '900',
     marginBottom: Spacing.one,
+    fontFamily: 'Outfit',
   },
   sectionTitle: {
     fontSize: 15,
     fontWeight: '800',
     marginBottom: Spacing.two,
+    fontFamily: 'Outfit',
   },
   modeRow: {
     gap: Spacing.two,
@@ -344,12 +346,13 @@ const styles = StyleSheet.create({
   modeBtnText: {
     fontSize: 12,
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
   listItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.three,
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
     marginBottom: Spacing.two,
     gap: 12,
@@ -360,11 +363,13 @@ const styles = StyleSheet.create({
   listTitle: {
     fontSize: 14,
     fontWeight: '800',
+    fontFamily: 'Outfit',
   },
   qText: {
     fontSize: 15,
     fontWeight: '700',
     lineHeight: 20,
+    fontFamily: 'Outfit',
   },
   optBtn: {
     borderWidth: 1,
@@ -376,6 +381,7 @@ const styles = StyleSheet.create({
   optText: {
     fontSize: 14,
     fontWeight: '700',
+    fontFamily: 'Inter',
   },
   nextBtn: {
     borderRadius: 12,
@@ -387,5 +393,6 @@ const styles = StyleSheet.create({
   nextBtnText: {
     color: '#FFFFFF',
     fontWeight: '800',
+    fontFamily: 'Inter',
   },
 });

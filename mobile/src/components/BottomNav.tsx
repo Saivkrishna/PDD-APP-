@@ -6,11 +6,10 @@ interface BottomNavProps {
   active: string;
   onNav: (tab: string) => void;
   t: (key: string) => string;
+  colors: any;
 }
 
-export default function BottomNav({ active, onNav, t }: BottomNavProps) {
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
+export default function BottomNav({ active, onNav, t, colors }: BottomNavProps) {
 
   const items = [
     { id: 'home', icon: '🏠', label: t('home') || 'Home' },
@@ -33,7 +32,7 @@ export default function BottomNav({ active, onNav, t }: BottomNavProps) {
             key={item.id}
             style={[
               styles.navItem,
-              isActive && { backgroundColor: 'rgba(99, 102, 241, 0.08)' },
+              isActive && { backgroundColor: colors.accentGlow || 'rgba(99, 102, 241, 0.08)' },
             ]}
             onPress={() => onNav(item.id)}
           >

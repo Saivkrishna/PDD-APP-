@@ -7,15 +7,13 @@ interface SearchProps {
   onBack: () => void;
   t: (key: string) => string;
   onSelectResult: (payload: any) => void;
+  colors: any;
 }
 
-export default function SearchPage({ onBack, t, onSelectResult }: SearchProps) {
+export default function SearchPage({ onBack, t, onSelectResult, colors }: SearchProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   const suggestions = ['Software Engineer', 'Data Scientist', 'MBBS', 'CSE', 'Mechanical', 'AI Engineer', 'Law', 'Electrician'];
 

@@ -11,6 +11,7 @@ interface HeaderProps {
   onOpenSettings?: () => void;
   darkMode: boolean;
   onToggleTheme: () => void;
+  colors: any;
 }
 
 export default function Header({
@@ -21,10 +22,9 @@ export default function Header({
   onToggleBookmarked,
   onOpenSettings,
   darkMode,
-  onToggleTheme
+  onToggleTheme,
+  colors
 }: HeaderProps) {
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   return (
     <View style={[styles.header, { backgroundColor: colors.background, borderBottomColor: colors.borderColor }]}>
@@ -34,7 +34,7 @@ export default function Header({
             <Text style={[styles.backBtnText, { color: colors.textMain }]}>← Back</Text>
           </TouchableOpacity>
         )}
-        <Text style={[styles.logo, { color: colors.textMain }]} numberOfLines={1}>
+        <Text style={[styles.logo, { color: colors.textMain, fontFamily: 'Outfit' }]} numberOfLines={1}>
           {title}
         </Text>
       </View>

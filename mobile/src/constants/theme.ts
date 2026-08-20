@@ -80,3 +80,25 @@ export const Spacing = {
 
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
+
+export const getThemeColors = (themeName: string, darkMode: boolean) => {
+  const base = Colors[darkMode ? 'dark' : 'light'];
+  const colorsMap: Record<string, { primary: string; secondary: string; accent: string; glow: string }> = {
+    cosmic: { primary: '#38bdf8', secondary: '#6366f1', accent: '#38bdf8', glow: 'rgba(56, 189, 248, 0.08)' },
+    neon: { primary: '#ec4899', secondary: '#a855f7', accent: '#ec4899', glow: 'rgba(236, 72, 153, 0.08)' },
+    emerald: { primary: '#10b981', secondary: '#059669', accent: '#10b981', glow: 'rgba(16, 185, 129, 0.08)' },
+    amber: { primary: '#fbbf24', secondary: '#f59e0b', accent: '#fbbf24', glow: 'rgba(251, 191, 36, 0.08)' },
+    sapphire: { primary: '#06b6d4', secondary: '#3b82f6', accent: '#06b6d4', glow: 'rgba(6, 182, 212, 0.08)' },
+    ruby: { primary: '#f43f5e', secondary: '#e11d48', accent: '#f43f5e', glow: 'rgba(244, 63, 94, 0.08)' },
+    orchid: { primary: '#d946ef', secondary: '#8b5cf6', accent: '#d946ef', glow: 'rgba(217, 70, 239, 0.08)' },
+    sunset: { primary: '#f97316', secondary: '#ef4444', accent: '#f97316', glow: 'rgba(249, 115, 22, 0.08)' }
+  };
+  const themeColors = colorsMap[themeName] || colorsMap.cosmic;
+  return {
+    ...base,
+    primary: themeColors.primary,
+    secondary: themeColors.secondary,
+    accent: themeColors.accent,
+    accentGlow: themeColors.glow,
+  };
+};

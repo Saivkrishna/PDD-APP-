@@ -8,9 +8,10 @@ import aptitudeData from '../data/aptitudeData';
 interface AptitudeProps {
   onBack: () => void;
   t: (key: string) => string;
+  colors: any;
 }
 
-export default function AptitudeCheatsheetPage({ onBack, t }: AptitudeProps) {
+export default function AptitudeCheatsheetPage({ onBack, t, colors }: AptitudeProps) {
   const [activeTab, setActiveTab] = useState('lcm-hcf');
   const [showQuiz, setShowQuiz] = useState(false);
   const [difficulty, setDifficulty] = useState<'easy' | 'medium' | 'hard' | null>(null);
@@ -22,9 +23,6 @@ export default function AptitudeCheatsheetPage({ onBack, t }: AptitudeProps) {
   const [score, setScore] = useState(0);
   const [quizFinished, setQuizFinished] = useState(false);
   const [userAnswers, setUserAnswers] = useState<any[]>([]);
-
-  const scheme = useColorScheme() || 'dark';
-  const colors = Colors[scheme === 'unspecified' ? 'dark' : scheme];
 
   const topics = [
     { id: 'lcm-hcf', label: 'LCM & HCF', emoji: '🧮' },
