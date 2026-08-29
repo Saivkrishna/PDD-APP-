@@ -6812,28 +6812,6 @@ function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateT
         </div>
       </div>
 
-      {/* Saved Careers Dashboard */}
-      <div style={S.detailBox}>
-        <div style={S.label}>⭐ Saved Careers ({savedCareers.length})</div>
-        <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {savedCareers.length === 0 ? (
-            <div style={{ fontSize: 13, color: '#94a3b8', padding: '10px 0', textAlign: 'center', fontStyle: 'italic' }}>
-              No saved careers yet. Explore courses, streams, or jobs and tap the star (★) to save them.
-            </div>
-          ) : (
-            savedCareers.map(item => (
-              <div key={item.id} style={{ ...S.listRow, marginBottom: 0 }} onClick={() => onSelectSavedCareer(item.payload)}>
-                <div style={S.listIcon}>{item.icon || '💼'}</div>
-                <div>
-                  <div style={S.listTitle}>{item.title}</div>
-                  <div style={{ ...S.listSub }}><span style={S.badge}>{item.type}</span></div>
-                </div>
-                <div style={S.arrow}>→</div>
-              </div>
-            ))
-          )}
-        </div>
-      </div>
 
       {/* Language settings */}
       <div style={S.detailBox}>
