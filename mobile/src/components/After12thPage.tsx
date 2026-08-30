@@ -8,8 +8,6 @@ interface After12thPageProps {
   t: (key: string) => string;
   initialTarget?: any;
   clearTarget?: () => void;
-  savedCareers?: any[];
-  onToggleSave?: (career: any) => void;
   colors: any;
 }
 
@@ -18,8 +16,6 @@ export default function After12thPage({
   t,
   initialTarget,
   clearTarget,
-  savedCareers = [],
-  onToggleSave,
   colors
 }: After12thPageProps) {
   const [tab, setTab] = useState<'streams' | 'jobs'>('streams');
@@ -134,20 +130,6 @@ export default function After12thPage({
             <Text style={{ color: colors.textMain, fontWeight: '700' }}>← Back</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.textMain }]} numberOfLines={1}>{selectedSector.label}</Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.borderColor }]}
-            onPress={() => onToggleSave && onToggleSave({
-              id: selectedSector.id,
-              title: selectedSector.label,
-              icon: '🏫',
-              type: 'After 12th Sector',
-              payload: { type: 'after12th', streamId: selectedStream?.id, sectorId: selectedSector.id }
-            })}
-          >
-            <Text style={{ color: savedCareers.some(item => item.careerId === selectedSector.id) ? colors.primary : colors.textMain, fontWeight: '800' }}>
-              {savedCareers.some(item => item.careerId === selectedSector.id) ? '★' : '☆'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -272,20 +254,6 @@ export default function After12thPage({
             <Text style={{ color: colors.textMain, fontWeight: '700' }}>← Back</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.textMain }]} numberOfLines={1}>{selectedJob.title}</Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.borderColor }]}
-            onPress={() => onToggleSave && onToggleSave({
-              id: selectedJob.id,
-              title: selectedJob.title,
-              icon: '💼',
-              type: 'After 12th Job',
-              payload: { type: 'after12th', tab: 'jobs', jobId: selectedJob.id }
-            })}
-          >
-            <Text style={{ color: savedCareers.some(item => item.careerId === selectedJob.id) ? colors.primary : colors.textMain, fontWeight: '800' }}>
-              {savedCareers.some(item => item.careerId === selectedJob.id) ? '★' : '☆'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>

@@ -870,7 +870,7 @@ function Splash({ onEnter }) {
 }
 
 // ─── HEADER ──────────────────────────────────────────────────────
-function Header({ title, onBack, showBack, isBookmarked, onToggleBookmarked, onOpenSettings, style }) {
+function Header({ title, onBack, showBack, onOpenSettings, style }) {
   const [dark, setDark] = useState(() => {
     const saved = localStorage.getItem('cp_dark_mode');
     if (saved !== null) {
@@ -928,13 +928,6 @@ function Header({ title, onBack, showBack, isBookmarked, onToggleBookmarked, onO
         >
           {dark ? '🌙' : '☀️'}
         </button>
-        {onToggleBookmarked && (
-          <button onClick={onToggleBookmarked} style={{ background: 'var(--glass-bg, rgba(255, 255, 255, 0.05))', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: isBookmarked ? '#f59e0b' : '#94a3b8', transition: 'all 0.2s', padding: 0 }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; }}>
-            {isBookmarked ? '★' : '☆'}
-          </button>
-        )}
         {onOpenSettings && (
           <button onClick={onOpenSettings} style={{ background: 'var(--glass-bg, rgba(255, 255, 255, 0.05))', border: '1px solid var(--border-color)', borderRadius: '50%', cursor: 'pointer', fontSize: 16, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-sub)', transition: 'all 0.2s', padding: 0 }}
             onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.1)'; }}
@@ -1057,7 +1050,7 @@ function EducationHubPage({ onNav, t, onOpenSettings }) {
 }
 
 // ─── AI RECOMMENDATION PAGE (GEMINI POWERED) ───────────────────────────
-function AIRecommendationPage({ userId, target, onBack, onOpenSettings, t, savedCareers, onToggleSave }) {
+function AIRecommendationPage({ userId, target, onBack, onOpenSettings, t }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadingText, setLoadingText] = useState('🤖 Connecting to AI Career Coach...');
@@ -1188,24 +1181,7 @@ function AIRecommendationPage({ userId, target, onBack, onOpenSettings, t, saved
     );
   }
 
-  const recId = `ai-rec-${target.quizType}-${JSON.stringify(target.answers)}`;
-  const isBookmarked = savedCareers.some(item => item.careerId === recId);
-
-  const handleToggleBookmark = () => {
-    if (onToggleSave) {
-      onToggleSave({
-        id: recId,
-        title: data.title,
-        icon: '🤖',
-        type: 'AI Recommendation',
-        payload: {
-          type: 'ai-recommendation',
-          quizType: target.quizType,
-          answers: target.answers
-        }
-      });
-    }
-  };
+  
 
   return (
     <div style={S.page}>
@@ -1214,8 +1190,7 @@ function AIRecommendationPage({ userId, target, onBack, onOpenSettings, t, saved
         showBack
         onBack={onBack}
         onOpenSettings={onOpenSettings}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={handleToggleBookmark}
+        
       />
       <div style={{ ...S.heroBox, padding: '30px 20px 10px' }}>
         <div style={{ fontSize: 60, marginBottom: 8 }}>🤖</div>
@@ -2093,7 +2068,7 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
 }
 
 // ─── AFTER 10TH ──────────────────────────────────────────────────
-function After10thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [], onToggleSave, onAddToCompare, onOpenSettings }) {
+function After10thPage({ onBack, initialTarget, clearTarget, t, onAddToCompare, onOpenSettings }) {
   const [tab, setTab] = useState('streams');
   const [categories, setCategories] = useState([]);
   const [jobs, setJobs] = useState([]);
@@ -2204,7 +2179,7 @@ function After10thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
   };
 
   if (selectedJob) {
-    return <JobDetail job={selectedJob} onBack={handleBack} t={t} savedCareers={savedCareers} onToggleSave={onToggleSave} onAddToCompare={onAddToCompare} />;
+    return <JobDetail job={selectedJob} onBack={handleBack} t={t} onAddToCompare={onAddToCompare} />;
   }
 
   if (selectedCourse) {
@@ -2224,14 +2199,7 @@ function After10thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
           showBack
           onBack={handleBack}
           onOpenSettings={onOpenSettings}
-          isBookmarked={savedCareers.some(item => item.careerId === selectedCourse.id)}
-          onToggleBookmarked={() => onToggleSave({
-            id: selectedCourse.id,
-            title: selectedCourse.title,
-            icon: selectedCourse.icon || '🎯',
-            type: '10th Course',
-            payload: { type: 'after10th', categoryId: selectedCategory ? selectedCategory.id : 'intermediate', courseId: selectedCourse.id }
-          })}
+          
         />
         {loadingDetails || !courseDetail ? (
           <div style={{ textAlign: 'center', padding: '100px 0', color: '#a89fff', fontSize: 15, fontWeight: 700 }}>
@@ -2446,24 +2414,17 @@ function After10thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
   );
 }
 
-function JobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddToCompare }) {
+function JobDetail({ job, onBack, t, onAddToCompare }) {
   const cats = { IT: '#6c63ff', 'Non-IT': '#ff6584', Government: '#ffd166' };
   const catColor = cats[job.category] || '#6c63ff';
-  const isBookmarked = savedCareers.some(item => item.careerId === job.id);
+  
   return (
     <div style={S.page}>
       <Header
         title={`${job.icon} ${job.title}`}
         showBack
         onBack={onBack}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={() => onToggleSave({
-          id: job.id,
-          title: job.title,
-          icon: job.icon || '💼',
-          type: '10th Job',
-          payload: { type: 'after10th', tab: 'jobs', jobId: job.id }
-        })}
+        
       />
 
       {/* Hero */}
@@ -2592,24 +2553,17 @@ function JobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddToCom
 }
 
 // ─── AFTER 12TH ──────────────────────────────────────────────────
-function Job12thDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddToCompare }) {
+function Job12thDetail({ job, onBack, t, onAddToCompare }) {
   const cats = { 'IT': '#6c63ff', 'Non-IT': '#ff6584', 'Government': '#ffd166' };
   const color = cats[job.category] || '#6c63ff';
-  const isBookmarked = savedCareers.some(item => item.careerId === job.id);
+  
   return (
     <div style={S.page}>
       <Header
         title={`${job.icon} ${job.title}`}
         showBack
         onBack={onBack}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={() => onToggleSave({
-          id: job.id,
-          title: job.title,
-          icon: job.icon || '💼',
-          type: '12th Job',
-          payload: { type: 'after12th', tab: 'jobs', jobId: job.id }
-        })}
+        
       />
       <div style={S.heroBox}>
         <div style={{ fontSize: 56, marginBottom: 8 }}>{job.icon}</div>
@@ -2681,7 +2635,7 @@ const JOBS_12 = [
   { id: 'railway-12', title: 'Railway Jobs (RRB)', icon: '🚆', category: 'Government', salary: '₹25K–₹50K/month', description: 'Work in Indian Railways as technician, ticket inspector or operations staff.', skills: ['Aptitude', 'Technical Basics', 'Discipline'], howToBecome: 'RRB NTPC / Group D exams.', workplaces: ['Indian Railways'] },
 ];
 
-function After12thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [], onToggleSave, onAddToCompare, onOpenSettings }) {
+function After12thPage({ onBack, initialTarget, clearTarget, t, onAddToCompare, onOpenSettings }) {
   // view: 'main' | 'sectors' | 'departments' | 'deptDetail' | 'jobDetail'
   const [view, setView] = useState('main');
   const [tab, setTab] = useState('streams');
@@ -2746,7 +2700,7 @@ function After12thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
 
   // ── JOB DETAIL VIEW ──────────────────────────────────────────────
   if (view === 'jobDetail' && selectedJob) return (
-    <Job12thDetail job={selectedJob} onBack={() => { setSelectedJob(null); setView('main'); }} t={t} savedCareers={savedCareers} onToggleSave={onToggleSave} onAddToCompare={onAddToCompare} />
+    <Job12thDetail job={selectedJob} onBack={() => { setSelectedJob(null); setView('main'); }} t={t}  onAddToCompare={onAddToCompare} />
   );
 
   // ── DEPT DETAIL VIEW ─────────────────────────────────────────────
@@ -2757,8 +2711,7 @@ function After12thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
       sectorId={selectedSector?.id}
       onBack={() => { setSelectedDept(null); setView('departments'); }}
       t={t}
-      savedCareers={savedCareers}
-      onToggleSave={onToggleSave}
+      
       onAddToCompare={onAddToCompare}
       onOpenSettings={onOpenSettings}
     />
@@ -2906,17 +2859,8 @@ function After12thPage({ onBack, initialTarget, clearTarget, t, savedCareers = [
   );
 }
 
-function DeptDetail({ dept, streamId, sectorId, onBack, t, savedCareers = [], onToggleSave, onAddToCompare, onOpenSettings }) {
-  const isBookmarked = savedCareers.some(item => item.careerId === dept.id);
-  const handleToggle = () => {
-    onToggleSave({
-      id: dept.id,
-      title: dept.title,
-      icon: dept.icon || '🎯',
-      type: '12th Department',
-      payload: { type: 'after12th', streamId: streamId || 'MPC', sectorId: sectorId || '', deptId: dept.id }
-    });
-  };
+function DeptDetail({ dept, streamId, sectorId, onBack, t, onAddToCompare, onOpenSettings }) {
+  
   return (
     <div style={S.page}>
       <Header
@@ -2924,8 +2868,7 @@ function DeptDetail({ dept, streamId, sectorId, onBack, t, savedCareers = [], on
         showBack
         onBack={onBack}
         onOpenSettings={onOpenSettings}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={handleToggle}
+        
       />
       <div style={S.heroBox}>
         <div style={{ fontSize: 52, marginBottom: 8 }}>🎯</div>
@@ -3032,7 +2975,7 @@ const deptMasterTitles = {
   "ssc-staff-selection-commission": "MA in Public Administration / MBA in Public Policy"
 };
 
-function GraduationPage({ onBack, initialTarget, clearTarget, t, savedCareers, onToggleSave, onOpenSettings }) {
+function GraduationPage({ onBack, initialTarget, clearTarget, t, onOpenSettings }) {
   const [view, setView] = useState('main');
   const [deptTab, setDeptTab] = useState('info'); // 'info' | 'careers'
   const [tab, setTab] = useState('jobs'); // 'jobs' | 'study' | 'abroad'
@@ -3155,7 +3098,7 @@ function GraduationPage({ onBack, initialTarget, clearTarget, t, savedCareers, o
     }
   };
 
-  if (selectedJob) return <GradJobDetail job={selectedJob} onBack={() => setSelectedJob(null)} t={t} savedCareers={savedCareers} onToggleSave={onToggleSave} />;
+  if (selectedJob) return <GradJobDetail job={selectedJob} onBack={() => setSelectedJob(null)} t={t}  />;
 
   if (selectedCountry) {
     return (
@@ -3164,14 +3107,7 @@ function GraduationPage({ onBack, initialTarget, clearTarget, t, savedCareers, o
           title={`Study in ${selectedCountry.country}`}
           showBack
           onBack={() => setSelectedCountry(null)}
-          isBookmarked={savedCareers && savedCareers.some(item => item.careerId === selectedCountry.id)}
-          onToggleBookmarked={() => onToggleSave({
-            id: selectedCountry.id,
-            title: `${selectedCountry.country} Study Guide`,
-            icon: '✈️',
-            type: 'Study Abroad Program',
-            payload: { type: 'graduation', tab: 'abroad', countryId: selectedCountry.id }
-          })}
+          
         />
         <div style={S.heroBox}>
           <div style={{ fontSize: 56, marginBottom: 8 }}>✈️</div>
@@ -3246,14 +3182,7 @@ function GraduationPage({ onBack, initialTarget, clearTarget, t, savedCareers, o
           showBack
           onBack={() => { setSelectedMaster(null); setView('departments'); }}
           onOpenSettings={onOpenSettings}
-          isBookmarked={savedCareers && savedCareers.some(item => item.careerId === selectedMaster.id)}
-          onToggleBookmarked={() => onToggleSave({
-            id: selectedMaster.id,
-            title: selectedMaster.title,
-            icon: icon,
-            type: "Master's Degree",
-            payload: { type: 'graduation', tab: 'study', masterId: selectedMaster.id }
-          })}
+          
         />
         <div style={S.heroBox}>
           <div style={{ fontSize: 56, marginBottom: 8 }}>{icon}</div>
@@ -3648,7 +3577,7 @@ function GraduationPage({ onBack, initialTarget, clearTarget, t, savedCareers, o
   );
 }
 
-function GradJobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddToCompare }) {
+function GradJobDetail({ job, onBack, t, onAddToCompare }) {
   let salaryStr = typeof job.salary === 'string' ? job.salary : '';
   if (typeof job.salary === 'object' && job.salary) {
     if (job.salary.fresher) salaryStr += `Fresher: ${job.salary.fresher}`;
@@ -3662,7 +3591,7 @@ function GradJobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddT
   const certsList = job.certifications || [];
   const locationsList = job.locations || job.topCities || [];
   const studyList = job.higherStudies || [];
-  const isBookmarked = savedCareers.some(item => item.careerId === job.id);
+  
 
   return (
     <div style={S.page}>
@@ -3670,14 +3599,7 @@ function GradJobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddT
         title={`${job.icon || '💼'} ${job.title}`}
         showBack
         onBack={onBack}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={() => onToggleSave({
-          id: job.id,
-          title: job.title,
-          icon: job.icon || '💼',
-          type: 'Graduation Job',
-          payload: { type: 'graduation', tab: 'jobs', jobId: job.id }
-        })}
+        
       />
       <div style={S.heroBox}>
         <div style={{ fontSize: 56, marginBottom: 8 }}>{job.icon || '💼'}</div>
@@ -3822,9 +3744,9 @@ function SearchPage({ onBack, t, onSelectResult, onOpenSettings }) {
   );
 }
 
-function TrendingJobDetail({ job, onBack, t, savedCareers = [], onToggleSave, onAddToCompare }) {
+function TrendingJobDetail({ job, onBack, t, onAddToCompare }) {
   if (!job) return null;
-  const isBookmarked = savedCareers.some(item => item.careerId === job.id);
+  
 
   return (
     <div style={S.page}>
@@ -3833,14 +3755,7 @@ function TrendingJobDetail({ job, onBack, t, savedCareers = [], onToggleSave, on
         title={`${job.icon || '🔥'} ${job.title}`}
         showBack
         onBack={onBack}
-        isBookmarked={isBookmarked}
-        onToggleBookmarked={() => onToggleSave({
-          id: job.id,
-          title: job.title,
-          icon: job.icon || '🔥',
-          type: 'Trending Career',
-          payload: { type: 'trending', jobId: job.id }
-        })}
+        
       />
 
       <div style={{ animation: 'fadeIn 0.4s ease' }}>
@@ -6765,7 +6680,7 @@ function ComparisonOverlay({ compareList, onRemove, onClose, t }) {
 }
 
 // ─── SETTINGS PAGE COMPONENT ──────────────────────────────────────
-function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateTheme, soundEnabled, onUpdateSound, soundType, onUpdateSoundType, onResetData, onLogout, onBack, t, savedCareers = [], onSelectSavedCareer }) {
+function SettingsPage({ user, onUpdateUser, lang, onUpdateLang, theme, onUpdateTheme, soundEnabled, onUpdateSound, soundType, onUpdateSoundType, onResetData, onLogout, onBack, t }) {
   const [name, setName] = useState(user.name);
   const [email, setEmail] = useState(user.email);
   const [successMsg, setSuccessMsg] = useState('');
@@ -6946,7 +6861,6 @@ export default function App() {
   const [initialChatPrompt, setInitialChatPrompt] = useState('');
 
   // Bookmarks state & trending cache
-  const [savedCareers, setSavedCareers] = useState([]);
   const [trendingJobs, setTrendingJobs] = useState([]);
 
   // Internationalization & Customizations State
@@ -7144,20 +7058,6 @@ export default function App() {
   const [compareList, setCompareList] = useState([]);
   const [showCompare, setShowCompare] = useState(false);
 
-  // Sync bookmarks with user state
-  useEffect(() => {
-    if (user && user.id) {
-      fetch(`${API}/saved-careers?userId=${user.id}`)
-        .then(r => r.json())
-        .then(data => {
-          if (Array.isArray(data)) setSavedCareers(data);
-        })
-        .catch(err => console.error("Error fetching saved careers:", err));
-    } else {
-      setSavedCareers([]);
-    }
-  }, [user]);
-
   // Sync trending jobs cache
   useEffect(() => {
     fetch(`${API}/overview`)
@@ -7167,49 +7067,6 @@ export default function App() {
       })
       .catch(e => console.error("Error fetching overview details:", e));
   }, []);
-
-  const handleToggleSaveCareer = async (career) => {
-    if (!user || !user.id) return;
-    const isSaved = savedCareers.some(item => item.careerId === career.id);
-    playClickSound(soundEnabled);
-    if (isSaved) {
-      try {
-        const res = await fetch(`${API}/saved-careers?userId=${user.id}&careerId=${encodeURIComponent(career.id)}`, {
-          method: 'DELETE'
-        });
-        if (res.ok) {
-          setSavedCareers(prev => prev.filter(item => item.careerId !== career.id));
-        }
-      } catch (err) {
-        console.error("Error unsaving career:", err);
-      }
-    } else {
-      try {
-        const res = await fetch(`${API}/saved-careers`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            userId: user.id,
-            career: {
-              id: career.id,
-              title: career.title,
-              icon: career.icon || '💼',
-              type: career.type || 'Career',
-              payload: career.payload || {}
-            }
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.saved) {
-            setSavedCareers(prev => [...prev, data.saved]);
-          }
-        }
-      } catch (err) {
-        console.error("Error saving career:", err);
-      }
-    }
-  };
 
   const handleNavigateToPayload = (payload) => {
     if (!payload || !payload.type) return;
@@ -7290,8 +7147,7 @@ export default function App() {
           job={selectedTrendingJob}
           onBack={() => { playClickSound(soundEnabled); setSelectedTrendingJob(null); }}
           t={t}
-          savedCareers={savedCareers}
-          onToggleSave={handleToggleSaveCareer}
+          
           onAddToCompare={(job) => {
             playClickSound(soundEnabled);
             if (compareList.length >= 3) {
@@ -7341,8 +7197,7 @@ export default function App() {
             initialTarget={navTarget}
             clearTarget={() => setNavTarget(null)}
             t={t}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSaveCareer}
+            
             onAddToCompare={(job) => {
               playClickSound(soundEnabled);
               if (compareList.length >= 3) {
@@ -7364,8 +7219,7 @@ export default function App() {
             initialTarget={navTarget}
             clearTarget={() => setNavTarget(null)}
             t={t}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSaveCareer}
+            
             onAddToCompare={(job) => {
               playClickSound(soundEnabled);
               if (compareList.length >= 3) {
@@ -7387,8 +7241,7 @@ export default function App() {
             initialTarget={navTarget}
             clearTarget={() => setNavTarget(null)}
             t={t}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSaveCareer}
+            
             onOpenSettings={() => handleNavChange('settings')}
           />
         );
@@ -7424,8 +7277,7 @@ export default function App() {
             onBack={handleBack}
             onOpenSettings={() => handleNavChange('settings')}
             t={t}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSaveCareer}
+            
           />
         );
       case 'settings':
@@ -7462,7 +7314,6 @@ export default function App() {
             }}
             onResetData={() => {
               playClickSound(soundEnabled);
-              setSavedCareers([]);
               setCompareList([]);
             }}
             onLogout={async () => {
@@ -7478,11 +7329,6 @@ export default function App() {
             }}
             onBack={handleBack}
             t={t}
-            savedCareers={savedCareers}
-            onSelectSavedCareer={(career) => {
-              playClickSound(soundEnabled);
-              handleNavigateToPayload(career.payload);
-            }}
           />
         );
 

@@ -205,43 +205,7 @@ const LocalDB = {
     return true;
   },
 
-  getSavedCareers(userId) {
-    const saved = readJSON('saved_careers.json');
-    return saved.filter(s => s.userId === userId);
-  },
-
-  addSavedCareer(userId, career) {
-    const saved = readJSON('saved_careers.json');
-    const existing = saved.find(s => s.userId === userId && s.careerId === career.id);
-    if (existing) return existing;
-
-    const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-    const newSave = {
-      id,
-      userId,
-      careerId: career.id,
-      title: career.title,
-      icon: career.icon || '💼',
-      type: career.type || 'Career',
-      payload: career.payload || {},
-      savedAt: new Date().toISOString()
-    };
-    saved.push(newSave);
-    writeJSON('saved_careers.json', saved);
-    return newSave;
-  },
-
-  removeSavedCareer(userId, careerId) {
-    const saved = readJSON('saved_careers.json');
-    const filtered = saved.filter(s => !(s.userId === userId && s.careerId === careerId));
-    writeJSON('saved_careers.json', filtered);
-    return true;
-  },
-
   clearUserData(userId) {
-    const saved = readJSON('saved_careers.json');
-    const filtered = saved.filter(s => s.userId !== userId);
-    writeJSON('saved_careers.json', filtered);
     return true;
   },
 
@@ -567,88 +531,8 @@ const DB = {
     }
   },
 
-  // --- BOOKMARKED/SAVED CAREERS SECTION ---
-  async getSavedCareers(userId) {
-    try {
-      const db = this.getDb();
-      const q = query(collection(db, 'saved_careers'), where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
-      const saved = [];
-      querySnapshot.forEach(doc => {
-        saved.push(doc.data());
-      });
-      return saved;
-    } catch (err) {
-      console.warn(`[DB] ⚠️ Firestore getSavedCareers error: ${err.message}. Falling back to local JSON database.`);
-      return LocalDB.getSavedCareers(userId);
-    }
-  },
-
-  async addSavedCareer(userId, career) {
-    try {
-      const db = this.getDb();
-      const q = query(
-        collection(db, 'saved_careers'),
-        where('userId', '==', userId),
-        where('careerId', '==', career.id)
-      );
-      const querySnapshot = await getDocs(q);
-      if (!querySnapshot.empty) {
-        return querySnapshot.docs[0].data();
-      }
-      
-      const id = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
-      const newSave = {
-        id,
-        userId,
-        careerId: career.id,
-        title: career.title,
-        icon: career.icon || '💼',
-        type: career.type || 'Career',
-        payload: career.payload || {},
-        savedAt: new Date().toISOString()
-      };
-      
-      await setDoc(doc(db, 'saved_careers', id), newSave);
-      return newSave;
-    } catch (err) {
-      console.warn(`[DB] ⚠️ Firestore addSavedCareer error: ${err.message}. Falling back to local JSON database.`);
-      return LocalDB.addSavedCareer(userId, career);
-    }
-  },
-
-  async removeSavedCareer(userId, careerId) {
-    try {
-      const db = this.getDb();
-      const q = query(
-        collection(db, 'saved_careers'),
-        where('userId', '==', userId),
-        where('careerId', '==', careerId)
-      );
-      const querySnapshot = await getDocs(q);
-      for (const document of querySnapshot.docs) {
-        await deleteDoc(doc(db, 'saved_careers', document.id));
-      }
-      return true;
-    } catch (err) {
-      console.warn(`[DB] ⚠️ Firestore removeSavedCareer error: ${err.message}. Falling back to local JSON database.`);
-      return LocalDB.removeSavedCareer(userId, careerId);
-    }
-  },
-  
   async clearUserData(userId) {
-    try {
-      const db = this.getDb();
-      const q = query(collection(db, 'saved_careers'), where('userId', '==', userId));
-      const querySnapshot = await getDocs(q);
-      for (const document of querySnapshot.docs) {
-        await deleteDoc(doc(db, 'saved_careers', document.id));
-      }
-      return true;
-    } catch (err) {
-      console.warn(`[DB] ⚠️ Firestore clearUserData error: ${err.message}. Falling back to local JSON database.`);
-      return LocalDB.clearUserData(userId);
-    }
+    return true;
   },
 
   // --- AI RECOMMENDATIONS CACHE SECTION ---

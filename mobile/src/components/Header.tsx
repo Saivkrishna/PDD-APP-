@@ -6,8 +6,6 @@ interface HeaderProps {
   title: string;
   onBack?: () => void;
   showBack?: boolean;
-  isBookmarked?: boolean;
-  onToggleBookmarked?: () => void;
   onOpenSettings?: () => void;
   darkMode: boolean;
   onToggleTheme: () => void;
@@ -18,8 +16,6 @@ export default function Header({
   title,
   onBack,
   showBack = false,
-  isBookmarked = false,
-  onToggleBookmarked,
   onOpenSettings,
   darkMode,
   onToggleTheme,
@@ -43,14 +39,6 @@ export default function Header({
         <TouchableOpacity style={[styles.circleBtn, { borderColor: colors.borderColor }]} onPress={onToggleTheme}>
           <Text style={styles.emojiText}>{darkMode ? '🌙' : '☀️'}</Text>
         </TouchableOpacity>
-
-        {onToggleBookmarked && (
-          <TouchableOpacity style={[styles.circleBtn, { borderColor: colors.borderColor }]} onPress={onToggleBookmarked}>
-            <Text style={[styles.emojiText, { color: isBookmarked ? '#f59e0b' : '#94a3b8' }]}>
-              {isBookmarked ? '★' : '☆'}
-            </Text>
-          </TouchableOpacity>
-        )}
 
         {onOpenSettings && (
           <TouchableOpacity style={[styles.circleBtn, { borderColor: colors.borderColor }]} onPress={onOpenSettings}>

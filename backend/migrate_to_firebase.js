@@ -74,7 +74,6 @@ try {
   const db = getFirestore();
 
   const USERS_FILE = path.join(__dirname, 'db', 'users.json');
-  const SAVED_FILE = path.join(__dirname, 'db', 'saved_careers.json');
 
   async function migrate() {
     console.log('🚀 Starting data migration to Firebase Firestore...');
@@ -91,17 +90,6 @@ try {
       console.log('⚠️ No users.json file found.');
     }
 
-    // 2. Migrate Saved Careers
-    if (fs.existsSync(SAVED_FILE)) {
-      const saved = JSON.parse(fs.readFileSync(SAVED_FILE, 'utf8'));
-      console.log(`💼 Found ${saved.length} saved careers to migrate.`);
-      for (const item of saved) {
-        await setDoc(doc(db, 'saved_careers', item.id), item);
-        console.log(`   Processed saved career: ${item.title} (User: ${item.userId})`);
-      }
-    } else {
-      console.log('⚠️ No saved_careers.json file found.');
-    }
 
     // 3. Migrate Technologies (seeding)
     console.log(`🧠 Found ${technologies.length} learning resources to seed.`);

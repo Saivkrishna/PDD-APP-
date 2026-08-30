@@ -37,7 +37,6 @@ export default function AppEntry() {
   const [user, setUser] = useState<any>(null);
   const [page, setPage] = useState<string>('home');
   const [navHistory, setNavHistory] = useState<string[]>(['home']);
-  const [savedCareers, setSavedCareers] = useState<any[]>([]);
   const [initialTarget, setInitialTarget] = useState<any>(null);
 
   // App Settings / Customizations
@@ -147,43 +146,7 @@ export default function AppEntry() {
     return () => unsubscribe();
   }, []);
 
-  // Fetch bookmarks from database
-  const fetchSavedCareers = async (userId: string) => {
-    try {
-      const res = await fetch(`${API_URL}/saved-careers?userId=${userId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setSavedCareers(data || []);
-      }
-    } catch (e) {}
-  };
 
-  useEffect(() => {
-    if (user && user.id) {
-      fetchSavedCareers(user.id);
-    }
-  }, [user]);
-
-  const handleToggleSave = async (career: any) => {
-    if (!user) return;
-    try {
-      const res = await fetch(`${API_URL}/saved-careers/toggle`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          careerId: career.id,
-          title: career.title,
-          icon: career.icon || '💼',
-          type: career.type,
-          payload: career.payload || career
-        })
-      });
-      if (res.ok) {
-        fetchSavedCareers(user.id);
-      }
-    } catch (e) {}
-  };
 
   const handleNavigateToPayload = (payload: any) => {
     if (!payload || !payload.type) return;
@@ -343,8 +306,6 @@ export default function AppEntry() {
             t={translationHelper}
             initialTarget={initialTarget}
             clearTarget={() => setInitialTarget(null)}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSave}
             colors={colors}
           />
         )}
@@ -354,8 +315,6 @@ export default function AppEntry() {
             t={translationHelper}
             initialTarget={initialTarget}
             clearTarget={() => setInitialTarget(null)}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSave}
             colors={colors}
           />
         )}
@@ -365,8 +324,6 @@ export default function AppEntry() {
             t={translationHelper}
             initialTarget={initialTarget}
             clearTarget={() => setInitialTarget(null)}
-            savedCareers={savedCareers}
-            onToggleSave={handleToggleSave}
             colors={colors}
           />
         )}
@@ -396,8 +353,6 @@ export default function AppEntry() {
             onResetData={handleResetData}
             onLogout={handleLogout}
             onBack={handleBack}
-            savedCareers={savedCareers}
-            onSelectSavedCareer={(item) => handleNavigateToPayload(item.payload)}
             colors={colors}
           />
         )}

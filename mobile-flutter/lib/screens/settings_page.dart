@@ -17,7 +17,7 @@ class SettingsPage extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Reset All Data?'),
-        content: const Text('This will delete all saved careers and clear your quiz records. This action cannot be undone.'),
+        content: const Text('This will clear your quiz records. This action cannot be undone.'),
         actions: [
           TextButton(
             child: const Text('Cancel'),

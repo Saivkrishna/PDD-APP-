@@ -8,8 +8,6 @@ interface GraduationPageProps {
   t: (key: string) => string;
   initialTarget?: any;
   clearTarget?: () => void;
-  savedCareers?: any[];
-  onToggleSave?: (career: any) => void;
   colors: any;
 }
 
@@ -20,8 +18,6 @@ export default function GraduationPage({
   t,
   initialTarget,
   clearTarget,
-  savedCareers = [],
-  onToggleSave,
   colors
 }: GraduationPageProps) {
   const [tab, setTab] = useState<TabType>('sectors');
@@ -142,39 +138,6 @@ export default function GraduationPage({
           <Text style={[styles.headerTitle, { color: colors.textMain }]} numberOfLines={1}>
             {selectedItemDetail.title || selectedItemDetail.degree || selectedItemDetail.country}
           </Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.borderColor }]}
-            onPress={() => {
-              let payloadObj: any = {};
-              let typeLabel = '';
-              let itemTitle = selectedItemDetail.title || selectedItemDetail.degree || selectedItemDetail.country;
-              
-              if (tab === 'higherStudy') {
-                typeLabel = 'Graduation PG Program';
-                payloadObj = { type: 'graduation', tab: 'higherStudy', masterId: selectedItemDetail.id };
-              } else if (tab === 'studyAbroad') {
-                typeLabel = 'Study Abroad Option';
-                payloadObj = { type: 'graduation', tab: 'studyAbroad', countryId: selectedItemDetail.id };
-              } else {
-                typeLabel = 'Graduation Job Scale';
-                payloadObj = { type: 'graduation', tab: 'jobs', jobId: selectedItemDetail.id };
-              }
-
-              if (onToggleSave) {
-                onToggleSave({
-                  id: selectedItemDetail.id,
-                  title: itemTitle,
-                  icon: tab === 'studyAbroad' ? '✈️' : '🎓',
-                  type: typeLabel,
-                  payload: payloadObj
-                });
-              }
-            }}
-          >
-            <Text style={{ color: savedCareers.some(item => item.careerId === selectedItemDetail.id) ? colors.primary : colors.textMain, fontWeight: '800' }}>
-              {savedCareers.some(item => item.careerId === selectedItemDetail.id) ? '★' : '☆'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -280,20 +243,6 @@ export default function GraduationPage({
             <Text style={{ color: colors.textMain, fontWeight: '700' }}>← Back</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: colors.textMain }]} numberOfLines={1}>{selectedDept.label}</Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.borderColor }]}
-            onPress={() => onToggleSave && onToggleSave({
-              id: selectedDept.id,
-              title: selectedDept.label,
-              icon: '💼',
-              type: 'Graduation Sector',
-              payload: { type: 'graduation', tab: 'jobs', sectorId: selectedSector?.id, deptId: selectedDept.id }
-            })}
-          >
-            <Text style={{ color: savedCareers.some(item => item.careerId === selectedDept.id) ? colors.primary : colors.textMain, fontWeight: '800' }}>
-              {savedCareers.some(item => item.careerId === selectedDept.id) ? '★' : '☆'}
-            </Text>
-          </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContent}>

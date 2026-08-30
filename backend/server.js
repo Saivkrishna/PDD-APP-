@@ -984,55 +984,6 @@ app.post('/api/profile/update', async (req, res) => {
   }
 });
 
-app.get('/api/saved-careers', async (req, res) => {
-  console.log('[API ROUTE HIT]: /api/saved-careers for user:', req.query.userId);
-  try {
-    const userId = sanitizeInput(req.query.userId);
-    if (!userId) {
-      return res.status(400).json({ error: 'User ID is required' });
-    }
-    const saved = await DB.getSavedCareers(userId);
-    res.status(200).json(saved);
-  } catch (err) {
-    console.error('Error in get saved-careers endpoint:', err);
-    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
-  }
-});
-
-app.post('/api/saved-careers', async (req, res) => {
-  try {
-    const userId = sanitizeInput(req.body.userId);
-    const { career } = req.body;
-
-    if (!userId || !career || !career.id || !career.title) {
-      return res.status(400).json({ error: 'User ID and structured career details are required' });
-    }
-
-    const saved = await DB.addSavedCareer(userId, career);
-    res.status(201).json({ success: true, saved });
-  } catch (err) {
-    console.error('Error in post saved-careers endpoint:', err);
-    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
-  }
-});
-
-app.delete('/api/saved-careers', async (req, res) => {
-  try {
-    const userId = sanitizeInput(req.query.userId);
-    const careerId = sanitizeInput(req.query.careerId);
-
-    if (!userId || !careerId) {
-      return res.status(400).json({ error: 'User ID and Career ID are required' });
-    }
-
-    await DB.removeSavedCareer(userId, careerId);
-    res.status(200).json({ success: true, message: 'Career unsaved successfully' });
-  } catch (err) {
-    console.error('Error in delete saved-careers endpoint:', err);
-    res.status(500).json({ error: 'Internal Server Error: ' + err.message });
-  }
-});
-
 app.post('/api/profile/reset-data', async (req, res) => {
   try {
     const userId = sanitizeInput(req.body.userId);
@@ -1040,7 +991,7 @@ app.post('/api/profile/reset-data', async (req, res) => {
       return res.status(400).json({ error: 'User ID is required' });
     }
     await DB.clearUserData(userId);
-    res.status(200).json({ success: true, message: 'User data and bookmarks cleared successfully' });
+    res.status(200).json({ success: true, message: 'User data cleared successfully' });
   } catch (err) {
     console.error('Error in reset-data endpoint:', err);
     res.status(500).json({ error: 'Internal Server Error: ' + err.message });

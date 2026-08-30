@@ -97,18 +97,7 @@ class ApiService {
     return json.decode(response.body);
   }
 
-  // --- BOOKMARKS ---
-  static Future<List<dynamic>> getSavedCareers(String userId) async {
-    return _get('/saved-careers?userId=$userId');
-  }
 
-  static Future<Map<String, dynamic>> saveCareer(String userId, Map<String, dynamic> career) async {
-    final response = await _postRaw('/saved-careers', {
-      'userId': userId,
-      'career': career,
-    });
-    return json.decode(response.body);
-  }
 
   static Future<Map<String, dynamic>> resetUserData(String userId) async {
     final response = await _postRaw('/profile/reset-data', {'userId': userId});

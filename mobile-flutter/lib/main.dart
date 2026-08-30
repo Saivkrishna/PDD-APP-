@@ -68,7 +68,6 @@ class _CareerPathAppState extends State<CareerPathApp> {
   late bool _soundEnabled;
   late String _soundType;
   Map<String, dynamic>? _user;
-  List<dynamic> _savedCareers = [];
 
   @override
   void initState() {
@@ -86,13 +85,7 @@ class _CareerPathAppState extends State<CareerPathApp> {
       setState(() {
         _user = session;
       });
-      _loadBookmarks();
     }
-  }
-
-  void _loadBookmarks() async {
-    // In practice, calls service backend APIs to retrieve bookmarks
-    // Or falls back to local storage
   }
 
   void setLanguage(String lang) {
@@ -129,18 +122,9 @@ class _CareerPathAppState extends State<CareerPathApp> {
     });
   }
 
-  void setSavedCareers(List<dynamic> careers) {
-    setState(() {
-      _savedCareers = careers;
-    });
-  }
+
 
   void onResetData() async {
-    setState(() {
-      _savedCareers = [];
-    });
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('cp_saved_careers');
     if (_user != null) {
       final userId = _user!['id']?.toString() ?? '';
       if (userId.isNotEmpty) {
@@ -154,7 +138,6 @@ class _CareerPathAppState extends State<CareerPathApp> {
   bool get soundEnabled => _soundEnabled;
   String get soundType => _soundType;
   Map<String, dynamic>? get user => _user;
-  List<dynamic> get savedCareers => _savedCareers;
 
   String translate(String key) {
     return Translations.get(key, _lang);

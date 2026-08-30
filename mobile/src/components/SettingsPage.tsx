@@ -16,8 +16,6 @@ interface SettingsPageProps {
   onResetData: () => void;
   onLogout: () => void;
   onBack: () => void;
-  savedCareers: any[];
-  onSelectSavedCareer: (career: any) => void;
   colors: any;
 }
 
@@ -34,8 +32,6 @@ export default function SettingsPage({
   onResetData,
   onLogout,
   onBack,
-  savedCareers = [],
-  onSelectSavedCareer,
   colors
 }: SettingsPageProps) {
 
@@ -58,34 +54,7 @@ export default function SettingsPage({
         </View>
       </View>
 
-      {/* Saved Careers Dashboard */}
-      <Text style={[styles.sectionTitle, { color: colors.textMain }]}>⭐ Saved Careers ({savedCareers.length})</Text>
-      <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.borderColor }]}>
-        {savedCareers.length === 0 ? (
-          <Text style={{ fontSize: 13, color: colors.textMuted, fontStyle: 'italic', textAlign: 'center', paddingVertical: Spacing.two }}>
-            No saved careers yet. Explore courses, streams, or jobs and tap the star (★) to save them.
-          </Text>
-        ) : (
-          savedCareers.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={[styles.savedItemRow, { borderBottomColor: colors.borderColor }]}
-              onPress={() => onSelectSavedCareer(item)}
-            >
-              <Text style={styles.savedIcon}>{item.icon || '💼'}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.savedTitle, { color: colors.textMain }]}>{item.title}</Text>
-                <View style={styles.badgeRow}>
-                  <View style={[styles.badge, { backgroundColor: colors.primary }]}>
-                    <Text style={styles.badgeText}>{item.type}</Text>
-                  </View>
-                </View>
-              </View>
-              <Text style={{ color: colors.primary, fontSize: 16 }}>➔</Text>
-            </TouchableOpacity>
-          ))
-        )}
-      </View>
+
 
       {/* Language Selection */}
       <Text style={[styles.sectionTitle, { color: colors.textMain }]}>{translationHelper('language')}</Text>
@@ -259,32 +228,5 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     marginTop: 2,
   },
-  savedItemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.two,
-    borderBottomWidth: 1,
-    gap: 12,
-  },
-  savedIcon: {
-    fontSize: 24,
-  },
-  savedTitle: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  badgeRow: {
-    flexDirection: 'row',
-    marginTop: 4,
-  },
-  badge: {
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  badgeText: {
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '800',
-  },
+
 });
