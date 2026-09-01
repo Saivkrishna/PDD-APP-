@@ -1923,60 +1923,6 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
         </div>
 
 
-        {/* TRENDING CAREERS (span-12) */}
-        {trending.length > 0 && (
-          <div className="bento-card span-12 premium-glass-card" style={{ minHeight: '280px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: '14px' }}>
-              <div>
-                <h3 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>{t('trendingTitle')}</h3>
-                <p style={{ color: 'var(--text-sub)', fontSize: '13px', marginTop: '2px' }}>High-growth tracks with strong future demand</p>
-              </div>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '16px', width: '100%' }}>
-              {trending.slice(0, 10).map(tVal => (
-                <div
-                  key={tVal.title}
-                  onClick={() => onSelectTrending(tVal)}
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '20px',
-                    padding: '18px 16px',
-                    cursor: 'pointer',
-                    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    minHeight: '130px'
-                  }}
-                  onMouseEnter={e => {
-                    e.currentTarget.style.transform = 'translateY(-4px)';
-                    e.currentTarget.style.borderColor = '#8B5CF6';
-                    e.currentTarget.style.boxShadow = '0 6px 18px rgba(139, 92, 246, 0.25)';
-                  }}
-                  onMouseLeave={e => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)';
-                    e.currentTarget.style.boxShadow = 'none';
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '28px' }}>{tVal.icon}</span>
-                    <span style={{ fontSize: '10px', color: 'var(--primary)', fontWeight: 800, background: 'var(--accent-glow)', border: '1px solid var(--border-color)', padding: '2px 8px', borderRadius: '12px' }}>
-                      🔥 {tVal.growth}
-                    </span>
-                  </div>
-                  <div style={{ marginTop: '12px' }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--text-main)', fontFamily: 'Outfit' }}>{tVal.title}</div>
-                    <div style={{ fontSize: 11, color: '#34d399', fontWeight: 700, marginTop: '4px' }}>{tVal.salary}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* UPCOMING EXAMS (span-12) */}
         <div className="span-12" style={{ padding: 0 }}>
           <ExamCalendar t={t} lang={lang} soundEnabled={soundEnabled} />
