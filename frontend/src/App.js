@@ -1560,16 +1560,6 @@ const MentorIllustration = () => (
     <circle cx="50" cy="15" r="5" fill="url(#grad-ai)" />
   </svg>
 );
-const ATSScannerIllustration = () => (
-  <svg viewBox="0 0 100 100" style={{ width: '64px', height: '64px', minWidth: '64px', pointerEvents: 'none' }}>
-    <rect x="25" y="15" width="50" height="70" rx="8" fill="none" stroke="var(--primary)" strokeWidth="3" />
-    <line x1="35" y1="30" x2="65" y2="30" stroke="var(--text-sub)" strokeWidth="2.5" strokeLinecap="round" />
-    <line x1="35" y1="40" x2="55" y2="40" stroke="var(--text-sub)" strokeWidth="2.5" strokeLinecap="round" />
-    <circle cx="65" cy="55" r="14" fill="none" stroke="var(--secondary)" strokeWidth="3" />
-    <line x1="57" y1="47" x2="73" y2="63" stroke="var(--secondary)" strokeWidth="2.5" strokeLinecap="round" />
-    <line x1="35" y1="75" x2="65" y2="75" stroke="var(--text-sub)" strokeWidth="2.5" strokeLinecap="round" />
-  </svg>
-);
 
 const AptitudeIllustration = () => (
   <svg viewBox="0 0 100 100" style={{ width: '64px', height: '64px', minWidth: '64px', pointerEvents: 'none' }}>
@@ -1710,33 +1700,6 @@ function HomePage({ onNav, onSelectTrending, t, lang, soundEnabled, user, onTrig
           </div>
           <div style={{ flex: '0 0 180px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <HeroIllustration />
-          </div>
-        </div>
-
-
-
-        {/* ATS SCANNER CARD (span-12) */}
-        <div
-          className="bento-card span-12 premium-glass-card"
-          onClick={() => onNav('ats-scanner')}
-          style={{ minHeight: '180px', cursor: 'pointer', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: '20px', justifyContent: 'space-between' }}
-        >
-          <div style={{ flex: '1 1 300px' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-main)', fontFamily: 'Outfit' }}>ATS Resume Scanner</h3>
-            <p style={{ color: 'var(--text-sub)', fontSize: '13px', marginTop: '6px', lineHeight: 1.5 }}>
-              Check your resume's ATS compatibility score, identify missing keywords/skills, and get actionable recommendations.
-            </p>
-            <button
-              className="premium-btn"
-              style={{ width: 'fit-content', padding: '10px 20px', fontSize: '12px', marginTop: '14px' }}
-              onClick={(e) => { e.stopPropagation(); onNav('ats-scanner'); }}
-            >
-              Scan Resume →
-            </button>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            <ATSScannerIllustration />
-            <span style={{ fontSize: '24px', color: 'var(--primary)', marginRight: '10px' }}>↗</span>
           </div>
         </div>
 
@@ -7072,29 +7035,8 @@ export default function App() {
   const handleNavigateToPayload = (payload) => {
     if (!payload || !payload.type) return;
 
-    // Reset selection and close overlay
-    setSelectedTrendingJob(null);
-    setShowCompare(false);
-
     if (payload.type === 'ai-recommendation') {
       handleNavChange('ai-recommendation', payload);
-      return;
-    }
-
-    if (payload.type === 'trending') {
-      const foundJob = trendingJobs.find(j => j.id === payload.jobId);
-      if (foundJob) {
-        setSelectedTrendingJob(foundJob);
-      } else {
-        fetch(`${API}/overview`)
-          .then(r => r.json())
-          .then(d => {
-            const tj = d.trending || [];
-            setTrendingJobs(tj);
-            const fj = tj.find(x => x.id === payload.jobId);
-            if (fj) setSelectedTrendingJob(fj);
-          });
-      }
       return;
     }
 

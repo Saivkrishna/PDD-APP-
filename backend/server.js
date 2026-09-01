@@ -5,13 +5,6 @@ const express = require('express');
 const careerData = require('./data');
 const DB = require('./services/db');
 const { reasoningQuizQuestions } = require('./reasoningQuizQuestions');
-const { extractText } = require('./services/ats/extractor');
-const { detectSections } = require('./services/ats/detector');
-const { parseJd } = require('./services/ats/jdParser');
-const { matchSkills } = require('./services/ats/skillMatcher');
-const { calculateScore } = require('./services/ats/scoringEngine');
-const { checkFormatting } = require('./services/ats/formattingChecker');
-const { getSemanticScore } = require('./services/ats/semanticMatcher');
 
 // Ensure a default Demo User exists in the database
 async function initDemoUser() {
@@ -2038,124 +2031,6 @@ app.post('/api/arithmetic-rain/reset-stats', async (req, res) => {
   } catch (err) {
     console.error('Error resetting statistics:', err);
     res.status(500).json({ error: 'Internal Server Error: ' + err.message });
-  }
-});
-
-// ATS Resume Extraction & Section Detection Route
-app.post('/api/ats/extract', async (req, res) => {
-  try {
-    const { fileData, fileName, mimeType } = req.body;
-    if (!fileData || !fileName) {
-      return res.status(400).json({ error: 'fileData (base64 string) and fileName are required' });
-    }
-
-    const buffer = Buffer.from(fileData, 'base64');
-    const text = await extractText(buffer, mimeType, fileName);
-    const sections = detectSections(text);
-
-    res.json({
-      success: true,
-      text,
-      sections
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/extract:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ATS Job Description Parsing Route
-app.post('/api/ats/parse-jd', async (req, res) => {
-  try {
-    const { jdText } = req.body;
-    if (!jdText) {
-      return res.status(400).json({ error: 'jdText is required' });
-    }
-
-    const parsedJd = parseJd(jdText);
-    res.json({
-      success: true,
-      parsedJd
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/parse-jd:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ATS Skill & Keyword Matching Route
-app.post('/api/ats/match-skills', async (req, res) => {
-  try {
-    const { resumeSections, parsedJd } = req.body;
-    if (!resumeSections || !parsedJd) {
-      return res.status(400).json({ error: 'resumeSections and parsedJd are required' });
-    }
-
-    const matchingResults = matchSkills(resumeSections, parsedJd);
-    res.json({
-      success: true,
-      ...matchingResults
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/match-skills:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ATS Scoring Engine Route
-app.post('/api/ats/score', async (req, res) => {
-  try {
-    const { resumeSections, parsedJd, matchedSkills, missingSkills } = req.body;
-    if (!resumeSections || !parsedJd) {
-      return res.status(400).json({ error: 'resumeSections and parsedJd are required' });
-    }
-
-    const scoreResults = await calculateScore(resumeSections, parsedJd, matchedSkills, missingSkills);
-    res.json({
-      success: true,
-      ...scoreResults
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/score:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ATS Semantic Matcher Route
-app.post('/api/ats/semantic-match', async (req, res) => {
-  try {
-    const { textA, textB } = req.body;
-    if (!textA || !textB) {
-      return res.status(400).json({ error: 'textA and textB are required' });
-    }
-
-    const similarityScore = await getSemanticScore(textA, textB);
-    res.json({
-      success: true,
-      similarityScore
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/semantic-match:', err.message);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// ATS Formatting Checker Route
-app.post('/api/ats/check-formatting', async (req, res) => {
-  try {
-    const { resumeText, resumeSections } = req.body;
-    if (!resumeSections) {
-      return res.status(400).json({ error: 'resumeSections is required' });
-    }
-
-    const formattingResults = checkFormatting(resumeText || '', resumeSections);
-    res.json({
-      success: true,
-      ...formattingResults
-    });
-  } catch (err) {
-    console.error('Error in /api/ats/check-formatting:', err.message);
-    res.status(500).json({ error: err.message });
   }
 });
 
