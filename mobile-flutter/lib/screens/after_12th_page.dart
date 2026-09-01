@@ -2,9 +2,17 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 import '../services/api_service.dart';
 import '../utils/sound_manager.dart';
+import 'career_comparison_sheet.dart';
 
 class After12thPage extends StatefulWidget {
-  const After12thPage({super.key});
+  final Map<String, dynamic>? initialTarget;
+  final Function(Map<String, dynamic>)? onAddToCompare;
+
+  const After12thPage({
+    super.key,
+    this.initialTarget,
+    this.onAddToCompare,
+  });
 
   @override
   State<After12thPage> createState() => _After12thPageState();
@@ -14,96 +22,19 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
   late TabController _tabController;
   List<dynamic> _streams = [];
   List<dynamic> _sectors = [];
+  List<dynamic> _jobs = [];
   String? _selectedStreamId;
   bool _loadingStreams = true;
   bool _loadingSectors = false;
+  bool _loadingJobs = true;
   String _jobCategoryFilter = 'All';
-
-  final List<Map<String, dynamic>> _jobs12 = [
-    {
-      'id': 'data-entry-12',
-      'title': 'Data Entry Operator',
-      'icon': '🖥️',
-      'category': 'IT',
-      'salary': '₹12K–₹20K/month',
-      'description': 'Handle data entry, typing and computer operations in offices, BPOs and data centers.',
-      'skills': ['Fast Typing', 'MS Excel', 'Communication', 'Accuracy'],
-      'howToBecome': 'Learn basic computer skills, MS Office and typing practice.',
-      'workplaces': ['Offices', 'BPOs', 'Data Centers']
-    },
-    {
-      'id': 'graphic-designer-12',
-      'title': 'Graphic Designer',
-      'icon': '🎨',
-      'category': 'IT',
-      'salary': '₹15K–₹30K/month',
-      'description': 'Create visual content for brands, social media, ads and digital platforms.',
-      'skills': ['Canva', 'Photoshop', 'Illustrator', 'Creativity'],
-      'howToBecome': 'Learn Canva, Photoshop and Illustrator.',
-      'workplaces': ['Marketing Agencies', 'IT Companies', 'Freelancing']
-    },
-    {
-      'id': 'video-editor-12',
-      'title': 'Video Editor',
-      'icon': '🎬',
-      'category': 'IT',
-      'salary': '₹15K–₹35K/month',
-      'description': 'Edit and produce video content for YouTube channels, media companies and brands.',
-      'skills': ['Premiere Pro', 'CapCut', 'After Effects', 'Creativity'],
-      'howToBecome': 'Learn Premiere Pro, CapCut or After Effects.',
-      'workplaces': ['YouTube Channels', 'Media Companies', 'Freelancing']
-    },
-    {
-      'id': 'retail-12',
-      'title': 'Retail Staff',
-      'icon': '🛍️',
-      'category': 'Non-IT',
-      'salary': '₹12K–₹20K/month',
-      'description': 'Handle customer service, billing and store operations in retail outlets.',
-      'skills': ['Sales', 'Customer Handling', 'Communication'],
-      'howToBecome': 'Communication and customer service skills.',
-      'workplaces': ['Malls', 'Supermarkets', 'Stores']
-    },
-    {
-      'id': 'bpo-12',
-      'title': 'BPO Executive',
-      'icon': '📞',
-      'category': 'Non-IT',
-      'salary': '₹15K–₹28K/month',
-      'description': 'Handle inbound/outbound calls and customer support in call centres.',
-      'skills': ['Speaking Skills', 'Problem Solving', 'English Communication'],
-      'howToBecome': 'Basic English and communication training.',
-      'workplaces': ['Call Centers', 'ITES Companies']
-    },
-    {
-      'id': 'police-12',
-      'title': 'Police Constable',
-      'icon': '👮',
-      'category': 'Government',
-      'salary': '₹25K–₹45K/month',
-      'description': 'Maintain law and order, assist investigations and serve the community.',
-      'skills': ['Fitness', 'Discipline', 'Communication'],
-      'howToBecome': 'State police recruitment exams.',
-      'workplaces': ['Police Department']
-    },
-    {
-      'id': 'army-12',
-      'title': 'Army / NDA',
-      'icon': '🪖',
-      'category': 'Government',
-      'salary': '₹35K–₹60K/month',
-      'description': 'Serve in the Indian Army, Navy or Air Force as a soldier or officer.',
-      'skills': ['Physical Fitness', 'Leadership', 'Discipline'],
-      'howToBecome': 'NDA exam or Army recruitment rally.',
-      'workplaces': ['Indian Army', 'Navy', 'Air Force']
-    }
-  ];
+  String? _error;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _loadStreams();
+    _loadInitialData();
   }
 
   @override
@@ -112,27 +43,81 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
     super.dispose();
   }
 
-  void _loadStreams() async {
+  Future<void> _loadInitialData() async {
+    setState(() {
+      _loadingStreams = true;
+      _loadingJobs = true;
+      _error = null;
+    });
+
     try {
-      final res = await ApiService.getAfter12thStreams();
-      setState(() {
-        _streams = res;
-        _loadingStreams = false;
-      });
-      if (_streams.isNotEmpty) {
-        _selectStream(_streams[0]['id']);
+      final streamsRes = await ApiService.getAfter12thStreams();
+      final jobsRes = await ApiService.getAfter12thJobs();
+
+      if (mounted) {
+        setState(() {
+          _streams = streamsRes;
+          _jobs = jobsRes;
+          _loadingStreams = false;
+          _loadingJobs = false;
+        });
+
+        if (streamsRes.isNotEmpty) {
+          final targetStream = widget.initialTarget?['streamId']?.toString() ?? streamsRes.first['id']?.toString() ?? 'MPC';
+          _selectStream(targetStream);
+        }
       }
     } catch (_) {
-      setState(() {
-        _streams = [
-          {'id': 'mpc', 'title': 'MPC (Maths, Physics, Chemistry)'},
-          {'id': 'bipc', 'title': 'BiPC (Biology, Physics, Chemistry)'},
-          {'id': 'cec', 'title': 'CEC (Commerce, Economics, Civics)'},
-          {'id': 'mec', 'title': 'MEC (Maths, Economics, Commerce)'}
-        ];
-        _loadingStreams = false;
-      });
-      _selectStream('mpc');
+      if (mounted) {
+        setState(() {
+          _streams = [
+            {"id": "MPC", "label": "Maths, Physics, Chemistry (MPC)"},
+            {"id": "BiPC", "label": "Biology, Physics, Chemistry (BiPC)"},
+            {"id": "CEC", "label": "Commerce, Economics, Civics (CEC)"},
+            {"id": "MEC", "label": "Maths, Economics, Commerce (MEC)"},
+            {"id": "HEC", "label": "History, Economics, Civics (HEC)"},
+            {"id": "Vocational", "label": "Vocational Streams"}
+          ];
+          _jobs = [
+            {
+              'id': 'data-entry-12',
+              'title': 'Data Entry Operator',
+              'icon': '🖥️',
+              'category': 'IT',
+              'salary': '₹12K–₹20K/month',
+              'description': 'Handle data processing, typing, and spreadsheets in corporate offices and IT centers.',
+              'skills': ['Fast Typing', 'MS Excel', 'Accuracy', 'Communication'],
+              'howToBecome': 'Learn MS Office, Excel formulas, and keyboard typing efficiency.',
+              'workplaces': ['Offices', 'BPOs', 'Data Centers']
+            },
+            {
+              'id': 'graphic-designer-12',
+              'title': 'Graphic Designer',
+              'icon': '🎨',
+              'category': 'IT',
+              'salary': '₹18K–₹35K/month',
+              'description': 'Design creative digital graphics, brand posters, and UI assets for web/social media.',
+              'skills': ['Photoshop', 'Illustrator', 'Figma', 'Creativity'],
+              'howToBecome': 'Master visual design principles, typography, and Adobe Creative Suite.',
+              'workplaces': ['Marketing Agencies', 'IT Companies', 'Freelancing']
+            },
+            {
+              'id': 'police-12',
+              'title': 'Police Constable',
+              'icon': '👮',
+              'category': 'Government',
+              'salary': '₹25K–₹45K/month',
+              'description': 'Maintains public safety, enforces state laws, and assists in community protection.',
+              'skills': ['Physical Fitness', 'Law Knowledge', 'Communication'],
+              'howToBecome': 'Qualify state constable recruitment written and physical endurance tests.',
+              'workplaces': ['State Police Stations', 'Patrol Units']
+            }
+          ];
+          _loadingStreams = false;
+          _loadingJobs = false;
+        });
+        _selectStream('MPC');
+      }
     }
   }
 
@@ -140,48 +125,102 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
     setState(() {
       _selectedStreamId = streamId;
       _loadingSectors = true;
-      _sectors = [];
     });
+
     try {
-      final res = await ApiService.getAfter12thSectors(streamId);
-      setState(() {
-        _sectors = res;
-        _loadingSectors = false;
-      });
+      final sectors = await ApiService.getAfter12thSectors(streamId);
+      if (mounted) {
+        setState(() {
+          _sectors = sectors;
+          _loadingSectors = false;
+        });
+      }
     } catch (_) {
-      // Mock Fallback
-      setState(() {
-        _sectors = [
-          {
-            'id': 'eng',
-            'title': 'Engineering & Technology',
-            'icon': '💻',
-            'description': 'Designing and building software, electronics, structures, and systems.',
-            'departments': [
-              {'id': 'cse', 'title': 'Computer Science Engineering', 'duration': '4 Years', 'eligibility': '12th MPC Pass'},
-              {'id': 'ece', 'title': 'Electronics & Communication', 'duration': '4 Years', 'eligibility': '12th MPC Pass'}
-            ]
-          },
-          {
-            'id': 'pure_sci',
-            'title': 'Pure Sciences',
-            'icon': '🔬',
-            'description': 'Exploring foundational physics, chemistry, and mathematics degrees.',
-            'departments': [
-              {'id': 'bsc_physics', 'title': 'B.Sc. Physics', 'duration': '3 Years', 'eligibility': '12th Pass'}
-            ]
-          }
-        ];
-        _loadingSectors = false;
-      });
+      if (mounted) {
+        setState(() {
+          _sectors = [
+            {
+              'id': 'eng',
+              'title': 'Engineering & Technology',
+              'icon': '💻',
+              'description': 'Design, code, build, and deploy software, hardware, and physical infrastructure systems.',
+              'departments': [
+                {
+                  'id': 'cse',
+                  'name': 'Computer Science & Engineering (CSE)',
+                  'duration': '4 Years',
+                  'eligibility': 'Class 12 pass with 50% in MPC + JEE / State Entrance (EAMCET)',
+                  'exams': ['JEE Main', 'JEE Advanced', 'EAMCET', 'BITSAT'],
+                  'averageFees': '₹1.5L - ₹4L / year',
+                  'avgSalary': '₹6.5 - ₹24 LPA',
+                  'topRecruiters': ['Google', 'Microsoft', 'Amazon', 'TCS', 'Infosys'],
+                  'careerRoles': ['Software Engineer', 'Full Stack Developer', 'Cloud Architect']
+                },
+                {
+                  'id': 'ece',
+                  'name': 'Electronics & Communication (ECE)',
+                  'duration': '4 Years',
+                  'eligibility': 'Class 12 pass with 50% in MPC',
+                  'exams': ['JEE Main', 'EAMCET', 'BITSAT'],
+                  'averageFees': '₹1.2L - ₹3.5L / year',
+                  'avgSalary': '₹5.5 - ₹16 LPA',
+                  'topRecruiters': ['Intel', 'Qualcomm', 'Texas Instruments', 'ISRO'],
+                  'careerRoles': ['VLSI Engineer', 'Embedded Systems Developer', 'Hardware Designer']
+                }
+              ]
+            },
+            {
+              'id': 'architecture',
+              'title': 'Architecture & Planning',
+              'icon': '🏛️',
+              'description': 'Building design, urban planning, landscape architecture, and construction management.',
+              'departments': [
+                {
+                  'id': 'barch',
+                  'name': 'Bachelor of Architecture (B.Arch)',
+                  'duration': '5 Years',
+                  'eligibility': 'Class 12 with Math + NATA / JEE Main Paper 2',
+                  'exams': ['NATA', 'JEE Main Paper 2'],
+                  'averageFees': '₹1.5L - ₹3L / year',
+                  'avgSalary': '₹4.5 - ₹12 LPA',
+                  'topRecruiters': ['L&T Construction', 'Architectural Firms', 'Urban Development Authorities'],
+                  'careerRoles': ['Architect', 'Urban Planner', 'Interior Designer']
+                }
+              ]
+            }
+          ];
+          _loadingSectors = false;
+        });
+      }
     }
+  }
+
+  void _showSectorDetail(Map<String, dynamic> sector) {
+    final state = CareerPathApp.of(context);
+    SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => After12thSectorDetailPage(
+          sector: sector,
+          streamId: _selectedStreamId ?? 'MPC',
+          onAddToCompare: widget.onAddToCompare,
+        ),
+      ),
+    );
   }
 
   void _showJobDetail(Map<String, dynamic> job) {
     final state = CareerPathApp.of(context);
     SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+
     Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => JobDetail12thScreen(job: job)),
+      MaterialPageRoute(
+        builder: (_) => After12thJobDetailScreen(
+          job: job,
+          onAddToCompare: widget.onAddToCompare,
+        ),
+      ),
     );
   }
 
@@ -189,13 +228,14 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
   Widget build(BuildContext context) {
     final state = CareerPathApp.of(context);
     final theme = Theme.of(context);
+
     final filteredJobs = _jobCategoryFilter == 'All'
-        ? _jobs12
-        : _jobs12.where((j) => j['category'] == _jobCategoryFilter).toList();
+        ? _jobs
+        : _jobs.where((j) => j['category'] == _jobCategoryFilter).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Career After 12th', style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
+        title: Text(state?.translate('after12th') ?? 'Career After 12th', style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         bottom: TabBar(
@@ -204,7 +244,7 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
           unselectedLabelColor: theme.unselectedWidgetColor.withOpacity(0.6),
           indicatorColor: theme.colorScheme.primary,
           tabs: const [
-            Tab(text: 'Academic Streams'),
+            Tab(text: 'Degree & Sectors'),
             Tab(text: 'Direct Jobs'),
           ],
         ),
@@ -214,62 +254,71 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: theme.brightness == Brightness.dark
-                ? [const Color(0xFF0F0826), const Color(0xFF06020F)]
-                : [const Color(0xFFEBE9FF), const Color(0xFFF8F9FA)],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
         child: TabBarView(
           controller: _tabController,
           children: [
-            // Tab 1: Streams
-            _loadingStreams
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    children: [
-                      // Stream Chips horizontal view
-                      Container(
-                        height: 50,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: ListView.builder(
+            // Tab 1: Streams & Sectors
+            Column(
+              children: [
+                // Horizontal Stream Selector Chips
+                Container(
+                  height: 52,
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: _loadingStreams
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
                           scrollDirection: Axis.horizontal,
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           itemCount: _streams.length,
                           itemBuilder: (context, idx) {
                             final s = _streams[idx];
-                            final isSel = s['id'] == _selectedStreamId;
+                            final isSel = _selectedStreamId == s['id'];
                             return Padding(
                               padding: const EdgeInsets.only(right: 8.0),
                               child: ChoiceChip(
-                                label: Text(s['title']?.toString().split(' ')[0] ?? ''),
+                                label: Text(s['label'] ?? s['id'] ?? ''),
                                 selected: isSel,
-                                selectedColor: theme.colorScheme.primary.withOpacity(0.2),
+                                selectedColor: theme.colorScheme.primary.withOpacity(0.25),
                                 labelStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isSel ? theme.colorScheme.primary : theme.unselectedWidgetColor,
+                                  color: isSel ? theme.colorScheme.primary : Colors.white70,
+                                  fontWeight: isSel ? FontWeight.bold : FontWeight.w500,
+                                  fontSize: 12,
                                 ),
                                 onSelected: (_) {
+                                  SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
                                   _selectStream(s['id']);
                                 },
                               ),
                             );
                           },
                         ),
-                      ),
-                      
-                      // Sectors list
-                      Expanded(
-                        child: _loadingSectors
-                            ? const Center(child: CircularProgressIndicator())
-                            : ListView.builder(
-                                padding: const EdgeInsets.all(16),
-                                itemCount: _sectors.length,
-                                itemBuilder: (context, idx) {
-                                  final sec = _sectors[idx];
-                                  final List<dynamic> depts = sec['departments'] ?? [];
-                                  return Card(
-                                    margin: const EdgeInsets.only(bottom: 15),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                ),
+                
+                // Sectors list
+                Expanded(
+                  child: _loadingSectors
+                      ? const Center(child: CircularProgressIndicator())
+                      : _sectors.isEmpty
+                          ? const Center(child: Text('No sectors found for this stream.'))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: _sectors.length,
+                              itemBuilder: (context, idx) {
+                                final sec = _sectors[idx];
+                                final depts = (sec['departments'] as List?) ?? [];
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  color: CareerPathApp.getCardBg(context),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () => _showSectorDetail(sec),
+                                    borderRadius: BorderRadius.circular(14),
                                     child: Padding(
                                       padding: const EdgeInsets.all(16.0),
                                       child: Column(
@@ -277,49 +326,50 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
                                         children: [
                                           Row(
                                             children: [
-                                              Text(sec['icon'] ?? '💼', style: const TextStyle(fontSize: 24)),
-                                              const SizedBox(width: 10),
+                                              Text(sec['icon'] ?? '🎓', style: const TextStyle(fontSize: 26)),
+                                              const SizedBox(width: 12),
                                               Expanded(
-                                                child: Text(sec['title'] ?? '', style: const TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold)),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      sec['title'] ?? '',
+                                                      style: const TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold),
+                                                    ),
+                                                    if (depts.isNotEmpty)
+                                                      Text(
+                                                        '${depts.length} Specialized Degrees',
+                                                        style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                                                      ),
+                                                  ],
+                                                ),
                                               ),
+                                              const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
                                             ],
                                           ),
-                                          const SizedBox(height: 6),
-                                          Text(sec['description'] ?? '', style: TextStyle(fontSize: 12, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7))),
-                                          const SizedBox(height: 12),
-                                          const Divider(),
                                           const SizedBox(height: 8),
-                                          const Text('Courses / Degrees:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
-                                          const SizedBox(height: 6),
-                                          ...depts.map((d) => Padding(
-                                            padding: const EdgeInsets.only(bottom: 8.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.between,
-                                              children: [
-                                                Expanded(
-                                                  child: Text(d['title'] ?? '', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                                                ),
-                                                Text(d['duration'] ?? '', style: const TextStyle(fontSize: 11, color: Colors.blueAccent)),
-                                              ],
-                                            ),
-                                          )).toList(),
+                                          Text(
+                                            sec['description'] ?? '',
+                                            style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFF94A3B8)),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
-            
-            // Tab 2: Jobs
+                                  ),
+                                );
+                              },
+                            ),
+                ),
+              ],
+            ),
+
+            // Tab 2: Direct Jobs
             Column(
               children: [
-                // Filters Row
+                // Category filter chips
                 Container(
                   height: 48,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 6),
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -331,6 +381,7 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
                           label: Text(cat),
                           selected: isSel,
                           onSelected: (_) {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
                             setState(() {
                               _jobCategoryFilter = cat;
                             });
@@ -340,27 +391,39 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
                     }).toList(),
                   ),
                 ),
-                
-                // Jobs List
+
+                // Jobs list
                 Expanded(
-                  child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filteredJobs.length,
-                    itemBuilder: (context, idx) {
-                      final job = filteredJobs[idx];
-                      return Card(
-                        margin: const EdgeInsets.only(bottom: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: ListTile(
-                          leading: Text(job['icon'] ?? '💼', style: const TextStyle(fontSize: 24)),
-                          title: Text(job['title'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text(job['salary'] ?? '', style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                          onTap: () => _showJobDetail(job),
-                        ),
-                      );
-                    },
-                  ),
+                  child: _loadingJobs
+                      ? const Center(child: CircularProgressIndicator())
+                      : filteredJobs.isEmpty
+                          ? const Center(child: Text('No jobs found in this category.'))
+                          : ListView.builder(
+                              padding: const EdgeInsets.all(16),
+                              itemCount: filteredJobs.length,
+                              itemBuilder: (context, idx) {
+                                final j = filteredJobs[idx];
+                                return Card(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  color: CareerPathApp.getCardBg(context),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+                                  ),
+                                  child: ListTile(
+                                    contentPadding: const EdgeInsets.all(16),
+                                    leading: Text(j['icon'] ?? '💼', style: const TextStyle(fontSize: 28)),
+                                    title: Text(j['title'] ?? '', style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 15)),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(j['salary'] ?? '', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 13)),
+                                    ),
+                                    trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                                    onTap: () => _showJobDetail(j),
+                                  ),
+                                );
+                              },
+                            ),
                 ),
               ],
             ),
@@ -371,20 +434,29 @@ class _After12thPageState extends State<After12thPage> with SingleTickerProvider
   }
 }
 
-class JobDetail12thScreen extends StatelessWidget {
-  final Map<String, dynamic> job;
+// ─── SECTOR DETAIL PAGE ─────────────────────────────────────────
+class After12thSectorDetailPage extends StatelessWidget {
+  final Map<String, dynamic> sector;
+  final String streamId;
+  final Function(Map<String, dynamic>)? onAddToCompare;
 
-  const JobDetail12thScreen({super.key, required this.job});
+  const After12thSectorDetailPage({
+    super.key,
+    required this.sector,
+    required this.streamId,
+    this.onAddToCompare,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final state = CareerPathApp.of(context);
     final theme = Theme.of(context);
-    final List<String> skills = List<String>.from(job['skills'] ?? []);
-    final List<String> workplaces = List<String>.from(job['workplaces'] ?? []);
+    final title = sector['title']?.toString() ?? 'Sector Details';
+    final departments = (sector['departments'] as List?) ?? [];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(job['title'] ?? 'Job Detail', style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
+        title: Text(title, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -393,62 +465,288 @@ class JobDetail12thScreen extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: theme.brightness == Brightness.dark
-                ? [const Color(0xFF0F0826), const Color(0xFF06020F)]
-                : [const Color(0xFFEBE9FF), const Color(0xFFF8F9FA)],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Card(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Column(
+        child: ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: departments.length,
+          itemBuilder: (context, idx) {
+            final dept = departments[idx];
+            final deptName = dept['name']?.toString() ?? dept['title']?.toString() ?? 'Department';
+            final duration = dept['duration']?.toString() ?? '4 Years';
+            final salary = dept['avgSalary']?.toString() ?? '₹6–18 LPA';
+            final exams = (dept['exams'] as List?)?.map((e) => e.toString()).toList() ?? [];
+
+            return Card(
+              margin: const EdgeInsets.only(bottom: 14),
+              color: CareerPathApp.getCardBg(context),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+                side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+              ),
+              child: ExpansionTile(
+                title: Text(
+                  deptName,
+                  style: const TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Row(
                     children: [
-                      Text(job['icon'] ?? '💼', style: const TextStyle(fontSize: 48)),
-                      const SizedBox(height: 10),
-                      Text(job['title'] ?? '', style: const TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 10),
-                      Text(job['salary'] ?? '', style: const TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
+                      Text('⏳ $duration', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(width: 12),
+                      Text('💰 $salary', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
                     ],
                   ),
                 ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (dept['eligibility'] != null) ...[
+                          const Text('📋 ELIGIBILITY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
+                          const SizedBox(height: 4),
+                          Text(dept['eligibility'], style: const TextStyle(fontSize: 13, height: 1.3)),
+                          const SizedBox(height: 12),
+                        ],
+                        if (exams.isNotEmpty) ...[
+                          const Text('📅 ENTRANCE EXAMS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
+                          const SizedBox(height: 6),
+                          Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: exams.map((ex) => Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(ex, style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold)),
+                            )).toList(),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (dept['averageFees'] != null) ...[
+                          const Text('💳 AVERAGE FEES', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
+                          const SizedBox(height: 4),
+                          Text(dept['averageFees'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.amberAccent)),
+                          const SizedBox(height: 12),
+                        ],
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.compare_arrows, size: 16),
+                          label: const Text('Add to Compare'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.06),
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            if (onAddToCompare != null) {
+                              onAddToCompare!({
+                                'id': dept['id'] ?? deptName,
+                                'title': deptName,
+                                'stream': streamId,
+                                'duration': duration,
+                                'salary': salary,
+                                'eligibility': dept['eligibility'] ?? '',
+                                'skills': (dept['careerRoles'] as List?) ?? [],
+                                'workplaces': (dept['topRecruiters'] as List?) ?? [],
+                              });
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Added $deptName to comparison!')),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 15),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
 
-              _buildDetailBox(context, '📋 Job Description', Text(job['description'] ?? '', style: const TextStyle(fontSize: 14, height: 1.4))),
-              const SizedBox(height: 12),
+// ─── JOB DETAILS SCREEN ─────────────────────────────────────────
+class After12thJobDetailScreen extends StatelessWidget {
+  final Map<String, dynamic> job;
+  final Function(Map<String, dynamic>)? onAddToCompare;
 
-              if (job['howToBecome'] != null)
-                _buildDetailBox(context, '🎯 How to Become', Text(job['howToBecome'] ?? '', style: const TextStyle(fontSize: 14, height: 1.4))),
-              const SizedBox(height: 12),
+  const After12thJobDetailScreen({
+    super.key,
+    required this.job,
+    this.onAddToCompare,
+  });
 
-              if (skills.isNotEmpty)
-                _buildDetailBox(
-                  context,
-                  '🧠 Skills Needed',
+  @override
+  Widget build(BuildContext context) {
+    final state = CareerPathApp.of(context);
+    final theme = Theme.of(context);
+
+    final title = job['title']?.toString() ?? 'Job Role';
+    final salary = job['salary']?.toString() ?? '₹18,000 - ₹35,000 / month';
+    final category = job['category']?.toString() ?? 'General';
+    final description = job['description']?.toString() ?? '';
+    final howToBecome = job['howToBecome']?.toString() ?? '';
+    final skills = (job['skills'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final workplaces = (job['workplaces'] as List?)?.map((w) => w.toString()).toList() ?? [];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 18)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.compare_arrows),
+            tooltip: 'Add to Compare',
+            onPressed: () {
+              SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+              if (onAddToCompare != null) {
+                onAddToCompare!(job);
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Added $title to comparison list!')),
+              );
+            },
+          ),
+        ],
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: CareerPathApp.getGradient(context),
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Header Card
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: CareerPathApp.getCardBg(context),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+                ),
+                child: Column(
+                  children: [
+                    Text(job['icon'] ?? '💼', style: const TextStyle(fontSize: 44)),
+                    const SizedBox(height: 10),
+                    Text(
+                      title,
+                      style: const TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        category.toUpperCase(),
+                        style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.greenAccent.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        '💰 Salary: $salary',
+                        style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Description
+              _buildCard('📖 Overview', Text(description, style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFFE2E8F0)))),
+              const SizedBox(height: 16),
+
+              // How to become
+              if (howToBecome.isNotEmpty) ...[
+                _buildCard('🎓 Preparation & Pathway', Text(howToBecome, style: const TextStyle(fontSize: 13, height: 1.4, fontWeight: FontWeight.w600))),
+                const SizedBox(height: 16),
+              ],
+
+              // Skills
+              if (skills.isNotEmpty) ...[
+                _buildCard(
+                  '🧠 Key Skills Required',
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: skills.map((s) => Chip(label: Text(s), backgroundColor: theme.colorScheme.primary.withOpacity(0.08))).toList(),
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: skills.map((s) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(s, style: TextStyle(color: theme.colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+                    )).toList(),
                   ),
                 ),
-              const SizedBox(height: 12),
+                const SizedBox(height: 16),
+              ],
 
-              if (workplaces.isNotEmpty)
-                _buildDetailBox(
-                  context,
-                  '🏢 Where to Work',
+              // Workplaces
+              if (workplaces.isNotEmpty) ...[
+                _buildCard(
+                  '🏢 Workplaces & Sectors',
                   Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: workplaces.map((w) => Chip(label: Text(w), backgroundColor: Colors.amber.withOpacity(0.1), labelStyle: const TextStyle(color: Colors.amber))).toList(),
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: workplaces.map((w) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.06),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(w, style: const TextStyle(fontSize: 12, color: Colors.white70)),
+                    )).toList(),
                   ),
                 ),
+                const SizedBox(height: 24),
+              ],
+
+              // Add to compare button
+              ElevatedButton.icon(
+                icon: const Icon(Icons.compare_arrows),
+                label: const Text('Add to Compare'),
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                onPressed: () {
+                  SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                  if (onAddToCompare != null) {
+                    onAddToCompare!(job);
+                  }
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Added $title to comparison list!')),
+                  );
+                },
+              ),
+              const SizedBox(height: 30),
             ],
           ),
         ),
@@ -456,19 +754,21 @@ class JobDetail12thScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailBox(BuildContext context, String label, Widget content) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Color(0xFF6C63FF), letterSpacing: 1.2)),
-            const SizedBox(height: 10),
-            content,
-          ],
-        ),
+  Widget _buildCard(String title, Widget content) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          content,
+        ],
       ),
     );
   }

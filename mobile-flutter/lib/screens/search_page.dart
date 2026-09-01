@@ -49,27 +49,29 @@ class _SearchPageState extends State<SearchPage> {
     final state = CareerPathApp.of(context);
     SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
 
-    final type = result['type']?.toString().toLowerCase();
+    final type = result['type']?.toString().toLowerCase() ?? '';
     
-    // Dynamically routes based on payload type
     if (type == 'after10th' || type == '10th') {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const After10thPage()),
+        MaterialPageRoute(builder: (_) => After10thPage(initialTarget: result)),
       );
     } else if (type == 'after12th' || type == '12th') {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const After12thPage()),
+        MaterialPageRoute(builder: (_) => After12thPage(initialTarget: result)),
+      );
+    } else if (type == 'trending' || type == 'job' || result['salary'] != null) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => GraduationPage(initialTarget: result)),
       );
     } else {
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const GraduationPage()),
+        MaterialPageRoute(builder: (_) => GraduationPage(initialTarget: result)),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = CareerPathApp.of(context);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -101,9 +103,7 @@ class _SearchPageState extends State<SearchPage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: theme.brightness == Brightness.dark
-                ? [const Color(0xFF0F0826), const Color(0xFF06020F)]
-                : [const Color(0xFFEBE9FF), const Color(0xFFF8F9FA)],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
         child: _loading

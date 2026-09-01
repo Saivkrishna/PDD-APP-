@@ -8,7 +8,6 @@ import { allAptitudeQuestions } from './allQuizQuestions';
 import MemoryMatrixGame from './components/MemoryMatrix/MemoryMatrixGame-saikrishna';
 import ReasoningPracticePage from './components/ReasoningPracticePage';
 import ArithmeticRainGame from './components/ArithmeticRain/ArithmeticRainGame-saikrishna';
-import ATSScannerPage from './components/ATSScanner/ATSScannerPage';
 import { auth, googleProvider } from './firebase';
 import { 
   createUserWithEmailAndPassword, 
@@ -7331,16 +7330,6 @@ export default function App() {
             }}
             onBack={handleBack}
             t={t}
-          />
-        );
-
-      case 'ats-scanner':
-        return (
-          <ATSScannerPage
-            onBack={handleBack}
-            t={t}
-            user={user}
-            soundEnabled={soundEnabled}
           />
         );
 

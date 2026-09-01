@@ -103,14 +103,11 @@ class _AuthGatewayState extends State<AuthGateway> {
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF0F0826),
-              Color(0xFF06020F),
-            ],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
         child: Center(

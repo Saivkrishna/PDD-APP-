@@ -56,14 +56,11 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
     
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F0826),
-              Color(0xFF06020F),
-            ],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
         child: SafeArea(

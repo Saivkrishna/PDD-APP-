@@ -84,9 +84,7 @@ class EducationHubPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: theme.brightness == Brightness.dark
-                ? [const Color(0xFF0F0826), const Color(0xFF06020F)]
-                : [const Color(0xFFEBE9FF), const Color(0xFFF8F9FA)],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
         child: ListView.builder(

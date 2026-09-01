@@ -5,12 +5,13 @@ import '../main.dart';
 import '../services/api_service.dart';
 import '../utils/sound_manager.dart';
 import 'search_page.dart';
-import 'ats_scanner_page.dart';
 import 'memory_matrix_game.dart';
 import 'arithmetic_rain_game.dart';
 import 'education_hub_page.dart';
 import 'aptitude_cheatsheet_page.dart';
-import 'settings_page.dart';
+import 'reasoning_practice_page.dart';
+import 'tech_learning_hub_page.dart';
+import 'ai_recommendation_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
   bool _loadingTrending = false;
   int _quoteIdx = 0;
   Timer? _trendingTimer;
+  final List<Map<String, dynamic>> _compareList = [];
 
   final List<Map<String, String>> _quotes = [
     {"text": "The only way to do great work is to love what you do.", "author": "Steve Jobs"},
@@ -36,12 +38,20 @@ class _HomePageState extends State<HomePage> {
     {"text": "It always seems impossible until it's done.", "author": "Nelson Mandela"}
   ];
 
+  static const List<Map<String, String>> upcomingExams = [
+    {"name": "JEE Main (Session 2)", "date": "2026-04-04", "type": "Engineering", "icon": "⚡"},
+    {"name": "NEET UG 2026", "date": "2026-05-03", "type": "Medical", "icon": "🩺"},
+    {"name": "CUET UG 2026", "date": "2026-05-15", "type": "Central Universities", "icon": "🏛️"},
+    {"name": "GATE 2027", "date": "2027-02-06", "type": "Postgraduate Tech", "icon": "⚙️"},
+    {"name": "CAT 2026", "date": "2026-11-29", "type": "Management / IIMs", "icon": "📊"},
+  ];
+
   @override
   void initState() {
     super.initState();
     _quoteIdx = Random().nextInt(_quotes.length);
     _fetchTrending();
-    _trendingTimer = Timer.periodic(const Duration(seconds: 30), (_) => _fetchTrending());
+    _trendingTimer = Timer.periodic(const Duration(seconds: 45), (_) => _fetchTrending());
   }
 
   @override
@@ -56,32 +66,73 @@ class _HomePageState extends State<HomePage> {
       _loadingTrending = true;
     });
     try {
-      final health = await ApiService.checkHealth();
-      if (health['status'] == 'ok') {
-        // Fetch real data
-        final response = await ApiService.searchCareers(''); // Returns all careers as a starting point
-        if (mounted) {
-          setState(() {
-            _trending = response.take(4).toList();
-            _loadingTrending = false;
-          });
-        }
+      final overview = await ApiService.getOverview();
+      final trendingList = overview['trending'] as List?;
+      if (trendingList != null && trendingList.isNotEmpty && mounted) {
+        setState(() {
+          _trending = trendingList;
+          _loadingTrending = false;
+        });
       } else {
-        _setMockTrending();
+        _setFallbackTrending();
       }
     } catch (_) {
-      _setMockTrending();
+      _setFallbackTrending();
     }
   }
 
-  void _setMockTrending() {
+  void _setFallbackTrending() {
     if (!mounted) return;
     setState(() {
       _trending = [
-        {"id": "cse_ai", "title": "AI & ML Engineer", "icon": "🤖", "category": "IT", "salary": "₹5–15 LPA"},
-        {"id": "data_entry", "title": "Data Operations Executive", "icon": "🖥️", "category": "IT", "salary": "₹12K–20K/month"},
-        {"id": "delivery-12", "title": "Logistics Coordinator", "icon": "🚚", "category": "Non-IT", "salary": "₹15K–30K/month"},
-        {"id": "police-12", "title": "Police Constable", "icon": "👮", "category": "Government", "salary": "₹25K–45K/month"}
+        {
+          "id": "ai-engineer",
+          "title": "AI & Machine Learning Engineer",
+          "industry": "Artificial Intelligence",
+          "growth": "42% YoY",
+          "icon": "🤖",
+          "salary": "₹12,00,000 - ₹35,00,000 / year",
+          "description": "Design, develop, and deploy machine learning models and generative AI systems into high-throughput production environments.",
+          "skills": ["Python", "PyTorch", "Transformers", "MLOps", "REST APIs"],
+          "tools": ["HuggingFace", "Docker", "AWS SageMaker", "LangChain"],
+          "certifications": ["AWS Certified Machine Learning", "TensorFlow Developer Certificate"]
+        },
+        {
+          "id": "fullstack-dev",
+          "title": "Full Stack Cloud Architect",
+          "industry": "Cloud & Software",
+          "growth": "28% YoY",
+          "icon": "☁️",
+          "salary": "₹10,00,000 - ₹28,00,000 / year",
+          "description": "Architect scalable microservices, web apps, and enterprise cloud infrastructure using modern JavaScript frameworks.",
+          "skills": ["React", "Node.js", "TypeScript", "PostgreSQL", "Docker"],
+          "tools": ["AWS / GCP", "Kubernetes", "Next.js", "GitHub Actions"],
+          "certifications": ["AWS Solutions Architect Associate", "CKA (Kubernetes Administrator)"]
+        },
+        {
+          "id": "cybersecurity-analyst",
+          "title": "Cybersecurity & SOC Analyst",
+          "industry": "Information Security",
+          "growth": "35% YoY",
+          "icon": "🛡️",
+          "salary": "₹8,00,000 - ₹22,00,000 / year",
+          "description": "Protect organizational networks, perform penetration testing, and respond to cyber security incidents.",
+          "skills": ["Network Security", "Ethical Hacking", "SIEM", "Python"],
+          "tools": ["Wireshark", "Burp Suite", "Splunk", "Metasploit"],
+          "certifications": ["CompTIA Security+", "CEH (Certified Ethical Hacker)"]
+        },
+        {
+          "id": "data-scientist",
+          "title": "Data Scientist & Analytics Lead",
+          "industry": "Data & Analytics",
+          "growth": "31% YoY",
+          "icon": "📊",
+          "salary": "₹9,00,000 - ₹25,00,000 / year",
+          "description": "Uncover hidden business patterns, build predictive statistical models, and build automated reporting pipelines.",
+          "skills": ["SQL", "Python / R", "Statistics", "Data Visualization"],
+          "tools": ["Power BI", "Tableau", "Pandas", "Scikit-Learn"],
+          "certifications": ["Google Data Analytics Professional", "Microsoft Power BI Data Analyst"]
+        }
       ];
       _loadingTrending = false;
     });
@@ -103,9 +154,147 @@ class _HomePageState extends State<HomePage> {
   }
 
   int _calculateDaysLeft(String targetDateStr) {
-    final target = DateTime.parse(targetDateStr);
-    final difference = target.difference(DateTime.now());
-    return difference.inDays > 0 ? difference.inDays : 0;
+    try {
+      final target = DateTime.parse(targetDateStr);
+      final difference = target.difference(DateTime.now());
+      return difference.inDays > 0 ? difference.inDays : 0;
+    } catch (_) {
+      return 30;
+    }
+  }
+
+  void _startAIMentorQuiz() {
+    final state = CareerPathApp.of(context);
+    SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+
+    String studyArea = 'IT & Software';
+    String problemStyle = 'Building apps & systems';
+    String acadStage = '12th Standard';
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: CareerPathApp.getCardBg(context),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (BuildContext sContext, StateSetter setModalState) {
+            final theme = Theme.of(context);
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                top: 24,
+                bottom: MediaQuery.of(sContext).viewInsets.bottom + 30,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(color: Colors.grey.withOpacity(0.3), borderRadius: BorderRadius.circular(2)),
+                    ),
+                  ),
+                  const Text('🤖 AI Career Recommendation', style: TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                  const SizedBox(height: 6),
+                  const Text('Select your academic preferences to generate a personalized career roadmap timeline.', style: TextStyle(fontSize: 12, color: Colors.grey), textAlign: TextAlign.center),
+                  const SizedBox(height: 20),
+
+                  const Text('1. Subject Area of Interest:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: CareerPathApp.getBorderColor(context)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: studyArea,
+                        isExpanded: true,
+                        dropdownColor: CareerPathApp.getCardBg(context),
+                        items: ['IT & Software', 'Medical & Healthcare', 'Engineering & Core', 'Management & Business', 'Arts & Design', 'Civil Services']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13)))).toList(),
+                        onChanged: (v) => setModalState(() => studyArea = v ?? studyArea),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  const Text('2. Preferred Problem-Solving Style:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: CareerPathApp.getBorderColor(context)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: problemStyle,
+                        isExpanded: true,
+                        dropdownColor: CareerPathApp.getCardBg(context),
+                        items: ['Building apps & systems', 'Analytical & mathematical', 'Creative & artistic', 'People management', 'Hands-on practical execution']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13)))).toList(),
+                        onChanged: (v) => setModalState(() => problemStyle = v ?? problemStyle),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+
+                  const Text('3. Current Academic Stage:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.04),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: CareerPathApp.getBorderColor(context)),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: acadStage,
+                        isExpanded: true,
+                        dropdownColor: CareerPathApp.getCardBg(context),
+                        items: ['10th Standard', '12th Standard', 'Graduation', 'Post Graduation', 'Working Professional']
+                            .map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 13)))).toList(),
+                        onChanged: (v) => setModalState(() => acadStage = v ?? acadStage),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => AIRecommendationPage(
+                            answers: [studyArea, problemStyle, acadStage],
+                            quizType: 'general',
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    ),
+                    child: const Text('Generate AI Roadmap ➔', style: TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -113,338 +302,288 @@ class _HomePageState extends State<HomePage> {
     final state = CareerPathApp.of(context);
     final theme = Theme.of(context);
     final user = state?.user;
-    
-    final exams = [
-      {"name": "JEE Main 2027", "date": "2027-01-15T09:00:00", "info": "Engineering entrance for IITs/NITs"},
-      {"name": "NEET UG 2027", "date": "2027-05-02T10:00:00", "info": "Medical entrance for MBBS/BDS"},
-      {"name": "CLAT 2027", "date": "2026-12-06T14:00:00", "info": "Law entrance for National Law Universities"},
-      {"name": "CAT 2026", "date": "2026-11-29T09:00:00", "info": "Post-graduate business entrance for IIMs"}
-    ];
+    final quote = _quotes[_quoteIdx];
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          state?.translate('appName') ?? 'CareerPath AI 🎓',
-          style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.w900),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              // Navigates directly to settings tab in HomeNavHub
-              // In this case, we can show Settings screen directly using navigator
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const SettingsPage(isModal: true)),
-              );
-            },
-          ),
-        ],
-      ),
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: theme.brightness == Brightness.dark
-                ? [const Color(0xFF0F0826), const Color(0xFF06020F)]
-                : [const Color(0xFFEBE9FF), const Color(0xFFF8F9FA)],
+            colors: CareerPathApp.getGradient(context),
           ),
         ),
-        child: RefreshIndicator(
-          onRefresh: _fetchTrending,
-          child: SingleChildScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // 1. HERO GREETING AND QUOTE
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 4,
-                  color: theme.colorScheme.surface.withOpacity(0.9),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        child: SafeArea(
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 90),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Header Bar
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          _getGreeting(user),
-                          style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 26,
-                            fontWeight: FontWeight.w900,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _getGreeting(user),
+                              style: const TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              state?.translate('heroSub') ?? 'AI-powered guidance for every student',
+                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Ready to construct your future path? Explore roadmaps, test strategies, and use AI-powered guidance.',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(height: 15),
-                        // Search Box entry
-                        GestureDetector(
-                          onTap: () {
+                        IconButton(
+                          icon: const Icon(Icons.search, size: 26),
+                          tooltip: 'Search Careers',
+                          onPressed: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
                             Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) => const SearchPage()),
                             );
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.08),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(color: Colors.white.withOpacity(0.15)),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.search, size: 20),
-                                const SizedBox(width: 10),
-                                Text(
-                                  'Search careers, jobs, courses...',
-                                  style: TextStyle(color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6)),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Divider(color: theme.dividerColor.withOpacity(0.1)),
-                        // Tappable Quote widget
-                        GestureDetector(
-                          onTap: _shuffleQuote,
-                          child: Container(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  '"${_quotes[_quoteIdx]['text']}"',
-                                  style: const TextStyle(
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  '- ${_quotes[_quoteIdx]['author']}',
-                                  style: TextStyle(
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                    color: theme.colorScheme.primary,
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ],
                     ),
-                  ),
-                ),
-                
-                const SizedBox(height: 15),
-                
-                // 2. ATS SCANNER BANNER
-                Card(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 2,
-                  color: Colors.purple.withOpacity(0.1),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    leading: const CircleAvatar(
-                      backgroundColor: Color(0xFF6C63FF),
-                      child: Icon(Icons.description_outlined, color: Colors.white),
-                    ),
-                    title: const Text(
-                      'AI Resume Scanner (ATS Grader)',
-                      style: TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: const Text('Parse PDF/Word resumes and verify skills matching.'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ATSScannerPage()),
-                      );
-                    },
-                  ),
-                ),
-                
-                const SizedBox(height: 15),
+                    const SizedBox(height: 16),
 
-                // 3. BENTO QUICK LINKS
-                Text(
-                  '💡 Activities & Quizzes',
-                  style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
-                ),
-                const SizedBox(height: 10),
-                
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: 1.4,
-                  children: [
-                    _buildBentoItem(
-                      'Aptitude Quiz',
-                      'Practice numerical and logic sets.',
-                      '✏️',
-                      const Color(0xFF6C63FF),
-                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AptitudeCheatsheetPage(isModal: true))),
-                    ),
-                    _buildBentoItem(
-                      'Memory Matrix',
-                      'Train your spatial cognitive skills.',
-                      '🧠',
-                      const Color(0xFF2EC4B6),
-                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MemoryMatrixGame())),
-                    ),
-                    _buildBentoItem(
-                      'Arithmetic Rain',
-                      'Solve speed arithmetic challenges.',
-                      '🌧️',
-                      const Color(0xFFFF9F1C),
-                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ArithmeticRainGame())),
-                    ),
-                    _buildBentoItem(
-                      'Education Hub',
-                      'Explore academic streams & roadmaps.',
-                      '🎓',
-                      const Color(0xFFE71D36),
-                      () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EducationHubPage())),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 20),
-
-                // 4. TRENDING SEGMENT
-                Text(
-                  state?.translate('trendingTitle') ?? '🔥 Trending Careers 2026',
-                  style: const TextStyle(fontFamily: 'Outfit', fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                
-                if (_loadingTrending)
-                  const Center(child: CircularProgressIndicator())
-                else
-                  ..._trending.map((job) => Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: ListTile(
-                      leading: Text(job['icon'] ?? '💼', style: const TextStyle(fontSize: 24)),
-                      title: Text(job['title'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      subtitle: Text(job['salary'] ?? ''),
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    // Daily Quote Card
+                    GestureDetector(
+                      onTap: _shuffleQuote,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6C63FF).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
+                          color: CareerPathApp.getCardBg(context),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
                         ),
-                        child: Text(
-                          job['category'] ?? '',
-                          style: const TextStyle(color: Color(0xFF6C63FF), fontSize: 10, fontWeight: FontWeight.bold),
+                        child: Row(
+                          children: [
+                            const Text('💡', style: TextStyle(fontSize: 22)),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '"${quote['text']}"',
+                                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Color(0xFFE2E8F0)),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '— ${quote['author']}',
+                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: theme.colorScheme.primary),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      onTap: () {
-                        // Launches Career Details
-                      },
                     ),
-                  )).toList(),
+                    const SizedBox(height: 18),
 
-                const SizedBox(height: 20),
-
-                // 5. EXAMS COUNTDOWN
-                Text(
-                  state?.translate('upcomingExams') ?? '📅 Upcoming Entrance Exams',
-                  style: const TextStyle(fontFamily: 'Outfit', fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                
-                ...exams.map((exam) {
-                  final days = _calculateDaysLeft(exam['date']!);
-                  final double percent = max(0.0, min(1.0, days / 365.0));
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(14.0),
+                    // AI Mentor Hero Launcher
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            theme.colorScheme.primary.withOpacity(0.3),
+                            theme.colorScheme.secondary.withOpacity(0.2),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: theme.colorScheme.primary.withOpacity(0.4)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withOpacity(0.08),
+                            blurRadius: 15,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(exam['name']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                              Text('$days days left', style: const TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primary.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text('🎓 CAREERPATH AI', style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold)),
+                              ),
+                              const Text('✨ 2026 Edition', style: TextStyle(fontSize: 11, color: Colors.cyanAccent, fontWeight: FontWeight.bold)),
                             ],
                           ),
+                          const SizedBox(height: 12),
+                          Text(
+                            state?.translate('heroTitle') ?? 'Your Dreams Begin With the Right Path 🚀',
+                            style: const TextStyle(fontFamily: 'Outfit', fontSize: 18, fontWeight: FontWeight.w900),
+                          ),
                           const SizedBox(height: 6),
-                          Text(exam['info']!, style: TextStyle(fontSize: 12, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7))),
-                          const SizedBox(height: 10),
-                          LinearProgressIndicator(
-                            value: 1.0 - percent,
-                            backgroundColor: theme.dividerColor.withOpacity(0.08),
-                            color: const Color(0xFF6C63FF),
-                            minHeight: 6,
-                            borderRadius: BorderRadius.circular(3),
+                          const Text(
+                            'Explore academic streams, aptitude cheatsheets, logical reasoning mock tests, tech learning resources, and ATS resume tools.',
+                            style: TextStyle(fontSize: 12, height: 1.4, color: Color(0xFFE2E8F0)),
                           ),
                         ],
                       ),
                     ),
-                  );
-                }).toList(),
-              ],
-            ),
+                    const SizedBox(height: 24),
+
+                    // Quick Action Grid
+                    const Text('Explore Modules', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 12),
+                    GridView.count(
+                      crossAxisCount: 2,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 12,
+                      childAspectRatio: 1.4,
+                      children: [
+                        _buildQuickCard(
+                          icon: '🎓',
+                          title: 'Education Hub',
+                          subtitle: '10th, 12th & Degree',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EducationHubPage()));
+                          },
+                        ),
+                        _buildQuickCard(
+                          icon: '📐',
+                          title: 'Aptitude Handbook',
+                          subtitle: '22 Topics & Quizzes',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const AptitudeCheatsheetPage()));
+                          },
+                        ),
+                        _buildQuickCard(
+                          icon: '🧠',
+                          title: 'Reasoning Practice',
+                          subtitle: 'Mock Tests & Topics',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ReasoningPracticePage()));
+                          },
+                        ),
+                        _buildQuickCard(
+                          icon: '🚀',
+                          title: 'Learning Hub',
+                          subtitle: '54 Tech Skills & Videos',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const TechLearningHubPage()));
+                          },
+                        ),
+                        _buildQuickCard(
+                          icon: '🎮',
+                          title: 'Brain Games',
+                          subtitle: 'Memory & Arithmetic',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MemoryMatrixGame()));
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Upcoming Entrance Exams Tracker
+                    Text(
+                      state?.translate('upcomingExams') ?? '📅 Upcoming Entrance Exams',
+                      style: const TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 12),
+
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: upcomingExams.length,
+                      itemBuilder: (context, idx) {
+                        final ex = upcomingExams[idx];
+                        final daysLeft = _calculateDaysLeft(ex['date']!);
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          color: CareerPathApp.getCardBg(context),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+                          ),
+                          child: ListTile(
+                            leading: Text(ex['icon']!, style: const TextStyle(fontSize: 26)),
+                            title: Text(ex['name']!, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 14)),
+                            subtitle: Text('${ex['type']} • ${ex['date']}', style: const TextStyle(fontSize: 11, color: Colors.grey)),
+                            trailing: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: daysLeft < 45 ? Colors.redAccent.withOpacity(0.15) : Colors.cyanAccent.withOpacity(0.15),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '$daysLeft ${state?.translate('daysLeft') ?? 'days left'}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: daysLeft < 45 ? Colors.redAccent : Colors.cyanAccent,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBentoItem(String title, String desc, String icon, Color accentColor, VoidCallback onTap) {
-    final theme = Theme.of(context);
+  Widget _buildQuickCard({
+    required String icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-      elevation: 2,
+      color: CareerPathApp.getCardBg(context),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+      ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(icon, style: const TextStyle(fontSize: 24)),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(color: accentColor, shape: BoxShape.circle),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Text(
-                title,
-                style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 13),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                desc,
-                style: TextStyle(fontSize: 9, color: theme.textTheme.bodyMedium?.color?.withOpacity(0.6)),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+              Text(icon, style: const TextStyle(fontSize: 24)),
+              const SizedBox(height: 6),
+              Text(title, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(subtitle, style: const TextStyle(fontSize: 10, color: Colors.grey), maxLines: 1, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),

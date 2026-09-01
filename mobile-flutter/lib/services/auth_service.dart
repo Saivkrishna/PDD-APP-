@@ -127,11 +127,7 @@ class AuthService {
 
   // --- BACKEND AUTH SYNC ---
   static Future<Map<String, dynamic>> syncBackend(String uid, String name, String email) async {
-    final client = await ApiService.checkHealth(); // Verify API state
     try {
-      // Call sync POST endpoint directly
-      
-      // Let's call /api/auth/sync direct REST
       final res = await httpPost('/auth/sync', {
         'uid': uid,
         'name': name,
