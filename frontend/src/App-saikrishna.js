@@ -22,7 +22,7 @@ import {
   updateProfile
 } from 'firebase/auth';
 
-const API = process.env.REACT_APP_API_URL || '/api';
+const API = process.env.REACT_APP_API_URL || (typeof window !== 'undefined' && (window.location.hostname.includes('web.app') || window.location.hostname.includes('firebaseapp.com') || window.location.hostname.includes('github.io')) ? 'https://career-guidance-app-yx5h.onrender.com/api' : '/api');
 
 // ─── COLORS & STYLES ─────────────
 const S = {

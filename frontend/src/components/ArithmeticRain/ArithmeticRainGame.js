@@ -45,7 +45,7 @@ export default function ArithmeticRainGame({ onBack, t, soundEnabled: globalSoun
   const [globalCoins, setGlobalCoins] = useState(() => parseInt(localStorage.getItem('cp_coins') || '200', 10));
   const [globalXp, setGlobalXp] = useState(() => parseInt(localStorage.getItem('cp_xp') || '0', 10));
 
-  const API_URL = process.env.REACT_APP_API_URL || '/api';
+  const API_URL = process.env.REACT_APP_API_URL || (typeof window !== 'undefined' && (window.location.hostname.includes('web.app') || window.location.hostname.includes('firebaseapp.com') || window.location.hostname.includes('github.io')) ? 'https://career-guidance-app-yx5h.onrender.com/api' : '/api');
   const todayStr = new Date().toISOString().split('T')[0];
 
   // Disable body scroll when game screen is loaded to prevent focus shifting
