@@ -122,7 +122,15 @@ class _AptitudeCheatsheetPageState extends State<AptitudeCheatsheetPage> with Si
     SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
 
     final currentQ = _quizQuestions[_currentIdx];
-    final isCorrect = option == (currentQ['answer'] ?? currentQ['ans']);
+    final options = (currentQ['options'] as List?)?.map((o) => o.toString()).toList() ?? [];
+    String correctAnswer = (currentQ['answer'] ?? currentQ['ans'] ?? '').toString();
+    if (correctAnswer.isEmpty && currentQ['correctIndex'] != null && currentQ['correctIndex'] is int) {
+      final idx = currentQ['correctIndex'] as int;
+      if (idx >= 0 && idx < options.length) {
+        correctAnswer = options[idx];
+      }
+    }
+    final isCorrect = option == correctAnswer;
 
     setState(() {
       _selectedOption = option;
@@ -497,7 +505,13 @@ class _AptitudeCheatsheetPageState extends State<AptitudeCheatsheetPage> with Si
     final q = _quizQuestions[_currentIdx];
     final questionText = q['question'] ?? q['q'] ?? '';
     final options = (q['options'] as List?)?.map((o) => o.toString()).toList() ?? [];
-    final correctAnswer = q['answer'] ?? q['ans'] ?? '';
+    String correctAnswer = (q['answer'] ?? q['ans'] ?? '').toString();
+    if (correctAnswer.isEmpty && q['correctIndex'] != null && q['correctIndex'] is int) {
+      final idx = q['correctIndex'] as int;
+      if (idx >= 0 && idx < options.length) {
+        correctAnswer = options[idx];
+      }
+    }
     final explanation = q['explanation'] ?? '';
     final shortcut = q['shortcut'] ?? '';
     final company = q['company']?.toString() ?? '';

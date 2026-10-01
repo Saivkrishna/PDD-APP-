@@ -33,6 +33,7 @@ app.use((req, res, next) => {
   const allowedOrigins = [
     'https://career-guidance-app-9aba0.web.app',
     'https://career-guidance-app-9aba0.firebaseapp.com',
+    'https://career-guidance-app-yx5h.onrender.com',
     process.env.FRONTEND_URL
   ].filter(Boolean);
 

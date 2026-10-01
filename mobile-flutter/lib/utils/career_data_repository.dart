@@ -99,36 +99,43 @@ class CareerDataRepository {
       "id": "intermediate",
       "title": "Intermediate / 11th & 12th",
       "icon": "📘",
-      "description": "Continue formal schooling with stream selection leading to university degrees.",
+      "description": "Continue formal schooling with specific stream selections leading to degree courses.",
       "duration": "2 Years"
     },
     {
       "id": "diploma",
       "title": "Diploma / Polytechnic",
       "icon": "🛠️",
-      "description": "Technical 3-year diplomas providing practical skills and lateral entry to B.Tech 2nd year.",
+      "description": "Technical diploma courses offering practical knowledge and lateral entry into engineering.",
       "duration": "3 Years"
     },
     {
       "id": "iti",
-      "title": "ITI Vocational Certifications",
+      "title": "ITI Courses",
       "icon": "🔧",
-      "description": "Industrial training in electrical, mechanical, welder, fitter, and COPA trades.",
+      "description": "Industrial Training Institute programs offering immediate vocational and industrial jobs.",
       "duration": "1–2 Years"
     },
     {
       "id": "shortterm",
       "title": "Short-Term Skill Courses",
       "icon": "💻",
-      "description": "Fast-track certifications in coding, design, retail, and accounting for direct employment.",
+      "description": "Fast-track certification programs to gain specific industry skills and start working quickly.",
       "duration": "1–6 Months"
     },
     {
       "id": "vocational",
-      "title": "Vocational Stream Courses",
+      "title": "Vocational Courses",
       "icon": "🌾",
-      "description": "Job-oriented programs focusing on practical industry skill development.",
+      "description": "Job-oriented programs focusing on practical skill development in specific sectors.",
       "duration": "1–2 Years"
+    },
+    {
+      "id": "specialized",
+      "title": "Specialized Professional Courses",
+      "icon": "🌟",
+      "description": "Creative and niche professional certifications with high employment potential.",
+      "duration": "1–3 Years"
     }
   ];
 
@@ -187,6 +194,22 @@ class CareerDataRepository {
     {"id": "MEC", "label": "Maths, Economics, Commerce (MEC)"},
     {"id": "HEC", "label": "Humanities / Arts (HEC)"},
     {"id": "Vocational", "label": "Vocational & Applied Trades"}
+  ];
+
+  static const List<Map<String, dynamic>> after12thJobs = [
+    { 'id': 'data-entry-12', 'title': 'Data Entry Operator', 'icon': '🖥️', 'category': 'IT', 'salary': '₹12K–₹20K/month', 'description': 'Handle data entry, typing and computer operations in offices, BPOs and data centers.', 'skills': ['Fast Typing', 'MS Excel', 'Communication', 'Accuracy'], 'howToBecome': 'Learn basic computer skills, MS Office and typing practice.', 'workplaces': ['Offices', 'BPOs', 'Data Centers'] },
+    { 'id': 'graphic-designer-12', 'title': 'Graphic Designer', 'icon': '🎨', 'category': 'IT', 'salary': '₹15K–₹30K/month', 'description': 'Create visual content for brands, social media, ads and digital platforms.', 'skills': ['Canva', 'Photoshop', 'Illustrator', 'Creativity'], 'howToBecome': 'Learn Canva, Photoshop and Illustrator.', 'workplaces': ['Marketing Agencies', 'IT Companies', 'Freelancing'] },
+    { 'id': 'video-editor-12', 'title': 'Video Editor', 'icon': '🎬', 'category': 'IT', 'salary': '₹15K–₹35K/month', 'description': 'Edit and produce video content for YouTube channels, media companies and brands.', 'skills': ['Premiere Pro', 'CapCut', 'After Effects', 'Creativity'], 'howToBecome': 'Learn Premiere Pro, CapCut or After Effects.', 'workplaces': ['YouTube Channels', 'Media Companies', 'Freelancing'] },
+    { 'id': 'social-media-12', 'title': 'Social Media Manager', 'icon': '📱', 'category': 'IT', 'salary': '₹18K–₹35K/month', 'description': 'Manage brand presence, content and marketing across social media platforms.', 'skills': ['Communication', 'Marketing', 'Content Creation', 'Analytics'], 'howToBecome': 'Learn Instagram, Facebook and social media marketing.', 'workplaces': ['Brands', 'Agencies', 'Startups'] },
+    { 'id': 'web-design-12', 'title': 'Web Design Assistant', 'icon': '🌐', 'category': 'IT', 'salary': '₹15K–₹30K/month', 'description': 'Assist in designing and building website interfaces for clients.', 'skills': ['HTML', 'CSS', 'UI Basics', 'Creativity'], 'howToBecome': 'Learn HTML and CSS basics.', 'workplaces': ['IT Companies', 'Freelancing'] },
+    { 'id': 'retail-12', 'title': 'Retail Staff', 'icon': '🛍️', 'category': 'Non-IT', 'salary': '₹12K–₹20K/month', 'description': 'Handle customer service, billing and store operations in retail outlets.', 'skills': ['Sales', 'Customer Handling', 'Communication'], 'howToBecome': 'Communication and customer service skills.', 'workplaces': ['Malls', 'Supermarkets', 'Stores'] },
+    { 'id': 'bpo-12', 'title': 'BPO Executive', 'icon': '📞', 'category': 'Non-IT', 'salary': '₹15K–₹28K/month', 'description': 'Handle inbound/outbound calls and customer support in call centres.', 'skills': ['Speaking Skills', 'Problem Solving', 'English Communication'], 'howToBecome': 'Basic English and communication training.', 'workplaces': ['Call Centers', 'ITES Companies'] },
+    { 'id': 'airport-12', 'title': 'Airport Ground Staff', 'icon': '✈️', 'category': 'Non-IT', 'salary': '₹20K–₹35K/month', 'description': 'Handle passenger check-in, boarding, baggage and airport operations.', 'skills': ['Communication', 'Grooming', 'Customer Handling'], 'howToBecome': 'Aviation or customer service training course.', 'workplaces': ['Airports', 'Airlines'] },
+    { 'id': 'hotel-12', 'title': 'Hotel Staff', 'icon': '🏨', 'category': 'Non-IT', 'salary': '₹15K–₹25K/month', 'description': 'Provide hospitality services to hotel guests.', 'skills': ['Customer Service', 'Teamwork', 'Grooming'], 'howToBecome': 'Hospitality training or short hotel management course.', 'workplaces': ['Hotels', 'Resorts'] },
+    { 'id': 'delivery-12', 'title': 'Delivery & Logistics', 'icon': '🚚', 'category': 'Non-IT', 'salary': '₹15K–₹30K/month', 'description': 'Handle last-mile delivery and logistics for e-commerce and courier companies.', 'skills': ['Navigation', 'Time Management', 'Driving License'], 'howToBecome': 'Driving license and basic logistics knowledge.', 'workplaces': ['E-Commerce Companies', 'Logistics Companies'] },
+    { 'id': 'police-12', 'title': 'Police Constable', 'icon': '👮', 'category': 'Government', 'salary': '₹25K–₹45K/month', 'description': 'Maintain law and order, assist investigations and serve the community.', 'skills': ['Fitness', 'Discipline', 'Communication'], 'howToBecome': 'State police recruitment exams.', 'workplaces': ['Police Department'] },
+    { 'id': 'army-12', 'title': 'Army / NDA', 'icon': '🪖', 'category': 'Government', 'salary': '₹35K–₹60K/month', 'description': 'Serve in the Indian Army, Navy or Air Force as a soldier or officer.', 'skills': ['Physical Fitness', 'Leadership', 'Discipline'], 'howToBecome': 'NDA exam or Army recruitment rally.', 'workplaces': ['Indian Army', 'Navy', 'Air Force'] },
+    { 'id': 'railway-12', 'title': 'Railway Jobs (RRB)', 'icon': '🚆', 'category': 'Government', 'salary': '₹25K–₹50K/month', 'description': 'Work in Indian Railways as technician, ticket inspector or operations staff.', 'skills': ['Aptitude', 'Technical Basics', 'Discipline'], 'howToBecome': 'RRB NTPC / Group D exams.', 'workplaces': ['Indian Railways'] }
   ];
 
   static const Map<String, List<Map<String, dynamic>>> after12thSectorsMap = {
@@ -320,35 +343,17 @@ class CareerDataRepository {
     ]
   };
 
-  static const List<Map<String, dynamic>> after12thJobs = [
-    {
-      "id": "software-trainee",
-      "title": "Software Trainee / Systems Associate",
-      "category": "IT",
-      "salary": "₹22,000 – ₹35,000 / month",
-      "description": "Entry-level development and tech support role for computer stream graduates.",
-      "skills": ["Java / Python", "SQL Querying", "Problem Solving"],
-      "workplaces": ["IT Services", "Tech Startups"]
-    },
-    {
-      "id": "bank-clerk-po",
-      "title": "Bank Probationary Officer / Clerk",
-      "category": "Government",
-      "salary": "₹35,000 – ₹55,000 / month",
-      "description": "Public sector banking roles for managing account operations and customer loans.",
-      "skills": ["Quantitative Aptitude", "Reasoning", "Customer Relations"],
-      "workplaces": ["State Bank of India", "Punjab National Bank", "Canara Bank"]
-    }
-  ];
-
   // ─── GRADUATION DATASETS ──────────────────────────────────────────
   static const List<Map<String, dynamic>> graduationSectors = [
     {"id": "engineering", "title": "Engineering & Technology", "icon": "🎓", "deptCount": 6},
-    {"id": "it-software", "title": "IT & Software Services", "icon": "💻", "deptCount": 5},
-    {"id": "healthcare-biotech", "title": "Healthcare & Biotechnology", "icon": "🏥", "deptCount": 4},
-    {"id": "commerce-management", "title": "Commerce & Business Management", "icon": "📊", "deptCount": 5},
-    {"id": "law-policy", "title": "Law & Public Policy", "icon": "⚖️", "deptCount": 3},
-    {"id": "govt-defence", "title": "Government & Civil Services", "icon": "🏛️", "deptCount": 4}
+    {"id": "it-computer", "title": "IT & Computer Courses", "icon": "💻", "deptCount": 5},
+    {"id": "medical-healthcare", "title": "Medical & Healthcare", "icon": "🩺", "deptCount": 4},
+    {"id": "commerce-business", "title": "Commerce & Business", "icon": "💼", "deptCount": 5},
+    {"id": "law-legal", "title": "Law & Legal Services", "icon": "⚖️", "deptCount": 3},
+    {"id": "arts-humanities", "title": "Arts & Humanities", "icon": "🎨", "deptCount": 4},
+    {"id": "professional-courses", "title": "Professional Courses", "icon": "🏨", "deptCount": 4},
+    {"id": "agri-vocational", "title": "Agriculture & Vocational", "icon": "🌾", "deptCount": 3},
+    {"id": "defense-govt", "title": "Defense & Government", "icon": "🛡️", "deptCount": 4}
   ];
 
   static const List<Map<String, dynamic>> graduationHigherStudy = [
@@ -358,8 +363,8 @@ class CareerDataRepository {
       "sector": "Management",
       "icon": "💼",
       "duration": "2 Years",
-      "exams": "CAT, XAT, NMAT, SNAP, CMAT",
-      "topColleges": "IIM Ahmedabad, IIM Bangalore, IIM Calcutta, XLRI, FMS Delhi",
+      "exams": ["CAT", "XAT", "NMAT", "SNAP", "CMAT"],
+      "topColleges": ["IIM Ahmedabad", "IIM Bangalore", "IIM Calcutta", "XLRI", "FMS Delhi"],
       "avgFees": "₹12 Lakhs - ₹25 Lakhs total",
       "avgSalary": "₹16 LPA - ₹35 LPA",
       "description": "Premier postgraduate degree for corporate leadership, finance, marketing, and strategy."
@@ -370,8 +375,8 @@ class CareerDataRepository {
       "sector": "Engineering",
       "icon": "💻",
       "duration": "2 Years",
-      "exams": "GATE Exam",
-      "topColleges": "IIT Bombay, IIT Delhi, IIT Madras, IISc Bangalore, NIT Trichy",
+      "exams": ["GATE Exam"],
+      "topColleges": ["IIT Bombay", "IIT Delhi", "IIT Madras", "IISc Bangalore", "NIT Trichy"],
       "avgFees": "₹50,000 - ₹2 Lakhs total (Stipend ₹12,400/mo via GATE)",
       "avgSalary": "₹10 LPA - ₹24 LPA",
       "description": "Advanced technical specialization in AI, VLSI, Robotics, Data Science, and Thermal Engineering."
@@ -382,8 +387,8 @@ class CareerDataRepository {
       "sector": "Technology",
       "icon": "✈️",
       "duration": "1.5 - 2 Years",
-      "exams": "GRE, TOEFL / IELTS",
-      "topColleges": "Stanford, MIT, CMU, TU Munich, University of Toronto",
+      "exams": ["GRE", "TOEFL / IELTS"],
+      "topColleges": ["Stanford", "MIT", "CMU", "TU Munich", "University of Toronto"],
       "avgFees": "₹20 Lakhs - ₹45 Lakhs total",
       "avgSalary": "₹50 LPA - ₹1.2 Crore (\$75K - \$130K/year)",
       "description": "International STEM master's degree with high ROI and OPT/post-study work visas."
@@ -397,10 +402,13 @@ class CareerDataRepository {
       "flag": "🇺🇸",
       "title": "US Higher Education & OPT Guide",
       "icon": "🗽",
-      "exams": "GRE / GMAT, TOEFL / IELTS",
-      "tuition": "₹25 Lakhs - ₹45 Lakhs / year",
+      "entranceExams": ["GRE", "GMAT", "TOEFL", "IELTS"],
+      "avgTuition": "₹25 Lakhs - ₹45 Lakhs / year",
       "livingCost": "₹8 Lakhs - ₹14 Lakhs / year",
-      "visaRules": "3-Year OPT extension for STEM degree graduates.",
+      "visaType": "F-1 Student Visa",
+      "workOpportunity": "3-Year OPT extension for STEM degree graduates.",
+      "topUniversities": ["MIT", "Stanford", "Harvard", "CMU", "UC Berkeley"],
+      "popularCourses": ["MS in CS / Data Science", "MBA", "Fintech & Analytics"],
       "description": "World-leading technology hubs (Silicon Valley), top-tier research universities, and lucrative tech/finance salaries."
     },
     {
@@ -409,10 +417,13 @@ class CareerDataRepository {
       "flag": "🇩🇪",
       "title": "Free Public University Education",
       "icon": "🏰",
-      "exams": "IELTS / TOEFL, German (B1/B2 for specific programs)",
-      "tuition": "€0 (Free in Public Unis, nominal semester fee €300)",
-      "livingCost": "€11,208 / year (Blocked Account requirement)",
-      "visaRules": "18-month post-study job search visa.",
+      "entranceExams": ["IELTS", "TOEFL", "German (B1/B2)"],
+      "avgTuition": "€0 (Free in Public Unis, nominal semester fee €300)",
+      "livingCost": "€11,208 / year (Blocked Account)",
+      "visaType": "National Visa (Subclass D)",
+      "workOpportunity": "18-month post-study job search visa.",
+      "topUniversities": ["TU Munich", "RWTH Aachen", "KIT", "LMU Munich"],
+      "popularCourses": ["Automotive Engineering", "Data Engineering", "Robotics"],
       "description": "Zero tuition fees at top public universities (TU9), strong engineering industry (BMW, Siemens, SAP), and European residence pathways."
     },
     {

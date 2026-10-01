@@ -449,8 +449,6 @@ class After12thSectorDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final state = CareerPathApp.of(context);
-    final theme = Theme.of(context);
     final title = sector['title']?.toString() ?? 'Sector Details';
     final departments = (sector['departments'] as List?) ?? [];
 
@@ -472,99 +470,53 @@ class After12thSectorDetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           itemCount: departments.length,
           itemBuilder: (context, idx) {
-            final dept = departments[idx];
+            final dept = Map<String, dynamic>.from(departments[idx] as Map);
             final deptName = dept['name']?.toString() ?? dept['title']?.toString() ?? 'Department';
             final duration = dept['duration']?.toString() ?? '4 Years';
-            final salary = dept['avgSalary']?.toString() ?? '₹6–18 LPA';
-            final exams = (dept['exams'] as List?)?.map((e) => e.toString()).toList() ?? [];
+            final salary = dept['avgSalary']?.toString() ?? dept['salary']?.toString() ?? '₹6–18 LPA';
+            final icon = dept['icon']?.toString() ?? '🎯';
+            final desc = dept['description']?.toString() ?? '';
 
             return Card(
-              margin: const EdgeInsets.only(bottom: 14),
+              margin: const EdgeInsets.only(bottom: 12),
               color: CareerPathApp.getCardBg(context),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
                 side: BorderSide(color: CareerPathApp.getBorderColor(context)),
               ),
-              child: ExpansionTile(
-                title: Text(
-                  deptName,
-                  style: const TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 4.0),
-                  child: Row(
-                    children: [
-                      Text('⏳ $duration', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                      const SizedBox(width: 12),
-                      Text('💰 $salary', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: Text(icon, style: const TextStyle(fontSize: 32)),
+                title: Text(deptName, style: const TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.bold)),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (desc.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(desc, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8))),
                     ],
-                  ),
-                ),
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                    const SizedBox(height: 6),
+                    Row(
                       children: [
-                        if (dept['eligibility'] != null) ...[
-                          const Text('📋 ELIGIBILITY', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
-                          const SizedBox(height: 4),
-                          Text(dept['eligibility'], style: const TextStyle(fontSize: 13, height: 1.3)),
-                          const SizedBox(height: 12),
-                        ],
-                        if (exams.isNotEmpty) ...[
-                          const Text('📅 ENTRANCE EXAMS', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
-                          const SizedBox(height: 6),
-                          Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: exams.map((ex) => Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primary.withOpacity(0.12),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(ex, style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.bold)),
-                            )).toList(),
-                          ),
-                          const SizedBox(height: 12),
-                        ],
-                        if (dept['averageFees'] != null) ...[
-                          const Text('💳 AVERAGE FEES', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey, letterSpacing: 0.8)),
-                          const SizedBox(height: 4),
-                          Text(dept['averageFees'], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.amberAccent)),
-                          const SizedBox(height: 12),
-                        ],
-                        ElevatedButton.icon(
-                          icon: const Icon(Icons.compare_arrows, size: 16),
-                          label: const Text('Add to Compare'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.06),
-                            foregroundColor: Colors.white,
-                          ),
-                          onPressed: () {
-                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
-                            if (onAddToCompare != null) {
-                              onAddToCompare!({
-                                'id': dept['id'] ?? deptName,
-                                'title': deptName,
-                                'stream': streamId,
-                                'duration': duration,
-                                'salary': salary,
-                                'eligibility': dept['eligibility'] ?? '',
-                                'skills': (dept['careerRoles'] as List?) ?? [],
-                                'workplaces': (dept['topRecruiters'] as List?) ?? [],
-                              });
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Added $deptName to comparison!')),
-                            );
-                          },
-                        ),
+                        Text('⏳ $duration', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+                        const SizedBox(width: 12),
+                        Text('💰 $salary', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => After12thDeptDetailScreen(
+                        dept: dept,
+                        streamId: streamId,
+                        onAddToCompare: onAddToCompare,
+                      ),
+                    ),
+                  );
+                },
               ),
             );
           },
@@ -574,7 +526,400 @@ class After12thSectorDetailPage extends StatelessWidget {
   }
 }
 
-// ─── JOB DETAILS SCREEN ─────────────────────────────────────────
+// ─── DEPARTMENT / DEGREE DETAIL SCREEN (Matching Web DeptDetail) ─────
+class After12thDeptDetailScreen extends StatefulWidget {
+  final Map<String, dynamic> dept;
+  final String streamId;
+  final Function(Map<String, dynamic>)? onAddToCompare;
+
+  const After12thDeptDetailScreen({
+    super.key,
+    required this.dept,
+    required this.streamId,
+    this.onAddToCompare,
+  });
+
+  @override
+  State<After12thDeptDetailScreen> createState() => _After12thDeptDetailScreenState();
+}
+
+class _After12thDeptDetailScreenState extends State<After12thDeptDetailScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildCard(String title, Widget content) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: CareerPathApp.getCardBg(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: CareerPathApp.getBorderColor(context)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDeptRoadmapTimeline(Map<String, dynamic> dept) {
+    final theme = Theme.of(context);
+    final title = dept['title']?.toString() ?? dept['name']?.toString() ?? 'this program';
+    final exams = (dept['entranceExams'] as List?)?.map((e) => e.toString()).toList() ?? (dept['exams'] as List?)?.map((e) => e.toString()).toList() ?? [];
+    final subjects = (dept['subjects'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final skills = (dept['skills'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final tools = (dept['tools'] as List?)?.map((t) => t.toString()).toList() ?? [];
+    final careers = (dept['careers'] as List?)?.map((c) => c.toString()).toList() ?? (dept['careerRoles'] as List?)?.map((c) => c.toString()).toList() ?? [];
+    final salary = dept['salary']?.toString() ?? dept['avgSalary']?.toString() ?? 'competitive packages';
+
+    final examsStr = exams.isNotEmpty ? exams.join(', ') : 'Academic Merit scores';
+    final subjectsStr = subjects.isNotEmpty ? subjects.take(3).join(', ') : 'core curriculum';
+    final toolsStr = tools.isNotEmpty ? tools.take(3).join(', ') : 'standard tools';
+    final skillsStr = skills.isNotEmpty ? skills.take(3).join(', ') : 'practical engineering skills';
+    final careersStr = careers.isNotEmpty ? careers.take(3).join(', ') : 'professional roles';
+
+    final steps = [
+      {
+        "title": "1. Gain Admission",
+        "subtitle": "College Entry Requirements",
+        "desc": "Qualify for admission by passing required entrance exams: $examsStr."
+      },
+      {
+        "title": "2. Build Tech Foundations",
+        "subtitle": "Study key academic subjects",
+        "desc": "Understand the core subjects of this branch: $subjectsStr."
+      },
+      {
+        "title": "3. Master the Tools",
+        "subtitle": "Practical skills & tools",
+        "desc": "Develop hands-on proficiency with tools: $toolsStr and skills: $skillsStr."
+      },
+      {
+        "title": "4. Get Certified",
+        "subtitle": "Earn industry credentials",
+        "desc": "Acquire specialized modern certifications during your studies to differentiate your resume."
+      },
+      {
+        "title": "5. Launch Your Career",
+        "subtitle": "Corporate jobs & placements",
+        "desc": "Participate in recruitment and apply for target roles: $careersStr with salary average: $salary."
+      }
+    ];
+
+    return _buildCard(
+      '🗺️ Career Roadmap',
+      Column(
+        children: steps.map((step) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.check_circle_outline, size: 16, color: theme.colorScheme.primary),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(step['title']!, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text(step['subtitle']!, style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text(step['desc']!, style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8), height: 1.3)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final state = CareerPathApp.of(context);
+    final theme = Theme.of(context);
+    final dept = widget.dept;
+    final deptName = dept['name']?.toString() ?? dept['title']?.toString() ?? 'Department Detail';
+    final icon = dept['icon']?.toString() ?? '🎯';
+    final description = dept['description']?.toString() ?? '';
+    final duration = dept['duration']?.toString() ?? '4 Years';
+    final eligibility = dept['eligibility']?.toString() ?? 'Class 12 pass in required stream';
+    final salary = dept['salary']?.toString() ?? dept['avgSalary']?.toString() ?? '₹4–12 LPA';
+    final averageFees = dept['averageFees']?.toString() ?? dept['avgFees']?.toString() ?? '₹1.5L - ₹4L / year';
+    final entranceExams = (dept['entranceExams'] as List?)?.map((e) => e.toString()).toList() ?? (dept['exams'] as List?)?.map((e) => e.toString()).toList() ?? [];
+    final subjects = (dept['subjects'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final skills = (dept['skills'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final tools = (dept['tools'] as List?)?.map((t) => t.toString()).toList() ?? [];
+    final higherStudies = (dept['higherStudies'] as List?)?.map((h) => h.toString()).toList() ?? [];
+    final certifications = (dept['certifications'] as List?)?.map((c) => c.toString()).toList() ?? [];
+    final futureScope = dept['futureScope']?.toString() ?? '';
+    final locations = (dept['locations'] as List?)?.map((l) => l.toString()).toList() ?? [];
+    final careers = (dept['careers'] as List?)?.map((c) => c.toString()).toList() ?? (dept['careerRoles'] as List?)?.map((c) => c.toString()).toList() ?? [];
+    final topRecruiters = (dept['topColleges'] as List?)?.map((c) => c.toString()).toList() ?? (dept['topRecruiters'] as List?)?.map((r) => r.toString()).toList() ?? [];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(deptName, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 17)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.compare_arrows),
+            tooltip: 'Add to Compare',
+            onPressed: () {
+              SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+              if (widget.onAddToCompare != null) {
+                widget.onAddToCompare!(dept);
+              }
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Added $deptName to comparison!')),
+              );
+            },
+          ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: theme.colorScheme.primary,
+          unselectedLabelColor: theme.unselectedWidgetColor.withOpacity(0.6),
+          indicatorColor: theme.colorScheme.primary,
+          tabs: [
+            const Tab(text: '📚 Course Info'),
+            Tab(text: '💼 Career Roles (${careers.length})'),
+          ],
+        ),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: CareerPathApp.getGradient(context),
+          ),
+        ),
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            // TAB 1: Course Info
+            SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Hero Box
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: CareerPathApp.getCardBg(context),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: theme.colorScheme.primary.withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      children: [
+                        Text(icon, style: const TextStyle(fontSize: 48)),
+                        const SizedBox(height: 10),
+                        Text(deptName, style: const TextStyle(fontFamily: 'Outfit', fontSize: 20, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                              child: Text('⏳ Duration: $duration', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 11)),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(color: Colors.greenAccent.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                              child: Text('💰 Salary: $salary', style: const TextStyle(color: Colors.greenAccent, fontWeight: FontWeight.bold, fontSize: 11)),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                              decoration: BoxDecoration(color: Colors.amberAccent.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                              child: Text('💳 Fees: $averageFees', style: const TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold, fontSize: 11)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Overview
+                  if (description.isNotEmpty)
+                    _buildCard('📖 Program Description', Text(description, style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFFE2E8F0)))),
+
+                  // Eligibility
+                  _buildCard('🎓 Eligibility Criteria', Text(eligibility, style: const TextStyle(fontSize: 13, height: 1.4, fontWeight: FontWeight.w600))),
+
+                  // Entrance Exams
+                  if (entranceExams.isNotEmpty)
+                    _buildCard('📝 Entrance Exams', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: entranceExams.map((e) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: theme.colorScheme.primary.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        child: Text(e, style: TextStyle(color: theme.colorScheme.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+                      )).toList(),
+                    )),
+
+                  // Roadmap Timeline (5 steps matching Web)
+                  _buildDeptRoadmapTimeline(dept),
+
+                  // Subjects
+                  if (subjects.isNotEmpty)
+                    _buildCard('📖 Core Subjects Covered', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: subjects.map((s) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: theme.colorScheme.secondary.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        child: Text(s, style: TextStyle(color: theme.colorScheme.secondary, fontSize: 12, fontWeight: FontWeight.bold)),
+                      )).toList(),
+                    )),
+
+                  // Skills
+                  if (skills.isNotEmpty)
+                    _buildCard('🧠 Key Skills Required', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: skills.map((s) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.amberAccent.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        child: Text(s, style: const TextStyle(color: Colors.amberAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                      )).toList(),
+                    )),
+
+                  // Tools
+                  if (tools.isNotEmpty)
+                    _buildCard('🛠️ Tools to Learn', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: tools.map((tVal) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.cyanAccent.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        child: Text(tVal, style: const TextStyle(color: Colors.cyanAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                      )).toList(),
+                    )),
+
+                  // Higher Studies
+                  if (higherStudies.isNotEmpty)
+                    _buildCard('🎓 Higher Studies Options', Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: higherStudies.map((h) => Padding(
+                        padding: const EdgeInsets.only(bottom: 6.0),
+                        child: Row(
+                          children: [
+                            const Text('🎓 ', style: TextStyle(fontSize: 14)),
+                            Expanded(child: Text(h, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFFFFD166)))),
+                          ],
+                        ),
+                      )).toList(),
+                    )),
+
+                  // Certifications
+                  if (certifications.isNotEmpty)
+                    _buildCard('🏆 Certifications', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: certifications.map((c) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.purpleAccent.withOpacity(0.12), borderRadius: BorderRadius.circular(8)),
+                        child: Text(c, style: const TextStyle(color: Colors.purpleAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                      )).toList(),
+                    )),
+
+                  // Future Scope
+                  if (futureScope.isNotEmpty)
+                    _buildCard('🔮 Future Scope & Growth', Text(futureScope, style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFFFFD166), fontWeight: FontWeight.w600))),
+
+                  // Locations / Top Institutes
+                  if (locations.isNotEmpty || topRecruiters.isNotEmpty)
+                    _buildCard('📍 Top Institutes / Locations', Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: (locations.isNotEmpty ? locations : topRecruiters).map((l) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), borderRadius: BorderRadius.circular(8)),
+                        child: Text(l, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                      )).toList(),
+                    )),
+                ],
+              ),
+            ),
+
+            // TAB 2: Career Roles
+            ListView.builder(
+              padding: const EdgeInsets.all(20),
+              itemCount: careers.length,
+              itemBuilder: (context, idx) {
+                final role = careers[idx];
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  color: CareerPathApp.getCardBg(context),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    side: BorderSide(color: CareerPathApp.getBorderColor(context)),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(16),
+                    leading: const Text('💼', style: TextStyle(fontSize: 28)),
+                    title: Text(role, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 15)),
+                    subtitle: Text('Avg Salary: $salary', style: const TextStyle(color: Colors.greenAccent, fontSize: 12, fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => After12thJobDetailScreen(
+                            job: {
+                              'id': 'job-$idx',
+                              'title': role,
+                              'icon': '💼',
+                              'category': widget.streamId,
+                              'salary': salary,
+                              'description': 'Professional career role following completion of $deptName.',
+                              'howToBecome': 'Complete $deptName degree and apply through campus placements or corporate hiring.',
+                              'skills': skills,
+                              'workplaces': topRecruiters.isNotEmpty ? topRecruiters : ['Corporate Offices', 'MNCs', 'Tech Firms']
+                            },
+                            onAddToCompare: widget.onAddToCompare,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─── JOB DETAILS SCREEN (Matching Web Job12thDetail) ─────────────────
 class After12thJobDetailScreen extends StatelessWidget {
   final Map<String, dynamic> job;
   final Function(Map<String, dynamic>)? onAddToCompare;
@@ -584,6 +929,106 @@ class After12thJobDetailScreen extends StatelessWidget {
     required this.job,
     this.onAddToCompare,
   });
+
+  Widget _buildCard(BuildContext context, {required String title, required Widget content}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: CareerPathApp.getCardBg(context),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: CareerPathApp.getBorderColor(context)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          content,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildJobRoadmapTimeline(BuildContext context) {
+    final theme = Theme.of(context);
+    final title = job['title']?.toString() ?? 'this role';
+    final howToBecome = job['howToBecome']?.toString() ?? '';
+    final category = job['category']?.toString() ?? 'General';
+    final salary = job['salary']?.toString() ?? 'competitive packages';
+    final skills = (job['skills'] as List?)?.map((s) => s.toString()).toList() ?? [];
+    final workplaces = (job['workplaces'] as List?)?.map((w) => w.toString()).toList() ?? [];
+
+    final skillsStr = skills.isNotEmpty ? skills.join(', ') : 'domain methods';
+    final workplacesStr = workplaces.isNotEmpty ? workplaces.join(', ') : 'active workplaces';
+
+    final steps = [
+      {
+        "title": "1. Meet the Prerequisites",
+        "subtitle": "Complete your basic studies",
+        "desc": howToBecome.isNotEmpty
+            ? "Start by achieving the required education: $howToBecome"
+            : "Ensure you have completed your 12th standard education or equivalent."
+      },
+      {
+        "title": "2. Train Your Skills",
+        "subtitle": "Acquire key job skills",
+        "desc": "Learn the essential daily techniques and capabilities: $skillsStr."
+      },
+      {
+        "title": "3. Master the Tools",
+        "subtitle": "Learn industry software",
+        "desc": "Get comfortable with the software and tools used in places like: $workplacesStr."
+      },
+      {
+        "title": "4. Build a Portfolio",
+        "subtitle": "Show what you can do",
+        "desc": "Create simple personal or mock projects, construct a neat resume, and document your learning."
+      },
+      {
+        "title": "5. Secure the Placement",
+        "subtitle": "Start applying and earning",
+        "desc": "Apply for $title positions in the $category sector with salary ranges of $salary."
+      }
+    ];
+
+    return _buildCard(
+      context,
+      title: '🗺️ Career Roadmap',
+      content: Column(
+        children: steps.map((step) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.check_circle_outline, size: 16, color: theme.colorScheme.primary),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(step['title']!, style: const TextStyle(fontFamily: 'Outfit', fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text(step['subtitle']!, style: TextStyle(color: theme.colorScheme.primary, fontSize: 11, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 2),
+                      Text(step['desc']!, style: const TextStyle(fontSize: 12, color: Color(0xFF94A3B8), height: 1.3)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -679,20 +1124,21 @@ class After12thJobDetailScreen extends StatelessWidget {
               const SizedBox(height: 16),
 
               // Description
-              _buildCard('📖 Overview', Text(description, style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFFE2E8F0)))),
-              const SizedBox(height: 16),
+              _buildCard(context, title: '📖 Job Description', content: Text(description, style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFFE2E8F0)))),
 
               // How to become
-              if (howToBecome.isNotEmpty) ...[
-                _buildCard('🎓 Preparation & Pathway', Text(howToBecome, style: const TextStyle(fontSize: 13, height: 1.4, fontWeight: FontWeight.w600))),
-                const SizedBox(height: 16),
-              ],
+              if (howToBecome.isNotEmpty)
+                _buildCard(context, title: '🎯 How to Become', content: Text(howToBecome, style: const TextStyle(fontSize: 13, height: 1.4, fontWeight: FontWeight.w600))),
+
+              // Job Career Roadmap (5-step matching Web Job12thDetail)
+              _buildJobRoadmapTimeline(context),
 
               // Skills
-              if (skills.isNotEmpty) ...[
+              if (skills.isNotEmpty)
                 _buildCard(
-                  '🧠 Key Skills Required',
-                  Wrap(
+                  context,
+                  title: '🧠 Key Skills Required',
+                  content: Wrap(
                     spacing: 6,
                     runSpacing: 6,
                     children: skills.map((s) => Container(
@@ -705,14 +1151,13 @@ class After12thJobDetailScreen extends StatelessWidget {
                     )).toList(),
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
 
               // Workplaces
-              if (workplaces.isNotEmpty) ...[
+              if (workplaces.isNotEmpty)
                 _buildCard(
-                  '🏢 Workplaces & Sectors',
-                  Wrap(
+                  context,
+                  title: '🏢 Where to Work',
+                  content: Wrap(
                     spacing: 6,
                     runSpacing: 6,
                     children: workplaces.map((w) => Container(
@@ -725,8 +1170,8 @@ class After12thJobDetailScreen extends StatelessWidget {
                     )).toList(),
                   ),
                 ),
-                const SizedBox(height: 24),
-              ],
+
+              const SizedBox(height: 8),
 
               // Add to compare button
               ElevatedButton.icon(
@@ -750,25 +1195,6 @@ class After12thJobDetailScreen extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildCard(String title, Widget content) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0F172A),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(title, style: const TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          content,
-        ],
       ),
     );
   }

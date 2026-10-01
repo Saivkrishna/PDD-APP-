@@ -18093,5 +18093,1571 @@
       "Infosys"
     ],
     "source": "gemini"
+  },
+  {
+    "id": "5101",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Direct Data Extraction",
+    "q": "A table shows employee counts in 4 branches: North (120), South (150), East (130), West (100). Which branch has the highest number of employees?",
+    "options": [
+      "A) North",
+      "B) South",
+      "C) East",
+      "D) West"
+    ],
+    "answer": "B) South",
+    "explanation": "Comparing employee counts: South has 150 employees, which is the highest value.",
+    "shortcut": "Max(120, 150, 130, 100) = 150 (South).",
+    "company": "TCS, Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5102",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Simple Growth Percentage",
+    "q": "In a company, employee count grew from 200 in 2020 to 300 in 2022. What is the percentage increase?",
+    "options": [
+      "A) 33.33%",
+      "B) 40%",
+      "C) 50%",
+      "D) 60%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "Increase = 300 - 200 = 100. Percentage Increase = (100 / 200) * 100 = 50%.",
+    "shortcut": "100 / 200 = 50%.",
+    "company": "Infosys, Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5103",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Ratio from Table",
+    "q": "In a team, there are 12 male employees and 18 female employees. What is the ratio of male to female employees?",
+    "options": [
+      "A) 3:2",
+      "B) 2:3",
+      "C) 1:2",
+      "D) 2:1"
+    ],
+    "answer": "B) 2:3",
+    "explanation": "Ratio = 12 : 18 = 2 : 3 after dividing by 6.",
+    "shortcut": "12/18 = 2/3.",
+    "company": "TCS, Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5104",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Table Summation",
+    "q": "A student scores 85 in Math, 78 in Science, and 92 in English. What is the total score?",
+    "options": [
+      "A) 245",
+      "B) 255",
+      "C) 265",
+      "D) 275"
+    ],
+    "answer": "B) 255",
+    "explanation": "Total = 85 + 78 + 92 = 255.",
+    "shortcut": "85 + 78 + 92 = 255.",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5105",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Population Difference",
+    "q": "City A has a population of 75,000 and City B has 62,000. What is the difference in population?",
+    "options": [
+      "A) 11,000",
+      "B) 12,000",
+      "C) 13,000",
+      "D) 15,000"
+    ],
+    "answer": "C) 13,000",
+    "explanation": "Difference = 75,000 - 62,000 = 13,000.",
+    "shortcut": "75 - 62 = 13k.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5106",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Defect Percentage",
+    "q": "Out of 200 manufactured units, 40 are defective. What percentage of units are defective?",
+    "options": [
+      "A) 15%",
+      "B) 20%",
+      "C) 25%",
+      "D) 30%"
+    ],
+    "answer": "B) 20%",
+    "explanation": "Defective Percentage = (40 / 200) * 100 = 20%.",
+    "shortcut": "40 / 200 = 1/5 = 20%.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5107",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Quarterly Max Sales",
+    "q": "Quarterly sales figures are Q1: $45k, Q2: $60k, Q3: $50k, Q4: $65k. In which quarter were sales highest?",
+    "options": [
+      "A) Q1",
+      "B) Q2",
+      "C) Q3",
+      "D) Q4"
+    ],
+    "answer": "D) Q4",
+    "explanation": "Max value is 65k in Q4.",
+    "shortcut": "Max = Q4 (65k).",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5108",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Average Temperature",
+    "q": "Temperatures across 4 days were 25°C, 28°C, 27°C, and 30°C. What is the average daily temperature?",
+    "options": [
+      "A) 27°C",
+      "B) 27.5°C",
+      "C) 28°C",
+      "D) 28.5°C"
+    ],
+    "answer": "B) 27.5°C",
+    "explanation": "Average = (25 + 28 + 27 + 30) / 4 = 110 / 4 = 27.5°C.",
+    "shortcut": "110 / 4 = 27.5.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5109",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Comparative Difference",
+    "q": "Monday fruit sales: 50 apples, 30 oranges (Total: 80). Tuesday sales: 40 apples, 60 oranges (Total: 100). What is the difference in total fruits sold?",
+    "options": [
+      "A) 10",
+      "B) 15",
+      "C) 20",
+      "D) 25"
+    ],
+    "answer": "C) 20",
+    "explanation": "Difference = 100 - 80 = 20 fruits.",
+    "shortcut": "100 - 80 = 20.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5110",
+    "topic": "data-interpretation",
+    "difficulty": "easy",
+    "category": "Minimum Value Identification",
+    "q": "Workshop attendees: Day 1 (35), Day 2 (40), Day 3 (30), Day 4 (45), Day 5 (38). Which day had the fewest attendees?",
+    "options": [
+      "A) Day 1",
+      "B) Day 2",
+      "C) Day 3",
+      "D) Day 5"
+    ],
+    "answer": "C) Day 3",
+    "explanation": "The minimum attendance is 30 on Day 3.",
+    "shortcut": "Min = Day 3 (30).",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5112",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Weighted Average from Table",
+    "q": "A college has 3 sections: A (40 students, avg 70 marks), B (50 students, avg 80 marks), C (60 students, avg 65 marks). Find the overall average marks.",
+    "options": [
+      "A) 71.33",
+      "B) 72.00",
+      "C) 73.50",
+      "D) 74.25"
+    ],
+    "answer": "A) 71.33",
+    "explanation": "Total marks = (40 * 70) + (50 * 80) + (60 * 65) = 2800 + 4000 + 3900 = 10700. Total students = 150. Average = 10700 / 150 = 71.33.",
+    "shortcut": "10700 / 150 = 71.33.",
+    "company": "Infosys, Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5113",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Percentage Distribution from Table",
+    "q": "A table shows revenue across 3 products: P1 ($120k), P2 ($180k), P3 ($300k). What percentage of total revenue is contributed by P2?",
+    "options": [
+      "A) 25%",
+      "B) 30%",
+      "C) 35%",
+      "D) 40%"
+    ],
+    "answer": "B) 30%",
+    "explanation": "Total Revenue = 120 + 180 + 300 = $600k. P2 Share = (180 / 600) * 100 = 30%.",
+    "shortcut": "180 / 600 = 3/10 = 30%.",
+    "company": "TCS Ninja",
+    "source": "existing"
+  },
+  {
+    "id": "5114",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Year-on-Year Growth Table",
+    "q": "Production of wheat in 2021 was 450 tonnes and in 2022 was 540 tonnes. What was the percentage growth in production?",
+    "options": [
+      "A) 16.67%",
+      "B) 18.5%",
+      "C) 20%",
+      "D) 22%"
+    ],
+    "answer": "C) 20%",
+    "explanation": "Growth = 540 - 450 = 90 tonnes. Growth % = (90 / 450) * 100 = 20%.",
+    "shortcut": "90 / 450 = 1/5 = 20%.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5115",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Profit Margin Comparison",
+    "q": "Company X: Revenue $500k, Expenditure $400k. Company Y: Revenue $800k, Expenditure $600k. Which company has a higher profit percentage?",
+    "options": [
+      "A) Company X (25%)",
+      "B) Company Y (33.33%)",
+      "C) Company X (20%)",
+      "D) Both equal"
+    ],
+    "answer": "B) Company Y (33.33%)",
+    "explanation": "Profit X = (100 / 400) * 100 = 25%. Profit Y = (200 / 600) * 100 = 33.33%. Company Y has higher profit percentage.",
+    "shortcut": "Y = 200/600 (33.3%) > X = 100/400 (25%).",
+    "company": "Cognizant, Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5116",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Table Multi-column Difference",
+    "q": "In an exam table, Total Candidates = 1200, Passed Males = 450, Passed Females = 350. How many candidates failed the exam?",
+    "options": [
+      "A) 350",
+      "B) 400",
+      "C) 450",
+      "D) 500"
+    ],
+    "answer": "B) 400",
+    "explanation": "Total Passed = 450 + 350 = 800. Failed Candidates = 1200 - 800 = 400.",
+    "shortcut": "1200 - 800 = 400.",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5117",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Sales to Target Ratio",
+    "q": "Target sales were set at $250k. If actual sales reached $325k, what percentage of the target was achieved?",
+    "options": [
+      "A) 120%",
+      "B) 125%",
+      "C) 130%",
+      "D) 135%"
+    ],
+    "answer": "C) 130%",
+    "explanation": "Achievement % = (325 / 250) * 100 = (13 / 10) * 100 = 130%.",
+    "shortcut": "325 / 250 = 1.3 = 130%.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5118",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Gender Ratio Across Departments",
+    "q": "IT Dept: 60M, 40F. HR Dept: 20M, 30F. What is the overall ratio of total Males to total Females in both departments?",
+    "options": [
+      "A) 8:7",
+      "B) 7:8",
+      "C) 4:3",
+      "D) 5:4"
+    ],
+    "answer": "A) 8:7",
+    "explanation": "Total Males = 60 + 20 = 80. Total Females = 40 + 30 = 70. Ratio = 80 : 70 = 8 : 7.",
+    "shortcut": "80 : 70 = 8:7.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5119",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Expenditure Difference Over Years",
+    "q": "A company spent $40M on R&D in 2020 and $64M in 2022. By what percentage did R&D expenditure increase over the 2-year period?",
+    "options": [
+      "A) 50%",
+      "B) 55%",
+      "C) 60%",
+      "D) 65%"
+    ],
+    "answer": "C) 60%",
+    "explanation": "Increase = 64 - 40 = 24. Percentage Increase = (24 / 40) * 100 = 60%.",
+    "shortcut": "24 / 40 = 6/10 = 60%.",
+    "company": "Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5120",
+    "topic": "data-interpretation",
+    "difficulty": "medium",
+    "category": "Average Production per Machine",
+    "q": "5 machines produce 120, 140, 160, 180, and 200 units respectively in an hour. What is the average production per machine?",
+    "options": [
+      "A) 150",
+      "B) 160",
+      "C) 170",
+      "D) 180"
+    ],
+    "answer": "B) 160",
+    "explanation": "Since the numbers form an AP with common difference 20, the average is the middle term = 160 units.",
+    "shortcut": "Middle of AP = 160.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5121",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "DI Missing Values",
+    "q": "The average sales of a company for 5 years is $50M. If the sales of the first 3 years total $135M and the last 2 years sales are in the ratio 3:2, find the sales of the 4th year.",
+    "options": [
+      "A) $69M",
+      "B) $39M",
+      "C) $46M",
+      "D) $50M"
+    ],
+    "answer": "A) $69M",
+    "explanation": "Total sales = 5 * 50 = $250M. First 3 years total = $135M. Remaining 2 years total = 250 - 135 = $115M. 4th year sales = (3 / 5) * 115 = $69M.",
+    "shortcut": "115 * 3/5 = 69.",
+    "company": "TCS Digital, Amazon",
+    "source": "existing"
+  },
+  {
+    "id": "5122",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Multi-Table Consolidation",
+    "q": "Table 1 shows Total Revenue = $400M with 20% Net Profit Margin. Table 2 shows Tax Rate = 25% on Net Profit. What is the Profit After Tax (PAT)?",
+    "options": [
+      "A) $50M",
+      "B) $60M",
+      "C) $70M",
+      "D) $80M"
+    ],
+    "answer": "B) $60M",
+    "explanation": "Net Profit = 20% of 400 = $80M. Tax = 25% of 80 = $20M. PAT = 80 - 20 = $60M.",
+    "shortcut": "80 * (1 - 0.25) = 60.",
+    "company": "Goldman Sachs, Morgan Stanley",
+    "source": "existing"
+  },
+  {
+    "id": "5123",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "CAGR Computation",
+    "q": "A company's revenue was $100M in 2020 and grew to $144M in 2022. Find the Compound Annual Growth Rate (CAGR).",
+    "options": [
+      "A) 18%",
+      "B) 20%",
+      "C) 22%",
+      "D) 24%"
+    ],
+    "answer": "B) 20%",
+    "explanation": "CAGR = (End / Start)^(1/n) - 1 = (144 / 100)^(1/2) - 1 = √1.44 - 1 = 1.20 - 1 = 0.20 = 20%.",
+    "shortcut": "√1.44 - 1 = 1.2 - 1 = 20%.",
+    "company": "PwC, McKinsey",
+    "source": "existing"
+  },
+  {
+    "id": "5124",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Defective Rate Comparison",
+    "q": "Plant A produces 5000 units with 4% defect rate. Plant B produces 7000 units with 2% defect rate. What is the combined defect percentage across both plants?",
+    "options": [
+      "A) 2.5%",
+      "B) 2.83%",
+      "C) 3.0%",
+      "D) 3.2%"
+    ],
+    "answer": "B) 2.83%",
+    "explanation": "Defects A = 5000 * 0.04 = 200. Defects B = 7000 * 0.02 = 140. Total defects = 340. Total units = 12000. Combined Defect % = (340 / 12000) * 100 = 2.833%.",
+    "shortcut": "(200 + 140) / 120 = 340 / 120 = 2.83%.",
+    "company": "Amazon, Directi",
+    "source": "existing"
+  },
+  {
+    "id": "5125",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Cost-Revenue Margin Shift",
+    "q": "In 2021, Cost = $200M, Revenue = $250M. In 2022, Cost increased by 10% and Revenue increased by 20%. By what percentage did the absolute profit increase?",
+    "options": [
+      "A) 40%",
+      "B) 50%",
+      "C) 60%",
+      "D) 70%"
+    ],
+    "answer": "C) 60%",
+    "explanation": "2021 Profit = 250 - 200 = $50M. 2022 Cost = 200 * 1.10 = $220M. 2022 Revenue = 250 * 1.20 = $300M. 2022 Profit = 300 - 220 = $80M. Profit increase % = ((80 - 50) / 50) * 100 = 60%.",
+    "shortcut": "((80 - 50)/50) * 100 = 60%.",
+    "company": "Barclays, Deloitte",
+    "source": "existing"
+  },
+  {
+    "id": "5126",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Index Base Year Normalization",
+    "q": "Price Index with base year 2018 (Index = 100) was 120 in 2020 and 150 in 2022. If base year is shifted to 2020 (Index = 100), what is the recalculated Index for 2022?",
+    "options": [
+      "A) 120",
+      "B) 125",
+      "C) 130",
+      "D) 135"
+    ],
+    "answer": "B) 125",
+    "explanation": "New Index 2022 = (Old Index 2022 / Old Index 2020) * 100 = (150 / 120) * 100 = (5 / 4) * 100 = 125.",
+    "shortcut": "150 / 120 * 100 = 125.",
+    "company": "Google, Microsoft",
+    "source": "existing"
+  },
+  {
+    "id": "5127",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Multi-Product Profit Share",
+    "q": "Total profit across 3 products is $900k. Products A, B, and C contribute in ratio 2:3:4. If tax on Product C profit is 30%, how much tax is paid on Product C?",
+    "options": [
+      "A) $90k",
+      "B) $100k",
+      "C) $120k",
+      "D) $150k"
+    ],
+    "answer": "C) $120k",
+    "explanation": "Total parts = 2 + 3 + 4 = 9. Profit from C = (4 / 9) * 900 = $400k. Tax on C = 30% of 400 = $120k.",
+    "shortcut": "400 * 0.30 = 120k.",
+    "company": "TCS Digital",
+    "source": "existing"
+  },
+  {
+    "id": "5128",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Market Share Volume vs Value",
+    "q": "Brand X has 25% volume share in a 10 million smartphone market. If its average selling price is $400 compared to the industry average of $300, what is Brand X's value (revenue) market share?",
+    "options": [
+      "A) 28.5%",
+      "B) 30.0%",
+      "C) 33.33%",
+      "D) 35.0%"
+    ],
+    "answer": "C) 33.33%",
+    "explanation": "Brand X units = 2.5 million. Revenue X = 2.5M * $400 = $1000M. Total industry revenue = 10M * $300 = $3000M. Value Market Share = (1000 / 3000) * 100 = 33.33%.",
+    "shortcut": "(0.25 * 400) / 300 = 100 / 300 = 33.33%.",
+    "company": "Amazon, Flipkart",
+    "source": "existing"
+  },
+  {
+    "id": "5129",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Multi-Tier Efficiency Matrix",
+    "q": "Worker A produces 15 units/hour with 90% pass rate. Worker B produces 20 units/hour with 80% pass rate. In an 8-hour shift, how many more non-defective units does Worker B produce than Worker A?",
+    "options": [
+      "A) 12",
+      "B) 16",
+      "C) 20",
+      "D) 24"
+    ],
+    "answer": "C) 20",
+    "explanation": "Worker A good units/hr = 15 * 0.90 = 13.5. Total in 8 hrs = 13.5 * 8 = 108. Worker B good units/hr = 20 * 0.80 = 16. Total in 8 hrs = 16 * 8 = 128. Difference = 128 - 108 = 20 units.",
+    "shortcut": "8 * (16 - 13.5) = 8 * 2.5 = 20.",
+    "company": "Infosys, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5130",
+    "topic": "data-interpretation",
+    "difficulty": "hard",
+    "category": "Complex Tabular Proportion",
+    "q": "In a company of 1500 employees, 60% are in Technical roles and the rest in Non-Tech. If 40% of Technical and 30% of Non-Tech employees hold master's degrees, how many employees hold master's degrees?",
+    "options": [
+      "A) 510",
+      "B) 540",
+      "C) 570",
+      "D) 600"
+    ],
+    "answer": "B) 540",
+    "explanation": "Technical = 60% of 1500 = 900. Tech Masters = 40% of 900 = 360. Non-Tech = 40% of 1500 = 600. Non-Tech Masters = 30% of 600 = 180. Total Masters = 360 + 180 = 540.",
+    "shortcut": "360 + 180 = 540.",
+    "company": "Deloitte, PwC",
+    "source": "existing"
+  },
+  {
+    "id": "5202",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Central Angle from Percentage",
+    "q": "A family spends 30% of their income on rent. Find the central angle corresponding to rent in a budget pie chart.",
+    "options": [
+      "A) 90°",
+      "B) 108°",
+      "C) 120°",
+      "D) 144°"
+    ],
+    "answer": "B) 108°",
+    "explanation": "Angle = (Percentage / 100) * 360° = 0.30 * 360 = 108°.",
+    "shortcut": "30% of 360 = 36 * 3 = 108°.",
+    "company": "TCS Ninja",
+    "source": "existing"
+  },
+  {
+    "id": "5203",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Total Angle Property",
+    "q": "What is the total sum of central angles of all sectors in any pie chart?",
+    "options": [
+      "A) 180°",
+      "B) 270°",
+      "C) 360°",
+      "D) 100°"
+    ],
+    "answer": "C) 360°",
+    "explanation": "A complete circle has a total central angle of 360 degrees.",
+    "shortcut": "Total angle = 360°.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5204",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Sector Value Computation",
+    "q": "In a pie chart representing a total budget of ₹72,000, the sector for education is 60°. What is the amount allocated to education?",
+    "options": [
+      "A) ₹10,000",
+      "B) ₹12,000",
+      "C) ₹14,000",
+      "D) ₹15,000"
+    ],
+    "answer": "B) ₹12,000",
+    "explanation": "Value = (Angle / 360°) * Total = (60 / 360) * 72000 = (1 / 6) * 72000 = ₹12,000.",
+    "shortcut": "72000 / 6 = 12000.",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5205",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Fraction to Angle",
+    "q": "If a category represents 1/8 of total expenditure, what is its central angle in a pie chart?",
+    "options": [
+      "A) 40°",
+      "B) 45°",
+      "C) 50°",
+      "D) 60°"
+    ],
+    "answer": "B) 45°",
+    "explanation": "Angle = (1 / 8) * 360° = 45°.",
+    "shortcut": "360 / 8 = 45°.",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5206",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Remaining Sector Angle",
+    "q": "A pie chart has 3 sectors: Sector A (120°) and Sector B (150°). What is the angle of Sector C?",
+    "options": [
+      "A) 70°",
+      "B) 80°",
+      "C) 90°",
+      "D) 100°"
+    ],
+    "answer": "C) 90°",
+    "explanation": "Angle of C = 360° - (120° + 150°) = 360° - 270° = 90°.",
+    "shortcut": "360 - 270 = 90°.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5207",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "10% Sector Angle",
+    "q": "What is the central angle corresponding to 10% in a pie chart?",
+    "options": [
+      "A) 10°",
+      "B) 25°",
+      "C) 36°",
+      "D) 40°"
+    ],
+    "answer": "C) 36°",
+    "explanation": "Angle = 10% of 360° = 0.10 * 360 = 36°.",
+    "shortcut": "360 * 0.1 = 36°.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5208",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Half Circle Sector",
+    "q": "If a single sector covers a semicircle (180°), what percentage of the total does it represent?",
+    "options": [
+      "A) 25%",
+      "B) 40%",
+      "C) 50%",
+      "D) 60%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "Percentage = (180° / 360°) * 100 = 50%.",
+    "shortcut": "180/360 = 50%.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5209",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Ratio of Two Sectors",
+    "q": "In a pie chart, Sector X is 72° and Sector Y is 108°. What is the ratio of Sector X to Sector Y?",
+    "options": [
+      "A) 2:3",
+      "B) 3:4",
+      "C) 4:5",
+      "D) 1:2"
+    ],
+    "answer": "A) 2:3",
+    "explanation": "Ratio = 72 : 108 = (72/36) : (108/36) = 2 : 3.",
+    "shortcut": "72/108 = 2/3.",
+    "company": "Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5210",
+    "topic": "pie-chart",
+    "difficulty": "easy",
+    "category": "Degree Conversion Factor",
+    "q": "Every 1% in a standard pie chart corresponds to how many degrees?",
+    "options": [
+      "A) 1.8°",
+      "B) 2.4°",
+      "C) 3.6°",
+      "D) 4.2°"
+    ],
+    "answer": "C) 3.6°",
+    "explanation": "1% = 360° / 100 = 3.6°.",
+    "shortcut": "360 / 100 = 3.6°.",
+    "company": "Infosys, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5211",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Pie Sector Adjustments",
+    "q": "In a pie chart, sports is 72°. If the total budget is ₹15,000 and sports budget increases by 20%, what is the new central angle for sports?",
+    "options": [
+      "A) 86.4°",
+      "B) 72.0°",
+      "C) 80.0°",
+      "D) 84.2°"
+    ],
+    "answer": "A) 86.4°",
+    "explanation": "New Angle = 72° * 1.20 = 86.4°.",
+    "shortcut": "72 * 1.2 = 86.4°.",
+    "company": "Goldman Sachs, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5212",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Sector Difference Value",
+    "q": "Total population = 180,000. In a pie chart, Sector A (Adults) = 200° and Sector B (Children) = 120°. How many more adults are there than children?",
+    "options": [
+      "A) 35,000",
+      "B) 40,000",
+      "C) 45,000",
+      "D) 50,000"
+    ],
+    "answer": "B) 40,000",
+    "explanation": "Angle difference = 200° - 120° = 80°. Difference in people = (80 / 360) * 180,000 = (2 / 9) * 180,000 = 40,000.",
+    "shortcut": "(80 / 360) * 180k = 40k.",
+    "company": "Infosys, Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5213",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Finding Total from Sector",
+    "q": "If an expenditure of ₹45,000 corresponds to a central angle of 54° in a pie chart, what is the total expenditure?",
+    "options": [
+      "A) ₹250,000",
+      "B) ₹300,000",
+      "C) ₹320,000",
+      "D) ₹360,000"
+    ],
+    "answer": "B) ₹300,000",
+    "explanation": "Total = Value * (360° / Angle) = 45000 * (360 / 54) = 45000 * (20 / 3) = ₹300,000.",
+    "shortcut": "45000 * (360 / 54) = 300,000.",
+    "company": "TCS Ninja",
+    "source": "existing"
+  },
+  {
+    "id": "5214",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Comparative Two-Sector Percentage",
+    "q": "In a company budget pie chart, R&D is 54° and Marketing is 90°. By what percentage is the Marketing budget greater than the R&D budget?",
+    "options": [
+      "A) 40%",
+      "B) 50%",
+      "C) 66.67%",
+      "D) 75%"
+    ],
+    "answer": "C) 66.67%",
+    "explanation": "Percentage Greater = ((90 - 54) / 54) * 100 = (36 / 54) * 100 = (2 / 3) * 100 = 66.67%.",
+    "shortcut": "(36 / 54) * 100 = 66.67%.",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5215",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Cost Category Redistribution",
+    "q": "Raw materials cost represents 144° in a pie chart. If raw materials cost drops by 25%, what will its new central angle be?",
+    "options": [
+      "A) 96°",
+      "B) 108°",
+      "C) 112°",
+      "D) 120°"
+    ],
+    "answer": "B) 108°",
+    "explanation": "New Angle = 144° * (1 - 0.25) = 144 * 0.75 = 108°.",
+    "shortcut": "144 * 3/4 = 108°.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5216",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Salary Division Over Sectors",
+    "q": "Monthly salary is ₹80,000. Rent = 90°, Savings = 72°, Food = 108°, Others = 90°. How much money is saved each month?",
+    "options": [
+      "A) ₹14,000",
+      "B) ₹16,000",
+      "C) ₹18,000",
+      "D) ₹20,000"
+    ],
+    "answer": "B) ₹16,000",
+    "explanation": "Savings = (72 / 360) * 80000 = (1 / 5) * 80000 = ₹16,000.",
+    "shortcut": "80000 / 5 = 16000.",
+    "company": "Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5217",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Ratio of Combined Sectors",
+    "q": "A pie chart has sectors A (90°), B (60°), C (150°), D (60°). Find the ratio of combined sectors (A + B) to (C + D).",
+    "options": [
+      "A) 3:4",
+      "B) 5:7",
+      "C) 1:2",
+      "D) 2:3"
+    ],
+    "answer": "B) 5:7",
+    "explanation": "(A + B) = 90 + 60 = 150°. (C + D) = 150 + 60 = 210°. Ratio = 150 : 210 = 5 : 7.",
+    "shortcut": "150 : 210 = 5:7.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5218",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Percentage of Combined Sector",
+    "q": "Sectors A (108°) and B (72°) together represent what percentage of the entire pie chart?",
+    "options": [
+      "A) 45%",
+      "B) 50%",
+      "C) 55%",
+      "D) 60%"
+    ],
+    "answer": "B) 50%",
+    "explanation": "Combined angle = 108° + 72° = 180°. Percentage = (180 / 360) * 100 = 50%.",
+    "shortcut": "180/360 = 50%.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5219",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Angle Difference in Degrees",
+    "q": "In a pie chart, Sector 1 is 35% and Sector 2 is 20%. What is the difference between their central angles?",
+    "options": [
+      "A) 36°",
+      "B) 48°",
+      "C) 54°",
+      "D) 60°"
+    ],
+    "answer": "C) 54°",
+    "explanation": "Percentage difference = 35% - 20% = 15%. Angle difference = 15 * 3.6° = 54°.",
+    "shortcut": "15 * 3.6 = 54°.",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5220",
+    "topic": "pie-chart",
+    "difficulty": "medium",
+    "category": "Multiple Items Budget Share",
+    "q": "Total export value is $1.2 Billion. Sector Agriculture is 45°. What is the dollar value of Agriculture exports?",
+    "options": [
+      "A) $120M",
+      "B) $150M",
+      "C) $160M",
+      "D) $180M"
+    ],
+    "answer": "B) $150M",
+    "explanation": "Value = (45 / 360) * 1200M = (1 / 8) * 1200M = $150 Million.",
+    "shortcut": "1200 / 8 = 150M.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5221",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Dual Pie Chart Problem",
+    "q": "Chart 1 shows Total Employees = 10,000 (IT Dept = 36%). Chart 2 shows Total Female Employees = 4,000 (IT Dept = 45%). How many male employees work in the IT Dept?",
+    "options": [
+      "A) 1,600",
+      "B) 1,800",
+      "C) 2,000",
+      "D) 2,200"
+    ],
+    "answer": "B) 1,800",
+    "explanation": "Total IT employees = 36% of 10,000 = 3,600. Female IT employees = 45% of 4,000 = 1,800. Male IT employees = 3,600 - 1,800 = 1,800.",
+    "shortcut": "3600 - 1800 = 1800.",
+    "company": "Amazon, Morgan Stanley",
+    "source": "existing"
+  },
+  {
+    "id": "5222",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Multi-Year Sector Comparison",
+    "q": "In 2020, Company Sales = $500M and Sector A = 72° (20%). In 2022, Company Sales = $800M and Sector A = 54° (15%). What was the percentage change in Sector A's actual revenue from 2020 to 2022?",
+    "options": [
+      "A) +10%",
+      "B) +15%",
+      "C) +20%",
+      "D) +25%"
+    ],
+    "answer": "C) +20%",
+    "explanation": "2020 Sector A = 20% of 500 = $100M. 2022 Sector A = 15% of 800 = $120M. Percentage Change = ((120 - 100) / 100) * 100 = +20%.",
+    "shortcut": "(120 - 100)/100 = +20%.",
+    "company": "Goldman Sachs, PwC",
+    "source": "existing"
+  },
+  {
+    "id": "5223",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Sector Reallocation Shift",
+    "q": "A company reallocates ₹20,000 from Marketing (108°) to R&D (72°) in a total budget of ₹240,000. What is the new central angle for R&D?",
+    "options": [
+      "A) 90°",
+      "B) 96°",
+      "C) 102°",
+      "D) 108°"
+    ],
+    "answer": "C) 102°",
+    "explanation": "Reallocated angle = (20000 / 240000) * 360° = (1 / 12) * 360° = 30°. New R&D angle = 72° + 30° = 102°.",
+    "shortcut": "72° + (20/240)*360° = 72° + 30° = 102°.",
+    "company": "Microsoft, Barclays",
+    "source": "existing"
+  },
+  {
+    "id": "5224",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Profit Margin Over Pie Sectors",
+    "q": "Total Revenue = $600M across 3 divisions: A (120°, Margin 10%), B (150°, Margin 20%), C (90°, Margin 30%). What is the total profit generated across all divisions?",
+    "options": [
+      "A) $105M",
+      "B) $115M",
+      "C) $125M",
+      "D) $135M"
+    ],
+    "answer": "B) $115M",
+    "explanation": "Division A Rev = (120/360)*600 = $200M => Profit = 10% of 200 = $20M. Division B Rev = (150/360)*600 = $250M => Profit = 20% of 250 = $50M. Division C Rev = (90/360)*600 = $150M => Profit = 30% of 150 = $45M. Total Profit = 20 + 50 + 45 = $115M.",
+    "shortcut": "20 + 50 + 45 = $115M.",
+    "company": "McKinsey, Google",
+    "source": "existing"
+  },
+  {
+    "id": "5225",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Variable Sector Formulation",
+    "q": "A pie chart has 4 sectors with angles in the ratio 2x : 3x : 4x : x. Find the angle of the largest sector.",
+    "options": [
+      "A) 108°",
+      "B) 120°",
+      "C) 144°",
+      "D) 160°"
+    ],
+    "answer": "C) 144°",
+    "explanation": "Sum = 2x + 3x + 4x + x = 10x = 360° => x = 36°. Largest sector = 4x = 4 * 36° = 144°.",
+    "shortcut": "4 * (360 / 10) = 144°.",
+    "company": "TCS Digital",
+    "source": "existing"
+  },
+  {
+    "id": "5226",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Defect Ratio Across Pie Categories",
+    "q": "A manufacturing pie chart: Part A (144°, 5% defective), Part B (216°, 2.5% defective). What is the overall percentage of defective parts produced?",
+    "options": [
+      "A) 3.25%",
+      "B) 3.50%",
+      "C) 3.75%",
+      "D) 4.00%"
+    ],
+    "answer": "B) 3.50%",
+    "explanation": "Part A weight = 144/360 = 0.4. Part B weight = 216/360 = 0.6. Overall defect % = (0.4 * 5%) + (0.6 * 2.5%) = 2.0% + 1.5% = 3.5%.",
+    "shortcut": "0.4 * 5 + 0.6 * 2.5 = 2.0 + 1.5 = 3.5%.",
+    "company": "Amazon, Directi",
+    "source": "existing"
+  },
+  {
+    "id": "5227",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Dual Chart Gender Ratio",
+    "q": "Total population in City = 500,000 (Sector Zone North = 72°). If the ratio of Males to Females in Zone North is 3:2, how many females reside in Zone North?",
+    "options": [
+      "A) 36,000",
+      "B) 40,000",
+      "C) 44,000",
+      "D) 48,000"
+    ],
+    "answer": "B) 40,000",
+    "explanation": "Zone North population = (72 / 360) * 500,000 = (1 / 5) * 500,000 = 100,000. Females in Zone North = (2 / 5) * 100,000 = 40,000.",
+    "shortcut": "100k * 2/5 = 40,000.",
+    "company": "Infosys, Deloitte",
+    "source": "existing"
+  },
+  {
+    "id": "5228",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Normalized Angle Expansion",
+    "q": "If a new sector D of 40° is added to an existing 3-sector pie chart (A: 100°, B: 120°, C: 140°), by what factor must all original angles be scaled so the total remains 360°?",
+    "options": [
+      "A) 8/9",
+      "B) 7/8",
+      "C) 9/10",
+      "D) 5/6"
+    ],
+    "answer": "A) 8/9",
+    "explanation": "Sum of original plus new = 360° + 40° = 400°. To normalize back to 360°, the available angle for original sectors becomes 360° - 40° = 320°. Scaling factor = 320 / 360 = 8 / 9.",
+    "shortcut": "320 / 360 = 8/9.",
+    "company": "Google, D.E. Shaw",
+    "source": "existing"
+  },
+  {
+    "id": "5229",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Cost Structure Contribution",
+    "q": "In a book production pie chart: Printing (108°), Paper (90°), Royalty (54°), Binding (36°), Promotion (72°). If Paper cost is ₹180, what is the total cost of the book?",
+    "options": [
+      "A) ₹600",
+      "B) ₹720",
+      "C) ₹800",
+      "D) ₹900"
+    ],
+    "answer": "B) ₹720",
+    "explanation": "Paper angle = 90° = 1/4 of total. Total cost = 180 * (360 / 90) = 180 * 4 = ₹720.",
+    "shortcut": "180 * 4 = 720.",
+    "company": "Capgemini, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5230",
+    "topic": "pie-chart",
+    "difficulty": "hard",
+    "category": "Triple Pie Chart Consolidated Growth",
+    "q": "Three divisions A, B, C contribute $300M (60°), $600M (120°), and $900M (180°) to total group revenue ($1.8B). If Division A doubles its revenue while B and C remain unchanged, what will Division A's new central angle be?",
+    "options": [
+      "A) 90°",
+      "B) 102.86°",
+      "C) 108°",
+      "D) 120°"
+    ],
+    "answer": "B) 102.86°",
+    "explanation": "New Division A revenue = $600M. New Total Revenue = 600 + 600 + 900 = $2100M. New angle for Division A = (600 / 2100) * 360° = (2 / 7) * 360° = 102.86°.",
+    "shortcut": "(2/7) * 360 = 102.86°.",
+    "company": "Morgan Stanley, Amazon",
+    "source": "existing"
+  },
+  {
+    "id": "5302",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Bar Chart Ratios",
+    "q": "In a bar graph showing rice production of 3 states A, B, and C as 15, 25, and 20 tonnes respectively, what is the ratio of production of B to total production?",
+    "options": [
+      "A) 5:12",
+      "B) 5:7",
+      "C) 3:4",
+      "D) 1:2"
+    ],
+    "answer": "A) 5:12",
+    "explanation": "Total = 15 + 25 + 20 = 60 tonnes. Ratio = 25 / 60 = 5 / 12 = 5:12.",
+    "shortcut": "25 / 60 = 5/12.",
+    "company": "Cognizant, Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5303",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Bar Height Difference",
+    "q": "A bar chart displays company revenue over 2 years: 2021 ($450M) and 2022 ($600M). What is the increase in revenue?",
+    "options": [
+      "A) $100M",
+      "B) $150M",
+      "C) $200M",
+      "D) $250M"
+    ],
+    "answer": "B) $150M",
+    "explanation": "Increase = 600 - 450 = $150 Million.",
+    "shortcut": "600 - 450 = 150M.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5304",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Peak Identification",
+    "q": "In a 5-month line graph showing rainfall: Jan (40mm), Feb (65mm), Mar (90mm), Apr (70mm), May (50mm). Which month experienced peak rainfall?",
+    "options": [
+      "A) Feb",
+      "B) Mar",
+      "C) Apr",
+      "D) May"
+    ],
+    "answer": "B) Mar",
+    "explanation": "Highest point on line graph is March (90mm).",
+    "shortcut": "Max = March (90mm).",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5305",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Simple Bar Sum",
+    "q": "A bar chart shows book sales across 3 stores: Store 1 (120), Store 2 (180), Store 3 (200). What are the total books sold?",
+    "options": [
+      "A) 450",
+      "B) 480",
+      "C) 500",
+      "D) 520"
+    ],
+    "answer": "C) 500",
+    "explanation": "Total = 120 + 180 + 200 = 500 books.",
+    "shortcut": "120 + 180 + 200 = 500.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5306",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Line Graph Trend",
+    "q": "If points on a line chart continuously move upward from left to right, what does the trend represent?",
+    "options": [
+      "A) Decreasing Trend",
+      "B) Constant Trend",
+      "C) Increasing Trend",
+      "D) Volatile Trend"
+    ],
+    "answer": "C) Increasing Trend",
+    "explanation": "An upward slope from left to right indicates positive/increasing growth.",
+    "shortcut": "Upward slope = Increasing.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5307",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Double Bar Comparison",
+    "q": "In a double bar chart, School A has 300 boys and 250 girls. How many more boys are there than girls in School A?",
+    "options": [
+      "A) 40",
+      "B) 50",
+      "C) 60",
+      "D) 70"
+    ],
+    "answer": "B) 50",
+    "explanation": "Difference = 300 - 250 = 50.",
+    "shortcut": "300 - 250 = 50.",
+    "company": "Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5308",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Monthly Sales Average",
+    "q": "Sales in Q1 are: Month 1 ($20k), Month 2 ($30k), Month 3 ($40k). What is the average monthly sales?",
+    "options": [
+      "A) $25k",
+      "B) $30k",
+      "C) $35k",
+      "D) $40k"
+    ],
+    "answer": "B) $30k",
+    "explanation": "Average = (20 + 30 + 40) / 3 = 90 / 3 = $30k.",
+    "shortcut": "Middle of AP = 30k.",
+    "company": "TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5309",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Lowest Point Identification",
+    "q": "A stock price graph records: Mon ($150), Tue ($142), Wed ($138), Thu ($145), Fri ($160). On which day was the stock price lowest?",
+    "options": [
+      "A) Tue",
+      "B) Wed",
+      "C) Thu",
+      "D) Mon"
+    ],
+    "answer": "B) Wed",
+    "explanation": "Lowest value is $138 on Wednesday.",
+    "shortcut": "Min = Wed ($138).",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5310",
+    "topic": "graphical-chart",
+    "difficulty": "easy",
+    "category": "Proportion from Bar",
+    "q": "Total energy produced is 200 MW. The solar bar shows 50 MW. What fraction of total energy is solar?",
+    "options": [
+      "A) 1/2",
+      "B) 1/3",
+      "C) 1/4",
+      "D) 1/5"
+    ],
+    "answer": "C) 1/4",
+    "explanation": "Fraction = 50 / 200 = 1 / 4.",
+    "shortcut": "50/200 = 1/4.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5311",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Bar Graph Growth Percentage",
+    "q": "A bar graph shows company exports: 2020 ($40M) and 2021 ($60M). What is the percentage increase in exports from 2020 to 2021?",
+    "options": [
+      "A) 33.33%",
+      "B) 40%",
+      "C) 50%",
+      "D) 60%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "Increase = 60 - 40 = $20M. Percentage Increase = (20 / 40) * 100 = 50%.",
+    "shortcut": "20 / 40 = 50%.",
+    "company": "PwC, Amazon, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5312",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Line Graph Year-on-Year Growth",
+    "q": "A line chart shows car production: 2020 (80,000 units), 2021 (100,000 units), 2022 (125,000 units). What was the percentage growth from 2021 to 2022?",
+    "options": [
+      "A) 20%",
+      "B) 25%",
+      "C) 30%",
+      "D) 35%"
+    ],
+    "answer": "B) 25%",
+    "explanation": "Growth = 125,000 - 100,000 = 25,000. Growth % = (25,000 / 100,000) * 100 = 25%.",
+    "shortcut": "25k / 100k = 25%.",
+    "company": "Infosys, Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5313",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Double Bar Ratio Analysis",
+    "q": "A double bar chart shows Imports ($120M) and Exports ($150M) for 2021. What is the ratio of Imports to Exports?",
+    "options": [
+      "A) 3:4",
+      "B) 4:5",
+      "C) 5:6",
+      "D) 2:3"
+    ],
+    "answer": "B) 4:5",
+    "explanation": "Ratio = 120 / 150 = 4 / 5 = 4:5.",
+    "shortcut": "120/150 = 4/5.",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5314",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Average of Multiple Bars",
+    "q": "A bar chart shows annual profits: 2019 ($30M), 2020 ($45M), 2021 ($60M), 2022 ($65M). What is the 4-year average annual profit?",
+    "options": [
+      "A) $48M",
+      "B) $50M",
+      "C) $52M",
+      "D) $55M"
+    ],
+    "answer": "B) $50M",
+    "explanation": "Total = 30 + 45 + 60 + 65 = $200M. Average = 200 / 4 = $50 Million.",
+    "shortcut": "200 / 4 = 50M.",
+    "company": "Accenture, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5315",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Comparative Line Intersections",
+    "q": "In a chart showing Company A and Company B revenue, A's revenue rose by $20M/year starting from $100M in Year 0. B's revenue rose by $30M/year starting from $60M in Year 0. In which year will both revenues be equal?",
+    "options": [
+      "A) Year 2",
+      "B) Year 3",
+      "C) Year 4",
+      "D) Year 5"
+    ],
+    "answer": "C) Year 4",
+    "explanation": "Equation: 100 + 20t = 60 + 30t => 10t = 40 => t = 4 years.",
+    "shortcut": "(100 - 60) / (30 - 20) = 40 / 10 = 4 years.",
+    "company": "Capgemini",
+    "source": "existing"
+  },
+  {
+    "id": "5316",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Histogram Bin Frequency",
+    "q": "In a marks histogram: 0–20 (5 students), 20–40 (12 students), 40–60 (20 students), 60–80 (15 students), 80–100 (8 students). What percentage of students scored 60 or above?",
+    "options": [
+      "A) 35.5%",
+      "B) 38.33%",
+      "C) 40.0%",
+      "D) 42.5%"
+    ],
+    "answer": "B) 38.33%",
+    "explanation": "Total students = 5 + 12 + 20 + 15 + 8 = 60. Students scoring 60+ = 15 + 8 = 23. Percentage = (23 / 60) * 100 = 38.33%.",
+    "shortcut": "23 / 60 = 38.33%.",
+    "company": "TCS Ninja",
+    "source": "existing"
+  },
+  {
+    "id": "5317",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Stacked Bar Contribution",
+    "q": "A stacked bar shows Total Cost = $500k composed of Labor ($200k), Material ($200k), and Overhead ($100k). What percentage of total cost is Overhead?",
+    "options": [
+      "A) 15%",
+      "B) 20%",
+      "C) 25%",
+      "D) 30%"
+    ],
+    "answer": "B) 20%",
+    "explanation": "Overhead % = (100 / 500) * 100 = 20%.",
+    "shortcut": "100 / 500 = 20%.",
+    "company": "Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5318",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Percentage Decline on Line Graph",
+    "q": "Stock value dropped from $160 in May to $120 in June. What is the percentage drop?",
+    "options": [
+      "A) 20%",
+      "B) 25%",
+      "C) 30%",
+      "D) 33.33%"
+    ],
+    "answer": "B) 25%",
+    "explanation": "Drop = 160 - 120 = $40. Percentage Drop = (40 / 160) * 100 = 25%.",
+    "shortcut": "40 / 160 = 1/4 = 25%.",
+    "company": "Wipro",
+    "source": "existing"
+  },
+  {
+    "id": "5319",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Two-Period Bar Comparison",
+    "q": "Sales in Period 1: Branch A ($40k), Branch B ($60k). Sales in Period 2: Branch A ($50k), Branch B ($70k). What is the total combined sales across both periods?",
+    "options": [
+      "A) $200k",
+      "B) $210k",
+      "C) $220k",
+      "D) $230k"
+    ],
+    "answer": "C) $220k",
+    "explanation": "Total = 40 + 60 + 50 + 70 = $220k.",
+    "shortcut": "100 + 120 = 220k.",
+    "company": "Cognizant",
+    "source": "existing"
+  },
+  {
+    "id": "5320",
+    "topic": "graphical-chart",
+    "difficulty": "medium",
+    "category": "Target vs Actual Gap",
+    "q": "A line graph plots Targets (100, 120, 150) and Actuals (90, 130, 140) across 3 quarters. What is the net cumulative variance (Actuals - Targets)?",
+    "options": [
+      "A) -10",
+      "B) 0",
+      "C) +10",
+      "D) +20"
+    ],
+    "answer": "A) -10",
+    "explanation": "Total Targets = 100 + 120 + 150 = 370. Total Actuals = 90 + 130 + 140 = 360. Variance = 360 - 370 = -10.",
+    "shortcut": "360 - 370 = -10.",
+    "company": "Accenture",
+    "source": "existing"
+  },
+  {
+    "id": "5321",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Graph Growth CAGR",
+    "q": "A bar graph shows exports over 3 years: 2020 ($40M), 2021 ($60M), 2022 ($90M). Find the Compound Annual Growth Rate (CAGR) percentage from 2020 to 2022.",
+    "options": [
+      "A) 25%",
+      "B) 33.33%",
+      "C) 50%",
+      "D) 60%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "CAGR = (Value_end / Value_start)^(1/n) - 1. Here n = 2 years. Ratio = 90 / 40 = 2.25. (2.25)^(1/2) = √2.25 = 1.5. CAGR = 1.5 - 1 = 0.5 = 50%.",
+    "shortcut": "√(90/40) - 1 = 1.5 - 1 = 50%.",
+    "company": "PwC, Amazon, TCS",
+    "source": "existing"
+  },
+  {
+    "id": "5322",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Dual-Axis Chart Interpretation",
+    "q": "A dual-axis chart shows Units Sold on left axis (200k in 2021, 250k in 2022) and Price per Unit on right axis ($20 in 2021, $24 in 2022). What was the percentage increase in Total Revenue from 2021 to 2022?",
+    "options": [
+      "A) 40%",
+      "B) 45%",
+      "C) 50%",
+      "D) 55%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "2021 Revenue = 200k * $20 = $4.0M. 2022 Revenue = 250k * $24 = $6.0M. Revenue Increase % = ((6.0 - 4.0) / 4.0) * 100 = 50%.",
+    "shortcut": "((6.0 - 4.0)/4.0) * 100 = 50%.",
+    "company": "Google, McKinsey",
+    "source": "existing"
+  },
+  {
+    "id": "5323",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Cumulative Frequency / Ogive",
+    "q": "From a less-than ogive curve of 100 students, the curve intersects the 50th percentile mark at Score = 65 and 75th percentile mark at Score = 80. How many students scored between 65 and 80?",
+    "options": [
+      "A) 20",
+      "B) 25",
+      "C) 30",
+      "D) 35"
+    ],
+    "answer": "B) 25",
+    "explanation": "Number of students = 75th percentile - 50th percentile = 75 - 50 = 25 students.",
+    "shortcut": "75 - 50 = 25.",
+    "company": "Goldman Sachs, Morgan Stanley",
+    "source": "existing"
+  },
+  {
+    "id": "5324",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Multi-Line Cross Margin",
+    "q": "A line graph tracks Revenue R(t) = 50 + 15t and Cost C(t) = 30 + 10t (in $Millions, t in years). In what year will the annual profit reach $50 Million?",
+    "options": [
+      "A) Year 4",
+      "B) Year 5",
+      "C) Year 6",
+      "D) Year 7"
+    ],
+    "answer": "C) Year 6",
+    "explanation": "Profit P(t) = R(t) - C(t) = (50 - 30) + (15 - 10)t = 20 + 5t. Setting 20 + 5t = 50 => 5t = 30 => t = 6 years.",
+    "shortcut": "(50 - 20) / 5 = 6 years.",
+    "company": "Amazon, Barclays",
+    "source": "existing"
+  },
+  {
+    "id": "5325",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Weighted Bar Production",
+    "q": "A bar chart shows outputs of 3 factories: X (40 tonnes, cost ₹50k/tonne), Y (60 tonnes, cost ₹40k/tonne), Z (100 tonnes, cost ₹35k/tonne). What is the weighted average production cost per tonne?",
+    "options": [
+      "A) ₹38.5k",
+      "B) ₹39.5k",
+      "C) ₹40.5k",
+      "D) ₹42.0k"
+    ],
+    "answer": "B) ₹39.5k",
+    "explanation": "Total Cost = (40*50) + (60*40) + (100*35) = 2000 + 2400 + 3500 = ₹7900k. Total Output = 200 tonnes. Weighted Avg Cost = 7900 / 200 = ₹39.5k.",
+    "shortcut": "7900 / 200 = 39.5k.",
+    "company": "Microsoft, Directi",
+    "source": "existing"
+  },
+  {
+    "id": "5326",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Radar / Spider Chart Interpretation",
+    "q": "In a 5-dimension radar chart (Scale 0–100), Candidate A scores [80, 70, 90, 85, 75] and Candidate B scores [85, 80, 75, 70, 90]. What is the difference between their total aggregated scores?",
+    "options": [
+      "A) 0",
+      "B) 5",
+      "C) 10",
+      "D) 15"
+    ],
+    "answer": "A) 0",
+    "explanation": "Candidate A Total = 80 + 70 + 90 + 85 + 75 = 400. Candidate B Total = 85 + 80 + 75 + 70 + 90 = 400. Difference = 0.",
+    "shortcut": "400 - 400 = 0.",
+    "company": "Deloitte, PwC",
+    "source": "existing"
+  },
+  {
+    "id": "5327",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Subdivided Bar Proportions",
+    "q": "A subdivided bar chart shows 2021 Total Sales = $400M (Domestic 60%, Export 40%) and 2022 Total Sales = $600M (Domestic 50%, Export 50%). By what dollar amount did Export sales increase in 2022?",
+    "options": [
+      "A) $100M",
+      "B) $120M",
+      "C) $140M",
+      "D) $150M"
+    ],
+    "answer": "C) $140M",
+    "explanation": "2021 Export = 40% of 400 = $160M. 2022 Export = 50% of 600 = $300M. Increase = 300 - 160 = $140 Million.",
+    "shortcut": "300 - 160 = 140M.",
+    "company": "TCS Digital, Infosys",
+    "source": "existing"
+  },
+  {
+    "id": "5328",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Moving Average Smoothing",
+    "q": "Quarterly revenues are Q1 ($40M), Q2 ($60M), Q3 ($80M), Q4 ($100M), Q5 ($120M). What is the 3-period moving average for Q4?",
+    "options": [
+      "A) $70M",
+      "B) $80M",
+      "C) $90M",
+      "D) $100M"
+    ],
+    "answer": "B) $80M",
+    "explanation": "3-period moving average for Q4 includes Q2, Q3, and Q4: (60 + 80 + 100) / 3 = 240 / 3 = $80 Million.",
+    "shortcut": "(60 + 80 + 100) / 3 = 80M.",
+    "company": "Barclays, Google",
+    "source": "existing"
+  },
+  {
+    "id": "5329",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Loss-Making Year Identification",
+    "q": "A graph tracks Revenue R(t) and Expenses E(t) across 4 years: Y1 (R: $50M, E: $40M), Y2 (R: $60M, E: $65M), Y3 (R: $80M, E: $70M), Y4 (R: $90M, E: $85M). What was the net profit/loss in the only loss-making year?",
+    "options": [
+      "A) $5M Profit",
+      "B) $5M Loss",
+      "C) $10M Loss",
+      "D) Break-even"
+    ],
+    "answer": "B) $5M Loss",
+    "explanation": "In Year 2, Revenue ($60M) < Expenses ($65M). Net Loss = 65 - 60 = $5 Million Loss.",
+    "shortcut": "60 - 65 = -$5M (Loss).",
+    "company": "Amazon, Flipkart",
+    "source": "existing"
+  },
+  {
+    "id": "5330",
+    "topic": "graphical-chart",
+    "difficulty": "hard",
+    "category": "Multi-Year Compounded Bar Index",
+    "q": "A production index bar chart shows 2019 (Index = 100), 2020 (Index = 120), 2021 (Index = 150), 2022 (Index = 180). What was the percentage increase in production from 2020 to 2022?",
+    "options": [
+      "A) 40%",
+      "B) 45%",
+      "C) 50%",
+      "D) 60%"
+    ],
+    "answer": "C) 50%",
+    "explanation": "Increase = ((180 - 120) / 120) * 100 = (60 / 120) * 100 = 50%.",
+    "shortcut": "60 / 120 = 50%.",
+    "company": "TCS Digital, Accenture",
+    "source": "existing"
   }
 ]

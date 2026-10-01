@@ -335,7 +335,8 @@ const LocalDB = {
 
   getAptitudeQuestions(topic, difficulty) {
     const list = readJSON('aptitude_questions.json');
-    let filtered = list.filter(q => q.topic === topic);
+    const normTopic = topic === 'percentage' ? 'percentages' : topic;
+    let filtered = list.filter(q => q.topic === normTopic || q.topic === topic);
     if (difficulty && difficulty !== 'all') {
       filtered = filtered.filter(q => q.difficulty === difficulty);
     }
@@ -750,12 +751,10 @@ const DB = {
       querySnapshot.forEach(doc => {
         list.push(doc.data());
       });
-      return list;
+      if (list.length > 0) return list;
+      return LocalDB.getAptitudeQuestions(topic, difficulty);
     } catch (err) {
-      if (err.message.includes('PERMISSION_DENIED') || err.message.includes('permission')) {
-        global.firestoreDisabled = true;
-        console.warn(`[DB] 🔒 Firestore permission denied. Falling back to local JSON for this session.`);
-      }
+      global.firestoreDisabled = true;
       console.warn(`[DB] ⚠️ Firestore getAptitudeQuestions error: ${err.message}. Falling back to local JSON database.`);
       return LocalDB.getAptitudeQuestions(topic, difficulty);
     }

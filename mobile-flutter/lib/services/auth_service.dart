@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'api_service.dart';
@@ -10,18 +11,22 @@ class AuthService {
 
   static Future<void> initFirebase() async {
     try {
-      // Initialize Firebase client using public credentials matching the web app client configuration
-      // Gracefully handles missing config keys or initialization failures (such as running offline)
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: "AIzaSyBIfzCZRe5nYajS912R9gOGsDxjTSLSjEY",
-          authDomain: "career-guidance-app-9aba0.firebaseapp.com",
-          projectId: "career-guidance-app-9aba0",
-          storageBucket: "career-guidance-app-9aba0.firebasestorage.app",
-          messagingSenderId: "162671597184",
-          appId: "1:162671597184:web:137fa2c7654bf002d9b865",
-        ),
-      );
+      if (Firebase.apps.isEmpty) {
+        try {
+          await Firebase.initializeApp();
+        } catch (_) {
+          await Firebase.initializeApp(
+            options: const FirebaseOptions(
+              apiKey: "AIzaSyBIfzCZRe5nYajS912R9gOGsDxjTSLSjEY",
+              authDomain: "career-guidance-app-9aba0.firebaseapp.com",
+              projectId: "career-guidance-app-9aba0",
+              storageBucket: "career-guidance-app-9aba0.firebasestorage.app",
+              messagingSenderId: "162671597184",
+              appId: "1:162671597184:web:137fa2c7654bf002d9b865",
+            ),
+          );
+        }
+      }
       _auth = FirebaseAuth.instance;
       print("🔥 Firebase initialized successfully inside Flutter");
     } catch (e) {
@@ -125,17 +130,53 @@ class AuthService {
     }
   }
 
+  // --- GOOGLE SIGN-IN ---
+  static Future<Map<String, dynamic>> loginWithGoogle() async {
+    try {
+      if (_auth != null) {
+        final GoogleSignIn googleSignIn = GoogleSignIn(
+          serverClientId: '162671597184-rvh90iccromotabbiu1i0qi5ujpa3n7i.apps.googleusercontent.com',
+          scopes: ['email', 'profile'],
+        );
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+        if (googleUser == null) {
+          return {'success': false, 'error': 'Google Sign-In canceled'};
+        }
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        final UserCredential userCredential = await _auth!.signInWithCredential(credential);
+        if (userCredential.user != null) {
+          final user = userCredential.user!;
+          final syncRes = await syncBackend(
+            user.uid,
+            user.displayName ?? (user.email != null ? user.email!.split('@')[0] : 'Google User'),
+            user.email ?? '',
+          );
+          await _cacheUserSession(syncRes);
+          return {'success': true, 'user': syncRes};
+        }
+      }
+      throw Exception("Firebase Auth unavailable");
+    } catch (e) {
+      print("⚠️ Google Sign-In error: $e");
+      return {'success': false, 'error': 'Google Sign-In failed: ${e.toString()}'};
+    }
+  }
+
   // --- BACKEND AUTH SYNC ---
-  static Future<Map<String, dynamic>> syncBackend(String uid, String name, String email) async {
+  static Future<Map<String, dynamic>> syncBackend(String id, String name, String email) async {
     try {
       final res = await httpPost('/auth/sync', {
-        'uid': uid,
+        'id': id,
         'name': name,
         'email': email
       });
-      return res['user'] ?? {'id': uid, 'name': name, 'email': email};
+      return res['user'] ?? {'id': id, 'name': name, 'email': email};
     } catch (_) {
-      return {'id': uid, 'name': name, 'email': email};
+      return {'id': id, 'name': name, 'email': email};
     }
   }
 

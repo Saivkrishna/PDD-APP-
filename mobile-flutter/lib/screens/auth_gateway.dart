@@ -88,6 +88,36 @@ class _AuthGatewayState extends State<AuthGateway> {
     }
   }
 
+  void _handleGoogleSignIn() async {
+    final state = CareerPathApp.of(context);
+    SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+
+    setState(() {
+      _loading = true;
+      _error = null;
+      _message = null;
+    });
+
+    final result = await AuthService.loginWithGoogle();
+
+    setState(() {
+      _loading = false;
+    });
+
+    if (result['success'] == true) {
+      SoundManager.playSuccess(state?.soundEnabled ?? true);
+      state?.setUser(result['user']);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const HomeNavHub()),
+      );
+    } else {
+      SoundManager.playError(state?.soundEnabled ?? true);
+      setState(() {
+        _error = result['error'] ?? 'Google Sign-In failed. Please try again.';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = CareerPathApp.of(context);
@@ -236,6 +266,52 @@ class _AuthGatewayState extends State<AuthGateway> {
                           ),
                         ),
                       ),
+
+                      if (_screen == 'login') ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(child: Divider(color: Colors.white.withOpacity(0.15))),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Text('OR', style: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 12, fontWeight: FontWeight.bold)),
+                            ),
+                            Expanded(child: Divider(color: Colors.white.withOpacity(0.15))),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: _loading ? null : _handleGoogleSignIn,
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(24),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text('🌐 ', style: TextStyle(fontSize: 16)),
+                                Text(
+                                  'Continue with Google',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),

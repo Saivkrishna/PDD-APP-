@@ -4512,6 +4512,25 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
   const [quizFinished, setQuizFinished] = useState(false);
   const [userAnswers, setUserAnswers] = useState([]);
 
+  const getQuestionCount = (topicId, diff) => {
+    const normTopic = topicId === 'percentage' ? 'percentages' : topicId;
+    const apiCount = dbCounts[normTopic]?.[diff] ?? dbCounts[topicId]?.[diff];
+    if (typeof apiCount === 'number' && apiCount > 0) {
+      return apiCount;
+    }
+    const localFiltered = allAptitudeQuestions.filter(q => {
+      const qTopic = q.topic === 'percentage' ? 'percentages' : q.topic;
+      return (qTopic === normTopic || qTopic === topicId) && (diff === 'all' ? true : q.difficulty === diff);
+    });
+    if (localFiltered.length > 0) {
+      return localFiltered.length;
+    }
+    if (typeof apiCount === 'number') {
+      return apiCount;
+    }
+    return 0;
+  };
+
   const handleStartQuiz = async (diff, topicId = quizTopic) => {
     try {
       const normalizedTopic = topicId === 'percentage' ? 'percentages' : topicId;
@@ -4533,10 +4552,17 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
       throw new Error('Empty questions data');
     } catch (err) {
       console.warn('⚠️ Fetching questions from backend failed. Falling back to offline bundle:', err.message);
-      const filtered = allAptitudeQuestions.filter(q => q.topic === topicId && q.difficulty === diff);
+      const normalizedTopic = topicId === 'percentage' ? 'percentages' : topicId;
+      const filtered = allAptitudeQuestions.filter(q => {
+        const qTopic = q.topic === 'percentage' ? 'percentages' : q.topic;
+        return (qTopic === normalizedTopic || qTopic === topicId) && q.difficulty === diff;
+      });
       let selected = [];
       if (filtered.length === 0) {
-        const fallbackFiltered = allAptitudeQuestions.filter(q => q.topic === topicId);
+        const fallbackFiltered = allAptitudeQuestions.filter(q => {
+          const qTopic = q.topic === 'percentage' ? 'percentages' : q.topic;
+          return qTopic === normalizedTopic || qTopic === topicId;
+        });
         if (fallbackFiltered.length > 0) {
           selected = [...fallbackFiltered].sort(() => 0.5 - Math.random());
         } else {
@@ -5106,7 +5132,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#10b981' }}>🟢 EASY LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {dbCounts[quizTopic]?.easy ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'easy').length} Qs Database
+                    {getQuestionCount(quizTopic, 'easy')} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>
@@ -5129,7 +5155,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#f59e0b' }}>🟡 MEDIUM LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {dbCounts[quizTopic]?.medium ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'medium').length} Qs Database
+                    {getQuestionCount(quizTopic, 'medium')} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>
@@ -5152,7 +5178,7 @@ function AptitudeCheatsheetPage({ onBack, t, onOpenSettings }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontSize: '16px', fontWeight: '900', color: '#ef4444' }}>🔴 HARD LEVEL</span>
                   <span style={{ fontSize: '11px', background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444', padding: '2px 8px', borderRadius: '8px', fontWeight: 800 }}>
-                    {dbCounts[quizTopic]?.hard ?? allAptitudeQuestions.filter(q => q.topic === quizTopic && q.difficulty === 'hard').length} Qs Database
+                    {getQuestionCount(quizTopic, 'hard')} Qs Database
                   </span>
                 </div>
                 <p style={{ fontSize: '12px', color: 'var(--text-sub)', marginTop: '8px', lineHeight: 1.4 }}>

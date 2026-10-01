@@ -15,6 +15,10 @@ import { ratioProportionQuizQuestions } from './ratioProportionQuizData';
 import { mixtureAlligationQuizQuestions } from './mixtureAlligationQuizData';
 import { timeSpeedDistanceQuizQuestions } from './timeSpeedDistanceQuizData';
 import { permutationCombinationQuizQuestions } from './permutationCombinationQuizData';
+import { meanMedianModeQuizQuestions } from './meanMedianModeQuizData';
+import { dataInterpretationQuizQuestions } from './dataInterpretationQuizData';
+import { pieChartQuizQuestions } from './pieChartQuizData';
+import { graphicalChartQuizQuestions } from './graphicalChartQuizData';
 
 // Topic mapper to align existing questions to the 22 new topics
 const mapTopic = (topic, qText, catText) => {
@@ -868,7 +872,11 @@ const combined = [
   ...ratioProportionQuizQuestions,
   ...mixtureAlligationQuizQuestions,
   ...timeSpeedDistanceQuizQuestions,
-  ...permutationCombinationQuizQuestions
+  ...permutationCombinationQuizQuestions,
+  ...meanMedianModeQuizQuestions,
+  ...dataInterpretationQuizQuestions,
+  ...pieChartQuizQuestions,
+  ...graphicalChartQuizQuestions
 ];
 
 const uniqueCombined = [];
