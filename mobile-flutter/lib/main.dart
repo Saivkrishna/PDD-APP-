@@ -19,6 +19,8 @@ import 'services/auth_service.dart';
 import 'services/api_service.dart';
 import 'utils/translations.dart';
 import 'utils/sound_manager.dart';
+import 'utils/aptitude_data.dart';
+import 'utils/reasoning_data.dart';
 
 class AppTheme {
   final String id;
@@ -120,6 +122,12 @@ void main() async {
   
   // Initialize Firebase Auth / Core gracefully
   await AuthService.initFirebase();
+  
+  // Initialize Aptitude Repository (1086 questions & 22 cheatsheets)
+  await AptitudeDataRepository.initialize();
+  
+  // Initialize Reasoning Repository (200 questions across 10 topics)
+  await ReasoningDataRepository.initialize();
   
   final prefs = await SharedPreferences.getInstance();
   final String initialLang = prefs.getString('cp_lang') ?? 'en';

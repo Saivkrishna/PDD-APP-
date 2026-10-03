@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../utils/career_data_repository.dart';
 import '../utils/tech_learning_data.dart';
 import '../utils/aptitude_data.dart';
+import '../utils/reasoning_data.dart';
 
 class ApiService {
   // Production URL retrieved from the mobile configurations
@@ -337,58 +338,32 @@ class ApiService {
 
   // --- APTITUDE API ---
   static Future<List<dynamic>> getAptitudeQuestions(String topic, String difficulty) async {
-    final res = await _get('/aptitude/questions/$topic/$difficulty');
-    if (res.isNotEmpty) return res;
-
-    // Fallback quiz questions generated from AptitudeDataRepository
-    final topicData = AptitudeDataRepository.allTopics.firstWhere(
-      (t) => t['id'] == topic || t['id'] == 'percentages',
-      orElse: () => AptitudeDataRepository.allTopics.first,
-    );
-
-    return [
-      {
-        "id": "$topic-q1",
-        "question": "Sample Question on ${topicData['title']}: If 20% of a number is 45, what is 80% of that number?",
-        "options": ["180", "160", "200", "140"],
-        "correctIndex": 0,
-        "explanation": "Let the number be x. 0.20 * x = 45 => x = 225. 80% of 225 = 0.80 * 225 = 180.",
-        "difficulty": difficulty == 'all' ? 'easy' : difficulty,
-        "topic": topic,
-        "companyTags": ["🏢 TCS", "🏢 Infosys"]
-      },
-      {
-        "id": "$topic-q2",
-        "question": "A product cost price is ₹500 and is sold at a 25% profit. Find the selling price.",
-        "options": ["₹625", "₹600", "₹650", "₹575"],
-        "correctIndex": 0,
-        "explanation": "Selling Price = Cost Price * (1 + Profit%) = 500 * 1.25 = ₹625.",
-        "difficulty": difficulty == 'all' ? 'medium' : difficulty,
-        "topic": topic,
-        "companyTags": ["🏢 Wipro", "🏢 Accenture"]
+    final normTopic = topic == 'percentage' ? 'percentages' : topic;
+    try {
+      final res = await _getRaw('/aptitude/questions/$normTopic/$difficulty');
+      if (res.statusCode == 200) {
+        final decoded = json.decode(res.body);
+        if (decoded is List && decoded.isNotEmpty) {
+          return decoded;
+        }
       }
-    ];
+    } catch (_) {}
+    return AptitudeDataRepository.getQuestions(normTopic, difficulty);
   }
 
   static Future<Map<String, dynamic>> getAptitudeCounts() async {
-    final response = await _getRaw('/aptitude/counts');
-    if (response.statusCode == 200) {
-      final decoded = json.decode(response.body);
-      if (decoded is Map && decoded.isNotEmpty) return Map<String, dynamic>.from(decoded);
-    }
-    
-    // Build default counts mapping from AptitudeDataRepository
-    final Map<String, dynamic> counts = {};
-    for (final topic in AptitudeDataRepository.allTopics) {
-      counts[topic['id']!] = {
-        "easy": 10,
-        "medium": 10,
-        "hard": 10,
-        "total": 30
-      };
-    }
-    return counts;
+    try {
+      final response = await _getRaw('/aptitude/counts');
+      if (response.statusCode == 200) {
+        final decoded = json.decode(response.body);
+        if (decoded is Map && decoded.isNotEmpty) {
+          return Map<String, dynamic>.from(decoded);
+        }
+      }
+    } catch (_) {}
+    return AptitudeDataRepository.getAllCounts();
   }
+
 
   // --- REASONING API ---
   static Future<List<dynamic>> getReasoningQuiz({
@@ -413,53 +388,16 @@ class ApiService {
       }
     }
     
-    // Fallback Reasoning Question Pool for Practice & Test Mode
-    final fallbackPool = [
-      {
-        "id": "r-1",
-        "topic": topic ?? "syllogisms",
-        "difficulty": "easy",
-        "question": "Statements: All cats are animals. All animals are mammals.\nConclusions:\nI. All cats are mammals.\nII. Some mammals are cats.",
-        "options": ["Only I follows", "Only II follows", "Both I and II follow", "Neither follows"],
-        "correctIndex": 2,
-        "explanation": "Since cats ⊂ animals ⊂ mammals, all cats are mammals. Also, since cats exist in mammals, some mammals are cats. Both follow."
-      },
-      {
-        "id": "r-2",
-        "topic": topic ?? "blood-relations",
-        "difficulty": "medium",
-        "question": "Pointing to a photograph, Rahul said, 'She is the mother of my father's only daughter.' How is the person related to Rahul?",
-        "options": ["Mother", "Sister", "Aunt", "Grandmother"],
-        "correctIndex": 0,
-        "explanation": "Father's only daughter = Rahul's sister. The mother of Rahul's sister is Rahul's Mother."
-      },
-      {
-        "id": "r-3",
-        "topic": topic ?? "coding-decoding",
-        "difficulty": "hard",
-        "question": "If COMPUTER is coded as RFUVQNPC, how is MEDICINE coded in that rule?",
-        "options": ["EOJDJEFM", "EOJDEJFM", "MFEJDJOE", "MFEDJOJE"],
-        "correctIndex": 0,
-        "explanation": "The word is reversed: E-N-I-C-I-D-E-M, then each character is incremented by 1 (except the ends which swap). MEDICINE becomes EOJDJEFM."
-      }
-    ];
+    // Fallback Reasoning Question Pool from local ReasoningDataRepository (200 questions across 10 topics)
+    final localQuestions = ReasoningDataRepository.getQuestions(
+      topic: topic,
+      difficulty: difficulty,
+      testMode: testMode,
+    );
 
-    if (testMode == true) {
-      // Repeat to generate a 30 question test pool
-      final testPool = <Map<String, dynamic>>[];
-      for (int i = 1; i <= 30; i++) {
-        final base = fallbackPool[(i - 1) % fallbackPool.length];
-        testPool.add({
-          ...base,
-          "id": "mock-q-$i",
-          "question": "Question $i: ${base['question']}"
-        });
-      }
-      return testPool;
-    }
-
-    return fallbackPool;
+    return localQuestions.isNotEmpty ? localQuestions : ReasoningDataRepository.getAllQuestionsRaw();
   }
+
 
   // --- USER PROFILE & DATA MANAGEMENT ---
   static Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> userData) async {

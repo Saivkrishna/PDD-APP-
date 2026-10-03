@@ -493,12 +493,21 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         _buildQuickCard(
-                          icon: '🎮',
-                          title: 'Brain Games',
-                          subtitle: 'Memory & Arithmetic',
+                          icon: '🧩',
+                          title: 'Memory Matrix',
+                          subtitle: 'Spatial Pattern Game',
                           onTap: () {
                             SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
                             Navigator.of(context).push(MaterialPageRoute(builder: (_) => const MemoryMatrixGame()));
+                          },
+                        ),
+                        _buildQuickCard(
+                          icon: '🌧️',
+                          title: 'Arithmetic Rain',
+                          subtitle: 'Speed Math Game',
+                          onTap: () {
+                            SoundManager.playClick(state?.soundEnabled ?? true, state?.soundType ?? 'synth');
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => const ArithmeticRainGame()));
                           },
                         ),
                       ],
